@@ -10,20 +10,26 @@
 	<string>PicoBlog</string>
 	<key>IDESourceControlProjectOriginsDictionary</key>
 	<dict>
+		<key>D42402622E9F2F2DF3F40640445D723AE4CACA22</key>
+		<string>https://github.com/jeffreybergier/PicoBlog.git</string>
 		<key>bd13cce4-38e5-42be-9df0-bbfa65dd9970</key>
 		<string>https://www.jeffburg.com/saturdayappssvn</string>
 	</dict>
 	<key>IDESourceControlProjectPath</key>
-	<string>PicoBlog/PicoBlog.xcodeproj</string>
+	<string>PicoBlog.xcodeproj</string>
 	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
 	<dict>
+		<key>D42402622E9F2F2DF3F40640445D723AE4CACA22</key>
+		<string>../..</string>
 		<key>bd13cce4-38e5-42be-9df0-bbfa65dd9970</key>
 		<string>../../..</string>
 	</dict>
+	<key>IDESourceControlProjectURL</key>
+	<string>https://github.com/jeffreybergier/PicoBlog.git</string>
 	<key>IDESourceControlProjectVersion</key>
 	<integer>111</integer>
 	<key>IDESourceControlProjectWCCIdentifier</key>
-	<string>bd13cce4-38e5-42be-9df0-bbfa65dd9970</string>
+	<string>D42402622E9F2F2DF3F40640445D723AE4CACA22</string>
 	<key>IDESourceControlProjectWCConfigurations</key>
 	<array>
 		<dict>
@@ -32,7 +38,15 @@
 			<key>IDESourceControlWCCIdentifierKey</key>
 			<string>bd13cce4-38e5-42be-9df0-bbfa65dd9970</string>
 			<key>IDESourceControlWCCName</key>
-			<string>SaturdayApps</string>
+			<string></string>
+		</dict>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>D42402622E9F2F2DF3F40640445D723AE4CACA22</string>
+			<key>IDESourceControlWCCName</key>
+			<string>PicoBlog</string>
 		</dict>
 	</array>
 </dict>
