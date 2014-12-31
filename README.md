@@ -33,6 +33,3 @@ Pico Blog will take a cue from the old world of the internet. The technology mod
 - It goes without saying that everything this app does is relatively simple. Everyone should feel free to make their own clients or do whatever they want with the idea. 
 - I would prefer to have people using something like this, rather than trying to make money off of it. 
 - Lastly, I’m totally new to programming and my code is guaranteed to be messy and terrible. I welcome all pull requests to refactor and clean things up.
-
-## Thanks!
-- Jeff  
