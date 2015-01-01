@@ -12,7 +12,10 @@
 		737FBD7B1A549626004AAE3A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 737FBD7A1A549626004AAE3A /* Images.xcassets */; };
 		737FBD7E1A549626004AAE3A /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 737FBD7C1A549626004AAE3A /* LaunchScreen.xib */; };
 		737FBD8A1A549626004AAE3A /* PicoBlogTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 737FBD891A549626004AAE3A /* PicoBlogTests.swift */; };
-		73E2DEB71A54B7C500D34E95 /* README.md in Sources */ = {isa = PBXBuildFile; fileRef = 73E2DEB61A54B7C500D34E95 /* README.md */; };
+		73E2DEBC1A54CA9600D34E95 /* PicoDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73E2DEBB1A54CA9600D34E95 /* PicoDataSource.swift */; };
+		73E2DEBE1A54CAEB00D34E95 /* PicoSubscriptionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73E2DEBD1A54CAEB00D34E95 /* PicoSubscriptionManager.swift */; };
+		73E2DEC01A54CB3300D34E95 /* PicoPostManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73E2DEBF1A54CB3300D34E95 /* PicoPostManager.swift */; };
+		73E2DEC21A54CB4600D34E95 /* PicoDownloadManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73E2DEC11A54CB4600D34E95 /* PicoDownloadManager.swift */; };
 		73F0B15D1A5498E400D7BF2C /* FeedTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73F0B15C1A5498E400D7BF2C /* FeedTableViewController.swift */; };
 /* End PBXBuildFile section */
 
@@ -37,6 +40,10 @@
 		737FBD881A549626004AAE3A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		737FBD891A549626004AAE3A /* PicoBlogTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PicoBlogTests.swift; sourceTree = "<group>"; };
 		73E2DEB61A54B7C500D34E95 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		73E2DEBB1A54CA9600D34E95 /* PicoDataSource.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PicoDataSource.swift; sourceTree = "<group>"; };
+		73E2DEBD1A54CAEB00D34E95 /* PicoSubscriptionManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PicoSubscriptionManager.swift; sourceTree = "<group>"; };
+		73E2DEBF1A54CB3300D34E95 /* PicoPostManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PicoPostManager.swift; sourceTree = "<group>"; };
+		73E2DEC11A54CB4600D34E95 /* PicoDownloadManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PicoDownloadManager.swift; sourceTree = "<group>"; };
 		73F0B15C1A5498E400D7BF2C /* FeedTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FeedTableViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -81,8 +88,9 @@
 			isa = PBXGroup;
 			children = (
 				737FBD731A549626004AAE3A /* AppDelegate.swift */,
-				73F0B15C1A5498E400D7BF2C /* FeedTableViewController.swift */,
-				737FBD771A549626004AAE3A /* Main.storyboard */,
+				73E2DEBA1A54CA7400D34E95 /* View */,
+				73E2DEB91A54CA6500D34E95 /* Controller */,
+				73E2DEB81A54CA5800D34E95 /* Model */,
 				737FBD7A1A549626004AAE3A /* Images.xcassets */,
 				737FBD7C1A549626004AAE3A /* LaunchScreen.xib */,
 				737FBD711A549626004AAE3A /* Supporting Files */,
@@ -113,6 +121,33 @@
 				737FBD881A549626004AAE3A /* Info.plist */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		73E2DEB81A54CA5800D34E95 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				73E2DEBB1A54CA9600D34E95 /* PicoDataSource.swift */,
+				73E2DEBD1A54CAEB00D34E95 /* PicoSubscriptionManager.swift */,
+				73E2DEBF1A54CB3300D34E95 /* PicoPostManager.swift */,
+				73E2DEC11A54CB4600D34E95 /* PicoDownloadManager.swift */,
+			);
+			name = Model;
+			sourceTree = "<group>";
+		};
+		73E2DEB91A54CA6500D34E95 /* Controller */ = {
+			isa = PBXGroup;
+			children = (
+				73F0B15C1A5498E400D7BF2C /* FeedTableViewController.swift */,
+			);
+			name = Controller;
+			sourceTree = "<group>";
+		};
+		73E2DEBA1A54CA7400D34E95 /* View */ = {
+			isa = PBXGroup;
+			children = (
+				737FBD771A549626004AAE3A /* Main.storyboard */,
+			);
+			name = View;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -216,9 +251,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				73E2DEB71A54B7C500D34E95 /* README.md in Sources */,
+				73E2DEBE1A54CAEB00D34E95 /* PicoSubscriptionManager.swift in Sources */,
+				73E2DEBC1A54CA9600D34E95 /* PicoDataSource.swift in Sources */,
 				737FBD741A549626004AAE3A /* AppDelegate.swift in Sources */,
+				73E2DEC01A54CB3300D34E95 /* PicoPostManager.swift in Sources */,
 				73F0B15D1A5498E400D7BF2C /* FeedTableViewController.swift in Sources */,
+				73E2DEC21A54CB4600D34E95 /* PicoDownloadManager.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

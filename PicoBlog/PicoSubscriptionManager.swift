@@ -1,5 +1,5 @@
 //
-// FeedTableViewController.swift
+// PicoSubscriptionManager.swift
 // PicoBlog
 //
 // Created by Jeffrey Bergier on 12/31/14.
@@ -29,18 +29,28 @@
 
 import UIKit
 
-class FeedTableViewController: UITableViewController {
+class PicoSubscriptionManager {
     
-    weak var appDelegate = UIApplication.sharedApplication().delegate as? AppDelegate
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
+    func readSubscriptionsFromDisk() -> [NSURL] {
         
-        if let appDelegate = self.appDelegate {
-            for url in appDelegate.dataSource.subscriptionManager.readSubscriptionsFromDisk() {
-                appDelegate.dataSource.downloadManager.downloadFile(url: url)
+        // fake data files for now
+        let array = [
+            NSURL(string: "http://www.jeffburg.com/pico/file1.pico"),
+            NSURL(string: "http://www.jeffburg.com/pico/file2.pico"),
+            NSURL(string: "http://www.jeffburg.com/pico/file3.pico"),
+            NSURL(string: "http://www.jeffburg.com/pico/file4.pico"),
+            NSURL(string: "http://www.jeffburg.com/pico/file5.pico"),
+            NSURL(string: "http://www.jeffburg.com/pico/file6.pico")
+        ]
+        
+        // NSURL's are optional. Must check them before returning the array
+        var verifiedArray: [NSURL] = []
+        for url in array {
+            if let url = url {
+                verifiedArray.append(url)
             }
         }
+        
+        return verifiedArray
     }
-    
 }

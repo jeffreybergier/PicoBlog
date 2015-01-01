@@ -7,13 +7,13 @@
         <!--Feed Table View Controller-->
         <scene sceneID="PHb-dZ-kU0">
             <objects>
-                <tableViewController id="2zQ-SW-l1E" customClass="FeedTableViewController" customModule="PicoBlog" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController restorationIdentifier="FeedTableViewController" id="2zQ-SW-l1E" customClass="FeedTableViewController" customModule="PicoBlog" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="0nD-2Y-YEO">
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <prototypes>
-                            <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" id="bpo-qE-gQv">
+                            <tableViewCell contentMode="scaleToFill" restorationIdentifier="Temp" selectionStyle="default" indentationWidth="10" reuseIdentifier="Temp" id="bpo-qE-gQv">
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="bpo-qE-gQv" id="mkZ-94-ZpM">
                                     <autoresizingMask key="autoresizingMask"/>

@@ -1,5 +1,5 @@
 //
-// FeedTableViewController.swift
+// PicoPostManager.swift
 // PicoBlog
 //
 // Created by Jeffrey Bergier on 12/31/14.
@@ -29,18 +29,6 @@
 
 import UIKit
 
-class FeedTableViewController: UITableViewController {
-    
-    weak var appDelegate = UIApplication.sharedApplication().delegate as? AppDelegate
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        
-        if let appDelegate = self.appDelegate {
-            for url in appDelegate.dataSource.subscriptionManager.readSubscriptionsFromDisk() {
-                appDelegate.dataSource.downloadManager.downloadFile(url: url)
-            }
-        }
-    }
+class PicoPostManager {
     
 }

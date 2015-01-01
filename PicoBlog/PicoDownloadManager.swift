@@ -1,5 +1,5 @@
 //
-// FeedTableViewController.swift
+// PicoDownloadManager.swift
 // PicoBlog
 //
 // Created by Jeffrey Bergier on 12/31/14.
@@ -29,16 +29,24 @@
 
 import UIKit
 
-class FeedTableViewController: UITableViewController {
+class PicoDownloadManager {
     
-    weak var appDelegate = UIApplication.sharedApplication().delegate as? AppDelegate
+    var downloadedFiles: [NSDictionary] = []
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
+    func downloadFile(#url: NSURL) {
         
-        if let appDelegate = self.appDelegate {
-            for url in appDelegate.dataSource.subscriptionManager.readSubscriptionsFromDisk() {
-                appDelegate.dataSource.downloadManager.downloadFile(url: url)
+        NSURLConnection.sendAsynchronousRequest(NSURLRequest(URL: url), queue: NSOperationQueue.mainQueue()) { (response: NSURLResponse!, data: NSData!, error: NSError!) -> Void in
+            
+            let jsonFile: AnyObject? = NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions.MutableContainers, error: nil)
+            
+            if let dictionary = jsonFile as? NSDictionary {
+                if let array = dictionary["movies"] as? NSArray {
+                    for var i = 0; i < array.count; i++ {
+                        if let movieItem = array[i] as? NSDictionary {
+                            self.downloadedFiles.append(movieItem)
+                        }
+                    }
+                }
             }
         }
     }
