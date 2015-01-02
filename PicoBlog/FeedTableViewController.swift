@@ -31,14 +31,16 @@ import UIKit
 
 class FeedTableViewController: UITableViewController {
     
-    weak var appDelegate = UIApplication.sharedApplication().delegate as? AppDelegate
+    weak var dataSource = PicoDataSource.sharedInstance
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        if let appDelegate = self.appDelegate {
-            for url in appDelegate.dataSource.subscriptionManager.readSubscriptionsFromDisk() {
-                appDelegate.dataSource.downloadManager.downloadFile(url: url)
+        self.dataSource?.postManager.createFakeDataAndSaveToDisk()
+        
+        if let dataSource = self.dataSource {
+            for url in dataSource.subscriptionManager.readSubscriptionsFromDisk() {
+                dataSource.downloadManager.downloadFile(url: url)
             }
         }
     }

@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		732BA0DA1A560E690079D07F /* PicoNonClassTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 732BA0D91A560E690079D07F /* PicoNonClassTypes.swift */; };
 		737FBD741A549626004AAE3A /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 737FBD731A549626004AAE3A /* AppDelegate.swift */; };
 		737FBD791A549626004AAE3A /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 737FBD771A549626004AAE3A /* Main.storyboard */; };
 		737FBD7B1A549626004AAE3A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 737FBD7A1A549626004AAE3A /* Images.xcassets */; };
@@ -30,6 +31,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		732BA0D91A560E690079D07F /* PicoNonClassTypes.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PicoNonClassTypes.swift; sourceTree = "<group>"; };
 		737FBD6E1A549626004AAE3A /* PicoBlog.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PicoBlog.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		737FBD721A549626004AAE3A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		737FBD731A549626004AAE3A /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -130,6 +132,7 @@
 				73E2DEBD1A54CAEB00D34E95 /* PicoSubscriptionManager.swift */,
 				73E2DEBF1A54CB3300D34E95 /* PicoPostManager.swift */,
 				73E2DEC11A54CB4600D34E95 /* PicoDownloadManager.swift */,
+				732BA0D91A560E690079D07F /* PicoNonClassTypes.swift */,
 			);
 			name = Model;
 			sourceTree = "<group>";
@@ -251,6 +254,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				732BA0DA1A560E690079D07F /* PicoNonClassTypes.swift in Sources */,
 				73E2DEBE1A54CAEB00D34E95 /* PicoSubscriptionManager.swift in Sources */,
 				73E2DEBC1A54CA9600D34E95 /* PicoDataSource.swift in Sources */,
 				737FBD741A549626004AAE3A /* AppDelegate.swift in Sources */,

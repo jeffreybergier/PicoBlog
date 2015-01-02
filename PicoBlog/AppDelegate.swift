@@ -35,7 +35,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     let window = UIWindow(frame: UIScreen.mainScreen().bounds)
     let storyboard = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle())
-    let dataSource = PicoDataSource()
+    let dataSource = PicoDataSource.sharedInstance
 
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
         

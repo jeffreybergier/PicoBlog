@@ -1,8 +1,8 @@
 //
-// PicoDataSource.swift
+// PicoNonClassTypes.swift
 // PicoBlog
 //
-// Created by Jeffrey Bergier on 12/31/14.
+// Created by Jeffrey Bergier on 1/1/15.
 //
 // The MIT License (MIT)
 //
@@ -28,24 +28,25 @@
 //
 
 import UIKit
+import CoreLocation
 
-class PicoDataSource {
+struct picoMessage {
     
-    let downloadManager = PicoDownloadManager()
-    let postManager = PicoPostManager()
-    let subscriptionManager = PicoSubscriptionManager()
+    let date: NSDate
+    let username: NSString
+    let message: NSString
+    var userPicture: (image: UIImage?, url: NSURL?)
     
-    class var sharedInstance: PicoDataSource {
-        struct Static {
-            static var instance: PicoDataSource?
-            static var token: dispatch_once_t = 0
-        }
+    var picture: (image: UIImage, url: NSURL?)?
+    var location: CLLocation?
+    
+    init(date: NSDate, username: NSString, message: NSString, userPicture: (image: UIImage?, url: NSURL?)) {
         
-        dispatch_once(&Static.token) {
-            Static.instance = PicoDataSource()
-        }
+        self.date = date
+        self.username = username
+        self.message = message
+        self.userPicture = userPicture
         
-        return Static.instance!
     }
     
 }
