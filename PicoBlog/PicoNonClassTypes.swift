@@ -30,23 +30,43 @@
 import UIKit
 import CoreLocation
 
-struct picoMessage {
+struct PicoMessage {
     
     let date: NSDate
-    let username: NSString
-    let message: NSString
-    var userPicture: (image: UIImage?, url: NSURL?)
+    let user: User
+    let text: NSString
     
-    var picture: (image: UIImage, url: NSURL?)?
+    var picture: (image: UIImage?, url: NSURL?)?
     var location: CLLocation?
     
-    init(date: NSDate, username: NSString, message: NSString, userPicture: (image: UIImage?, url: NSURL?)) {
+    init(CompleteUser messageUser: User, messageDate: NSDate, messageText: NSString, messagePicture: (image: UIImage?, url: NSURL?)?) {
         
-        self.date = date
-        self.username = username
-        self.message = message
-        self.userPicture = userPicture
-        
+        self.date = messageDate
+        self.user = messageUser
+        self.text = messageText
+        self.picture = messagePicture
     }
     
+    init(IncompleteUsername username: NSString, avatarImageURL: NSURL, userFeedURL: NSURL, messageDate: NSDate, messageText: NSString, messagePicture: (image: UIImage?, url: NSURL?)?) {
+        
+        self.date = messageDate
+        self.text = messageText
+        self.picture = messagePicture
+        self.user = User(username: username, feedURL: userFeedURL, avatarImageURL: avatarImageURL)
+    }
+}
+
+struct User {
+    
+    let username: NSString
+    let feedURL: NSURL
+    var avatar: (image: UIImage?, url: NSURL)
+    
+    var bio: NSString?
+    
+    init(username: NSString, feedURL: NSURL, avatarImageURL: NSURL) {
+        self.username = username
+        self.avatar = (nil, avatarImageURL)
+        self.feedURL = feedURL
+    }
 }

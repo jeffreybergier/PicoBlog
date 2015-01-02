@@ -31,23 +31,23 @@ import UIKit
 
 class PicoDownloadManager {
     
-    var downloadedFiles: [NSDictionary] = []
-    
-    func downloadFile(#url: NSURL) {
-        
-        NSURLConnection.sendAsynchronousRequest(NSURLRequest(URL: url), queue: NSOperationQueue.mainQueue()) { (response: NSURLResponse!, data: NSData!, error: NSError!) -> Void in
-            
-            let jsonFile: AnyObject? = NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions.MutableContainers, error: nil)
-            
-            if let dictionary = jsonFile as? NSDictionary {
-                if let array = dictionary["movies"] as? NSArray {
-                    for var i = 0; i < array.count; i++ {
-                        if let movieItem = array[i] as? NSDictionary {
-                            self.downloadedFiles.append(movieItem)
+    func downloadFileURL(url: NSURL) {
+        NSURLConnection.sendAsynchronousRequest(NSURLRequest(URL: url),
+            queue: NSOperationQueue.mainQueue())
+            { (response: NSURLResponse!, data: NSData!, error: NSError!) -> Void in
+                
+                if error == nil {
+                    let downloadedData: AnyObject? = NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions.MutableContainers, error: nil)
+                    if let downloadedArray = downloadedData as? [[NSString : NSObject]] {
+                        for downloadedDictionary in downloadedArray {
+                            if let downloadedMessage = PicoDataSource.sharedInstance.picoMessageFromDictionary(downloadedDictionary) {
+                                PicoDataSource.sharedInstance.downloadedMessages.append(downloadedMessage)
+                            }
                         }
                     }
+                } else {
+                    NSLog("\(self): Error downloading files: \(error.description)")
                 }
-            }
         }
     }
     

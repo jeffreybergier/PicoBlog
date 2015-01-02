@@ -93,6 +93,7 @@
 				73E2DEBA1A54CA7400D34E95 /* View */,
 				73E2DEB91A54CA6500D34E95 /* Controller */,
 				73E2DEB81A54CA5800D34E95 /* Model */,
+				732BA0D91A560E690079D07F /* PicoNonClassTypes.swift */,
 				737FBD7A1A549626004AAE3A /* Images.xcassets */,
 				737FBD7C1A549626004AAE3A /* LaunchScreen.xib */,
 				737FBD711A549626004AAE3A /* Supporting Files */,
@@ -132,7 +133,6 @@
 				73E2DEBD1A54CAEB00D34E95 /* PicoSubscriptionManager.swift */,
 				73E2DEBF1A54CB3300D34E95 /* PicoPostManager.swift */,
 				73E2DEC11A54CB4600D34E95 /* PicoDownloadManager.swift */,
-				732BA0D91A560E690079D07F /* PicoNonClassTypes.swift */,
 			);
 			name = Model;
 			sourceTree = "<group>";

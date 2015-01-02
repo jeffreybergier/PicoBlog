@@ -35,12 +35,10 @@ class FeedTableViewController: UITableViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        self.dataSource?.postManager.createFakeDataAndSaveToDisk()
-        
+                
         if let dataSource = self.dataSource {
             for url in dataSource.subscriptionManager.readSubscriptionsFromDisk() {
-                dataSource.downloadManager.downloadFile(url: url)
+                dataSource.downloadManager.downloadFileURL(url)
             }
         }
     }

@@ -35,12 +35,8 @@ class PicoSubscriptionManager {
         
         // fake data files for now
         let array = [
-            NSURL(string: "http://www.jeffburg.com/pico/file1.pico"),
-            NSURL(string: "http://www.jeffburg.com/pico/file2.pico"),
-            NSURL(string: "http://www.jeffburg.com/pico/file3.pico"),
-            NSURL(string: "http://www.jeffburg.com/pico/file4.pico"),
-            NSURL(string: "http://www.jeffburg.com/pico/file5.pico"),
-            NSURL(string: "http://www.jeffburg.com/pico/file6.pico")
+            NSURL(string: "http://www.jeffburg.com/pico/jeffburg.pico"),
+            NSURL(string: "http://www.jeffburg.com/pico/amazeballs.pico")
         ]
         
         // NSURL's are optional. Must check them before returning the array
