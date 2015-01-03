@@ -39,9 +39,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
         
-        if let feedTableViewController = self.storyboard.instantiateInitialViewController() as? FeedTableViewController {
-            let navigationController = UINavigationController(rootViewController: feedTableViewController)
-            self.window.rootViewController = navigationController
+        if let feedTableViewController = self.storyboard.instantiateInitialViewController() as? UINavigationController {
+            self.window.rootViewController = feedTableViewController
             self.window.backgroundColor = UIColor.whiteColor()
             self.window.makeKeyAndVisible()
         } else {

@@ -41,6 +41,14 @@ class FeedTableViewController: UITableViewController {
                 dataSource.downloadManager.downloadFileURL(url)
             }
         }
+        
+        self.tableView.delegate = self
+        self.tableView.dataSource = PicoDataSource.sharedInstance
+        self.tableView.estimatedRowHeight = 112.0
+        self.tableView.rowHeight = UITableViewAutomaticDimension
     }
     
+    @IBAction func didTapRefreshButton(sender: UIBarButtonItem) {
+        self.tableView.reloadData()
+    }
 }

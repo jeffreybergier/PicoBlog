@@ -29,7 +29,7 @@
 
 import UIKit
 
-class PicoDataSource {
+class PicoDataSource: NSObject, UITableViewDataSource {
     
     var currentUser = User(username: "jeffburg", feedURL: NSURL(string: "http://www.jeffburg.com/pico/feed1.pico")!, avatarImageURL: NSURL(string: "http://www.jeffburg.com/pico/images/123456789_small.jpeg")!)
     var downloadedMessages: [PicoMessage] = [] {
@@ -56,6 +56,25 @@ class PicoDataSource {
         return Static.instance!
     }
     
+    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return self.downloadedMessages.count
+    }
+    
+    func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+        var identifierString: NSString
+        if self.downloadedMessages[indexPath.row].picture?.url == nil {
+            identifierString = "PicoMessageCellWithoutImage"
+        } else {
+            identifierString = "PicoMessageCellWithImage"
+        }
+        if let cell = tableView.dequeueReusableCellWithIdentifier(identifierString) as? FeedTableViewCell {
+            cell.messagePost = self.downloadedMessages[indexPath.row]
+            return cell
+        } else {
+            return UITableViewCell()
+        }
+    }
+
     func dictionaryFromPicoMessage(picoMessage: PicoMessage) -> [NSString : NSObject] {
         
         let dateFormatter = NSDateFormatter()
