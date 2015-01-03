@@ -31,15 +31,13 @@ import UIKit
 
 class FeedTableViewController: UITableViewController {
     
-    weak var dataSource = PicoDataSource.sharedInstance
-    
     override func viewDidLoad() {
         super.viewDidLoad()
-                
-        if let dataSource = self.dataSource {
-            for url in dataSource.subscriptionManager.readSubscriptionsFromDisk() {
-                dataSource.downloadManager.downloadFileURL(url)
-            }
+        
+        PicoDataSource.sharedInstance.postManager.createFakeDataAndSaveToDisk()
+        
+        for url in PicoDataSource.sharedInstance.subscriptionManager.readSubscriptionsFromDisk() {
+            PicoDataSource.sharedInstance.downloadManager.downloadFileURL(url)
         }
         
         self.tableView.delegate = self
@@ -50,5 +48,8 @@ class FeedTableViewController: UITableViewController {
     
     @IBAction func didTapRefreshButton(sender: UIBarButtonItem) {
         self.tableView.reloadData()
+        for url in PicoDataSource.sharedInstance.subscriptionManager.readSubscriptionsFromDisk() {
+            PicoDataSource.sharedInstance.downloadManager.downloadFileURL(url)
+        }
     }
 }

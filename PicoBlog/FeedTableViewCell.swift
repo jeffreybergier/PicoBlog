@@ -57,6 +57,12 @@ class FeedTableViewCell: UITableViewCell {
     }
     
     private func updateViewWithNewPicoMessage(newMessage: PicoMessage) {
+        self.messageTextLabel?.text = ""
+        self.usernameTextLabel?.text = ""
+        self.messageDateTextLabel?.text = ""
+        self.userImageView?.image = nil
+        self.messageImageView?.image = nil
+        
         self.messageTextLabel?.text = newMessage.text
         self.usernameTextLabel?.text = newMessage.user.username
         self.messageDateTextLabel?.text = self.dateFormatter.stringFromDate(newMessage.date)

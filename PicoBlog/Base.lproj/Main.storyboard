@@ -15,7 +15,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <prototypes>
-                            <tableViewCell contentMode="scaleToFill" restorationIdentifier="Temp" selectionStyle="default" indentationWidth="10" reuseIdentifier="PicoMessageCellWithImage" rowHeight="112" id="bpo-qE-gQv" customClass="FeedTableViewCell" customModule="PicoBlog" customModuleProvider="target">
+                            <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="PicoMessageCellWithImage" rowHeight="112" id="bpo-qE-gQv" customClass="FeedTableViewCell" customModule="PicoBlog" customModuleProvider="target">
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="bpo-qE-gQv" id="mkZ-94-ZpM">
                                     <autoresizingMask key="autoresizingMask"/>
@@ -78,7 +78,7 @@
                                     <outlet property="usernameTextLabel" destination="TwH-w1-TYt" id="ubn-dZ-mZ4"/>
                                 </connections>
                             </tableViewCell>
-                            <tableViewCell contentMode="scaleToFill" restorationIdentifier="Temp" selectionStyle="default" indentationWidth="10" reuseIdentifier="PicoMessageCellWithoutImage" rowHeight="112" id="kca-xj-Ti7" customClass="FeedTableViewCell" customModule="PicoBlog" customModuleProvider="target">
+                            <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="PicoMessageCellWithoutImage" rowHeight="112" id="kca-xj-Ti7" customClass="FeedTableViewCell" customModule="PicoBlog" customModuleProvider="target">
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="kca-xj-Ti7" id="78B-hO-mYM">
                                     <autoresizingMask key="autoresizingMask"/>

@@ -39,6 +39,7 @@ class PicoDataSource: NSObject, UITableViewDataSource {
         }
     }
     
+    let dateFormatter = NSDateFormatter()
     let downloadManager = PicoDownloadManager()
     let postManager = PicoPostManager()
     let subscriptionManager = PicoSubscriptionManager()
@@ -54,6 +55,12 @@ class PicoDataSource: NSObject, UITableViewDataSource {
         }
         
         return Static.instance!
+    }
+    
+    override init() {
+        super.init()
+        
+        self.dateFormatter.dateFormat = "YYYY-MM-dd'-'HH:mm:ssZZZ"
     }
     
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -77,9 +84,6 @@ class PicoDataSource: NSObject, UITableViewDataSource {
 
     func dictionaryFromPicoMessage(picoMessage: PicoMessage) -> [NSString : NSObject] {
         
-        let dateFormatter = NSDateFormatter()
-        dateFormatter.setLocalizedDateFormatFromTemplate("YYYY-MM-dd'T'HH:mm:ssZZZ")
-        
         let date = picoMessage.date
         let username = picoMessage.user.username
         let userFeedURL = picoMessage.user.feedURL.description
@@ -87,7 +91,7 @@ class PicoDataSource: NSObject, UITableViewDataSource {
         let messageText = picoMessage.text
         
         var dictionary: [NSString : NSObject] = [
-            "date" : dateFormatter.stringFromDate(date),
+            "date" : self.dateFormatter.stringFromDate(date),
             "username" : username,
             "userFeedURL" : userFeedURL,
             "userAvatarImageURL" : userAvatarImageURL,
@@ -115,9 +119,7 @@ class PicoDataSource: NSObject, UITableViewDataSource {
 
         //REQUIRED
         if let dateString = dictionary["date"] as? NSString {
-            let dateFormatter = NSDateFormatter()
-            dateFormatter.setLocalizedDateFormatFromTemplate("YYYY-MM-dd'T'HH:mm:ssZZZ")
-            messageDate = dateFormatter.dateFromString(dateString)
+            messageDate = self.dateFormatter.dateFromString(dateString)
         }
         
         if let verifiedUsername = dictionary["username"] as? NSString {
