@@ -32,6 +32,7 @@ import CoreLocation
 
 struct PicoMessage {
     
+    let id: NSString
     let date: NSDate
     let user: User
     let text: NSString
@@ -45,6 +46,8 @@ struct PicoMessage {
         self.user = messageUser
         self.text = messageText
         self.picture = messagePicture
+        
+        self.id = messageDate.description + messageText
     }
     
     init(IncompleteUsername username: NSString, avatarImageURL: NSURL, userFeedURL: NSURL, messageDate: NSDate, messageText: NSString, messagePicture: (image: UIImage?, url: NSURL?)?) {
@@ -53,6 +56,12 @@ struct PicoMessage {
         self.text = messageText
         self.picture = messagePicture
         self.user = User(username: username, feedURL: userFeedURL, avatarImageURL: avatarImageURL)
+        
+        self.id = messageDate.description + messageText
+    }
+    
+    private func generateMD5(#seedString: NSString) -> NSString {
+        return seedString
     }
 }
 

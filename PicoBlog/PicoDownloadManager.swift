@@ -29,25 +29,55 @@
 
 import UIKit
 
-class PicoDownloadManager {
+class PicoDownloadManager: NSObject, NSURLConnectionDelegate, NSURLConnectionDataDelegate {
     
-    func downloadFileURL(url: NSURL) {
-        NSURLConnection.sendAsynchronousRequest(NSURLRequest(URL: url),
-            queue: NSOperationQueue.mainQueue())
-            { (response: NSURLResponse!, data: NSData!, error: NSError!) -> Void in
-                
-                if error == nil {
-                    let downloadedData: AnyObject? = NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions.MutableContainers, error: nil)
-                    if let downloadedArray = downloadedData as? [[NSString : NSObject]] {
-                        for downloadedDictionary in downloadedArray {
-                            if let downloadedMessage = PicoDataSource.sharedInstance.picoMessageFromDictionary(downloadedDictionary) {
-                                PicoDataSource.sharedInstance.downloadedMessages.append(downloadedMessage)
-                            }
-                        }
-                    }
-                } else {
-                    NSLog("\(self): Error downloading files: \(error.description)")
+    var connectionsInProgress: [NSURLConnection] = []
+    var messagePlaceholder: [PicoMessage] = []
+    
+    func downloadFileURL(url: [NSURL]) {
+        for url in url {
+            if let connection = NSURLConnection(request: NSURLRequest(URL: url), delegate: self, startImmediately: true) {
+                self.connectionsInProgress.append(connection)
+            }
+        }
+    }
+    
+    func connection(connection: NSURLConnection, didReceiveData data: NSData) {
+        //remove the connection from the array. This keeps track of when all the downloads are complete
+        for var i=0; i<self.connectionsInProgress.count; i++ {
+            if connection == self.connectionsInProgress[i] {
+                self.connectionsInProgress.removeAtIndex(i)
+            }
+        }
+        //extract the PicoMessage from the NSData and put it into a placeholder array
+        let downloadedData: AnyObject? = NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions.MutableContainers, error: nil)
+        if let downloadedArray = downloadedData as? [[NSString : NSObject]] {
+            for downloadedDictionary in downloadedArray {
+                if let downloadedMessage = PicoDataSource.sharedInstance.picoMessageFromDictionary(downloadedDictionary) {
+                    self.messagePlaceholder.append(downloadedMessage)
                 }
+            }
+        }
+        //if all the connections are done, set the downloaded messages property on the data source and clear the placeholder array
+        if self.connectionsInProgress.count == 0 {
+            PicoDataSource.sharedInstance.downloadedMessages = self.messagePlaceholder
+            self.messagePlaceholder = []
+        }
+
+    }
+    
+    func connection(connection: NSURLConnection, didFailWithError error: NSError) {
+        NSLog("\(self): Error downloading file: \(error.description)")
+        //remove the connection from the array. This keeps track of when all the downloads are complete
+        for var i=0; i<self.connectionsInProgress.count; i++ {
+            if connection == self.connectionsInProgress[i] {
+                self.connectionsInProgress.removeAtIndex(i)
+            }
+        }
+        //if all the connections are done, set the downloaded messages property on the data source and clear the placeholder array
+        if self.connectionsInProgress.count == 0 {
+            PicoDataSource.sharedInstance.downloadedMessages = self.messagePlaceholder
+            self.messagePlaceholder = []
         }
     }
     

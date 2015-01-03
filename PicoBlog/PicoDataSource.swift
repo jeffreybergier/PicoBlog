@@ -35,7 +35,7 @@ class PicoDataSource: NSObject, UITableViewDataSource {
     var downloadedMessages: [PicoMessage] = [] {
         didSet {
             self.downloadedMessages.sort({ $0.date.compare($1.date) == NSComparisonResult.OrderedAscending })
-            NSLog("Number of Downloaded Messages = \(self.downloadedMessages.count)")
+            NSNotificationCenter.defaultCenter().postNotificationName("DataSourceUpdated", object: nil)
         }
     }
     

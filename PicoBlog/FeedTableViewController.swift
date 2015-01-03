@@ -34,11 +34,9 @@ class FeedTableViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        PicoDataSource.sharedInstance.postManager.createFakeDataAndSaveToDisk()
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "dataSourceUpdated:", name: "DataSourceUpdated", object: nil)
         
-        for url in PicoDataSource.sharedInstance.subscriptionManager.readSubscriptionsFromDisk() {
-            PicoDataSource.sharedInstance.downloadManager.downloadFileURL(url)
-        }
+        self.updateDataSource()
         
         self.tableView.delegate = self
         self.tableView.dataSource = PicoDataSource.sharedInstance
@@ -46,7 +44,16 @@ class FeedTableViewController: UITableViewController {
         self.tableView.rowHeight = UITableViewAutomaticDimension
     }
     
-    @IBAction func didTapRefreshButton(sender: UIBarButtonItem) {
+    @IBAction @objc private func didTapRefreshButton(sender: UIBarButtonItem) {
+        self.updateDataSource()
+    }
+    
+    private func updateDataSource() {
+        let array = PicoDataSource.sharedInstance.subscriptionManager.readSubscriptionsFromDisk()
+        PicoDataSource.sharedInstance.downloadManager.downloadFileURL(array)
+    }
+    
+    @objc private func dataSourceUpdated(notification: NSNotification) {
         self.tableView.reloadData()
     }
 }
