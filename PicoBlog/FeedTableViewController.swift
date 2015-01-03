@@ -48,8 +48,5 @@ class FeedTableViewController: UITableViewController {
     
     @IBAction func didTapRefreshButton(sender: UIBarButtonItem) {
         self.tableView.reloadData()
-        for url in PicoDataSource.sharedInstance.subscriptionManager.readSubscriptionsFromDisk() {
-            PicoDataSource.sharedInstance.downloadManager.downloadFileURL(url)
-        }
     }
 }
