@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		732BA0DA1A560E690079D07F /* PicoNonClassTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 732BA0D91A560E690079D07F /* PicoNonClassTypes.swift */; };
+		736301B51A58A3640011FC87 /* PicoCellDownloadManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 736301B41A58A3640011FC87 /* PicoCellDownloadManager.swift */; };
 		7373D8231A575B1A006CA25B /* FeedTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7373D8221A575B1A006CA25B /* FeedTableViewCell.swift */; };
 		737FBD741A549626004AAE3A /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 737FBD731A549626004AAE3A /* AppDelegate.swift */; };
 		737FBD791A549626004AAE3A /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 737FBD771A549626004AAE3A /* Main.storyboard */; };
@@ -33,6 +34,7 @@
 
 /* Begin PBXFileReference section */
 		732BA0D91A560E690079D07F /* PicoNonClassTypes.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PicoNonClassTypes.swift; sourceTree = "<group>"; };
+		736301B41A58A3640011FC87 /* PicoCellDownloadManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PicoCellDownloadManager.swift; sourceTree = "<group>"; };
 		7373D8221A575B1A006CA25B /* FeedTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FeedTableViewCell.swift; sourceTree = "<group>"; };
 		737FBD6E1A549626004AAE3A /* PicoBlog.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PicoBlog.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		737FBD721A549626004AAE3A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -135,6 +137,7 @@
 				73E2DEBD1A54CAEB00D34E95 /* PicoSubscriptionManager.swift */,
 				73E2DEBF1A54CB3300D34E95 /* PicoPostManager.swift */,
 				73E2DEC11A54CB4600D34E95 /* PicoDownloadManager.swift */,
+				736301B41A58A3640011FC87 /* PicoCellDownloadManager.swift */,
 			);
 			name = Model;
 			sourceTree = "<group>";
@@ -263,6 +266,7 @@
 				73E2DEBC1A54CA9600D34E95 /* PicoDataSource.swift in Sources */,
 				737FBD741A549626004AAE3A /* AppDelegate.swift in Sources */,
 				73E2DEC01A54CB3300D34E95 /* PicoPostManager.swift in Sources */,
+				736301B51A58A3640011FC87 /* PicoCellDownloadManager.swift in Sources */,
 				73F0B15D1A5498E400D7BF2C /* FeedTableViewController.swift in Sources */,
 				73E2DEC21A54CB4600D34E95 /* PicoDownloadManager.swift in Sources */,
 			);

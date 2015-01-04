@@ -31,11 +31,11 @@ import UIKit
 
 class PicoDownloadManager: NSObject, NSURLConnectionDelegate, NSURLConnectionDataDelegate {
     
-    var connectionsInProgress: [NSURLConnection] = []
-    var messagePlaceholder: [PicoMessage] = []
+    private var connectionsInProgress: [NSURLConnection] = []
+    private var messagePlaceholder: [PicoMessage] = []
     
-    func downloadFileURL(url: [NSURL]) {
-        for url in url {
+    func downloadFiles(#urlArray: [NSURL]) {
+        for url in urlArray {
             if let connection = NSURLConnection(request: NSURLRequest(URL: url), delegate: self, startImmediately: true) {
                 self.connectionsInProgress.append(connection)
             }

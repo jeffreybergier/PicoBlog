@@ -67,41 +67,24 @@ class FeedTableViewCell: UITableViewCell {
         self.usernameTextLabel?.text = newMessage.user.username
         self.messageDateTextLabel?.text = self.dateFormatter.stringFromDate(newMessage.date)
         
-        self.downloadImageForAvatar(true, WithURL: newMessage.user.avatar.url)
+        var avatarRequest = NSURLRequest(URL: newMessage.user.avatar.url, cachePolicy: NSURLRequestCachePolicy.ReloadIgnoringLocalAndRemoteCacheData, timeoutInterval: 30)
+        if let avatarURLConnection = NSURLConnection(request: avatarRequest, delegate: PicoDataSource.sharedInstance.cellDownloadManager, startImmediately: true) {
+            PicoDataSource.sharedInstance.cellDownloadManager.connectionsInProgress[avatarURLConnection.description] = self
+        }
         if let messageImageURL = newMessage.picture?.url {
-            self.downloadImageForAvatar(false, WithURL: messageImageURL)
+            var messageImageRequest = NSURLRequest(URL: messageImageURL, cachePolicy: NSURLRequestCachePolicy.ReloadIgnoringLocalAndRemoteCacheData, timeoutInterval: 30)
+            if let messageImageURLConnection = NSURLConnection(request: messageImageRequest, delegate: PicoDataSource.sharedInstance.cellDownloadManager, startImmediately: true) {
+                PicoDataSource.sharedInstance.cellDownloadManager.connectionsInProgress[messageImageURLConnection.description] = self
+            }
         }
     }
     
-    private func downloadImageForAvatar(avatar: Bool, WithURL url: NSURL) {
-        NSURLConnection.sendAsynchronousRequest(NSURLRequest(URL: url),
-            queue: NSOperationQueue.mainQueue())
-            { (response: NSURLResponse!, data: NSData!, error: NSError!) -> Void in
-                
-                if error == nil {
-                    if let verifiedResponseURL = response.URL {
-                        if avatar {
-                            if verifiedResponseURL == self.messagePost?.user.avatar.url {
-                                if let avatarImage = UIImage(data: data) {
-                                    self.userImageView?.image = avatarImage
-                                }
-                            } else {
-                                NSLog("\(self): Received new Avatar Image but URL didn't match the current cell. The user probably scrolled and the cell was recycled. Throwing away results.")
-                            }
-                        } else {
-                            if verifiedResponseURL == self.messagePost?.picture?.url {
-                                if let messageImage = UIImage(data: data) {
-                                    self.messageImageView?.image = messageImage
-                                }
-                            } else {
-                                NSLog("\(self): Received new Message Image but URL didn't match the current cell. The user probably scrolled and the cell was recycled. Throwing away results.")
-                            }
-                        }
-                    }
-                } else {
-                    NSLog("\(self): Error downloading files: \(error.description)")
-                }
+    func receivedImage(image: UIImage, ForConnection connection: NSURLConnection) {
+        if connection.originalRequest.URL == self.messagePost?.user.avatar.url {
+            self.userImageView?.image = image
+        }
+        if connection.originalRequest.URL == self.messagePost?.picture?.url {
+            self.messageImageView?.image = image
         }
     }
-    
 }

@@ -31,6 +31,12 @@ import UIKit
 
 class PicoDataSource: NSObject, UITableViewDataSource {
     
+    let dateFormatter = NSDateFormatter()
+    let downloadManager = PicoDownloadManager()
+    let postManager = PicoPostManager()
+    let subscriptionManager = PicoSubscriptionManager()
+    let cellDownloadManager = PicoCellDownloadManager()
+    
     var currentUser = User(username: "jeffburg", feedURL: NSURL(string: "http://www.jeffburg.com/pico/feed1.pico")!, avatarImageURL: NSURL(string: "http://www.jeffburg.com/pico/images/123456789_small.jpeg")!)
     var downloadedMessages: [PicoMessage] = [] {
         didSet {
@@ -38,11 +44,6 @@ class PicoDataSource: NSObject, UITableViewDataSource {
             NSNotificationCenter.defaultCenter().postNotificationName("DataSourceUpdated", object: nil)
         }
     }
-    
-    let dateFormatter = NSDateFormatter()
-    let downloadManager = PicoDownloadManager()
-    let postManager = PicoPostManager()
-    let subscriptionManager = PicoSubscriptionManager()
     
     class var sharedInstance: PicoDataSource {
         struct Static {

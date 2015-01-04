@@ -22,6 +22,7 @@
                                     <subviews>
                                         <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="51U-r2-eX0">
                                             <rect key="frame" x="8" y="8" width="50" height="50"/>
+                                            <color key="backgroundColor" red="0.0" green="1" blue="0.50196081400000003" alpha="1" colorSpace="calibratedRGB"/>
                                             <constraints>
                                                 <constraint firstAttribute="height" constant="50" id="ISu-hS-8kC"/>
                                                 <constraint firstAttribute="width" secondItem="51U-r2-eX0" secondAttribute="height" multiplier="1:1" id="sea-9m-YLr"/>
@@ -29,6 +30,7 @@
                                         </imageView>
                                         <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="XN3-vA-39m">
                                             <rect key="frame" x="517" y="8" width="75" height="75"/>
+                                            <color key="backgroundColor" red="0.0" green="1" blue="0.50196081400000003" alpha="1" colorSpace="calibratedRGB"/>
                                             <constraints>
                                                 <constraint firstAttribute="height" constant="75" id="5Uk-mF-Gm9"/>
                                                 <constraint firstAttribute="width" secondItem="XN3-vA-39m" secondAttribute="height" multiplier="1:1" id="NA8-9D-VUC"/>
@@ -85,6 +87,7 @@
                                     <subviews>
                                         <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="WIb-MG-s6h">
                                             <rect key="frame" x="8" y="8" width="50" height="50"/>
+                                            <color key="backgroundColor" red="0.0" green="1" blue="0.50196081400000003" alpha="1" colorSpace="calibratedRGB"/>
                                             <constraints>
                                                 <constraint firstAttribute="height" constant="50" id="UJ7-cX-YHD"/>
                                                 <constraint firstAttribute="width" secondItem="WIb-MG-s6h" secondAttribute="height" multiplier="1:1" id="fle-04-T5t"/>

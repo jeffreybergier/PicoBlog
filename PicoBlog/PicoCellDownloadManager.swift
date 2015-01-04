@@ -1,8 +1,8 @@
 //
-// FeedTableViewController.swift
+// PicoCellDownloadManager.swift
 // PicoBlog
 //
-// Created by Jeffrey Bergier on 12/31/14.
+// Created by Jeffrey Bergier on 1/3/15.
 //
 // The MIT License (MIT)
 //
@@ -29,31 +29,31 @@
 
 import UIKit
 
-class FeedTableViewController: UITableViewController {
+class PicoCellDownloadManager: NSObject, NSURLConnectionDelegate, NSURLConnectionDataDelegate {
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "dataSourceUpdated:", name: "DataSourceUpdated", object: nil)
-        
-        self.updateDataSource()
-        
-        self.tableView.delegate = self
-        self.tableView.dataSource = PicoDataSource.sharedInstance
-        self.tableView.estimatedRowHeight = 112.0
-        self.tableView.rowHeight = UITableViewAutomaticDimension
+    var connectionsInProgress: [NSString : FeedTableViewCell] = [:]
+    private var incompleteDataDictionary: [NSString : NSData] = [:]
+    
+    func connection(connection: NSURLConnection, didReceiveData data: NSData) {
+        self.incompleteDataDictionary[connection.description] = data
     }
     
-    @IBAction @objc private func didTapRefreshButton(sender: UIBarButtonItem) {
-        self.updateDataSource()
+    func connectionDidFinishLoading(connection: NSURLConnection) {
+        if let data = self.incompleteDataDictionary[connection.description] {
+            if let image = UIImage(data: data) {
+                if let cellPointer = self.connectionsInProgress[connection.description] {
+                    cellPointer.receivedImage(image, ForConnection: connection)
+                }
+            } else {
+                NSLog("Image not found in Data")
+            }
+        } else {
+            NSLog("No Data In Dictionary")
+        }
     }
     
-    private func updateDataSource() {
-        let array = PicoDataSource.sharedInstance.subscriptionManager.readSubscriptionsFromDisk()
-        PicoDataSource.sharedInstance.downloadManager.downloadFiles(urlArray: array)
+    func connection(connection: NSURLConnection, didFailWithError error: NSError) {
+        //self.connectionsInProgress.removeValueForKey(connection)
     }
     
-    @objc private func dataSourceUpdated(notification: NSNotification) {
-        self.tableView.reloadData()
-    }
 }
