@@ -31,17 +31,17 @@ import UIKit
 
 class PicoCellDownloadManager: NSObject, NSURLConnectionDelegate, NSURLConnectionDataDelegate {
     
-    var connectionsInProgress: [NSString : FeedTableViewCell] = [:]
-    private var incompleteDataDictionary: [NSString : NSData] = [:]
+    var connectionsInProgress: [NSURLConnection : FeedTableViewCell] = [:]
+    private var incompleteDataDictionary: [NSURLConnection : NSData] = [:]
     
     func connection(connection: NSURLConnection, didReceiveData data: NSData) {
-        self.incompleteDataDictionary[connection.description] = data
+        self.incompleteDataDictionary[connection] = data
     }
     
     func connectionDidFinishLoading(connection: NSURLConnection) {
-        if let data = self.incompleteDataDictionary[connection.description] {
+        if let data = self.incompleteDataDictionary[connection] {
             if let image = UIImage(data: data) {
-                if let cellPointer = self.connectionsInProgress[connection.description] {
+                if let cellPointer = self.connectionsInProgress[connection] {
                     cellPointer.receivedImage(image, ForConnection: connection)
                 }
             } else {

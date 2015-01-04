@@ -69,12 +69,12 @@ class FeedTableViewCell: UITableViewCell {
         
         var avatarRequest = NSURLRequest(URL: newMessage.user.avatar.url, cachePolicy: NSURLRequestCachePolicy.ReloadIgnoringLocalAndRemoteCacheData, timeoutInterval: 30)
         if let avatarURLConnection = NSURLConnection(request: avatarRequest, delegate: PicoDataSource.sharedInstance.cellDownloadManager, startImmediately: true) {
-            PicoDataSource.sharedInstance.cellDownloadManager.connectionsInProgress[avatarURLConnection.description] = self
+            PicoDataSource.sharedInstance.cellDownloadManager.connectionsInProgress[avatarURLConnection] = self
         }
         if let messageImageURL = newMessage.picture?.url {
             var messageImageRequest = NSURLRequest(URL: messageImageURL, cachePolicy: NSURLRequestCachePolicy.ReloadIgnoringLocalAndRemoteCacheData, timeoutInterval: 30)
             if let messageImageURLConnection = NSURLConnection(request: messageImageRequest, delegate: PicoDataSource.sharedInstance.cellDownloadManager, startImmediately: true) {
-                PicoDataSource.sharedInstance.cellDownloadManager.connectionsInProgress[messageImageURLConnection.description] = self
+                PicoDataSource.sharedInstance.cellDownloadManager.connectionsInProgress[messageImageURLConnection] = self
             }
         }
     }
