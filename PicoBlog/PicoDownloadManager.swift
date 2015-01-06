@@ -29,56 +29,69 @@
 
 import UIKit
 
-class PicoDownloadManager: NSObject, NSURLConnectionDelegate, NSURLConnectionDataDelegate {
+class PicoDownloadManager: NSObject, NSURLSessionDelegate, NSURLSessionDataDelegate {
     
-    private var connectionsInProgress: [NSURLConnection] = []
+    private var tasksInProgress: [NSURLSessionTask] = []
+    private var dataInProgress: [NSURLSessionTask : NSMutableData] = [:]
     private var messagePlaceholder: [PicoMessage] = []
+    private lazy var session: NSURLSession = {
+        let configuration = NSURLSessionConfiguration.defaultSessionConfiguration()
+        let session = NSURLSession(configuration: configuration, delegate: self, delegateQueue:NSOperationQueue.mainQueue())
+        return session
+    }()
+    
+    override init() {
+        super.init()
+        
+        
+    }
     
     func downloadFiles(#urlArray: [NSURL]) {
         for url in urlArray {
-            if let connection = NSURLConnection(request: NSURLRequest(URL: url), delegate: self, startImmediately: true) {
-                self.connectionsInProgress.append(connection)
-            }
+            let task = self.session.dataTaskWithURL(url)
+            task.resume()
+            self.tasksInProgress.append(task)
+            //self.connectionsInProgress.append(connection)
         }
     }
     
-    func connection(connection: NSURLConnection, didReceiveData data: NSData) {
-        //remove the connection from the array. This keeps track of when all the downloads are complete
-        for var i=0; i<self.connectionsInProgress.count; i++ {
-            if connection == self.connectionsInProgress[i] {
-                self.connectionsInProgress.removeAtIndex(i)
-            }
+    func URLSession(session: NSURLSession, dataTask: NSURLSessionDataTask, didReceiveData data: NSData) {
+        if let mutableData = self.dataInProgress[dataTask] {
+            mutableData.appendData(data)
+        } else {
+            self.dataInProgress[dataTask] = NSMutableData(data: data)
         }
-        //extract the PicoMessage from the NSData and put it into a placeholder array
-        let downloadedData: AnyObject? = NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions.MutableContainers, error: nil)
-        if let downloadedArray = downloadedData as? [[NSString : NSObject]] {
-            for downloadedDictionary in downloadedArray {
-                if let downloadedMessage = PicoDataSource.sharedInstance.picoMessageFromDictionary(downloadedDictionary) {
-                    self.messagePlaceholder.append(downloadedMessage)
+    }
+    
+    func URLSession(session: NSURLSession, task: NSURLSessionTask, didCompleteWithError error: NSError?) {
+        if let error = error {
+            NSLog("\(self): Error while downloading feed: \(task.originalRequest.URL)")
+        } else {
+            if let data = self.dataInProgress[task] {
+                let downloadedData: AnyObject? = NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions.MutableContainers, error: nil)
+                if let downloadedArray = downloadedData as? [[NSString : NSObject]] {
+                    for downloadedDictionary in downloadedArray {
+                        if let downloadedMessage = PicoDataSource.sharedInstance.picoMessageFromDictionary(downloadedDictionary) {
+                            self.messagePlaceholder.append(downloadedMessage)
+                        } else {
+                            NSLog("\(self): Unable to convert dictionaryObject into PicoMessage: \(downloadedDictionary)")
+                        }
+                    }
+                } else {
+                    NSLog("\(self): Feed doesn't appear to be valid JSON: \(task.originalRequest.URL)")
                 }
             }
+            self.dataInProgress.removeValueForKey(task)
         }
-        //if all the connections are done, set the downloaded messages property on the data source and clear the placeholder array
-        if self.connectionsInProgress.count == 0 {
-            PicoDataSource.sharedInstance.downloadedMessages = self.messagePlaceholder
-            self.messagePlaceholder = []
-        }
-
-    }
-    
-    func connection(connection: NSURLConnection, didFailWithError error: NSError) {
-        NSLog("\(self): Error downloading file: \(error.description)")
-        //remove the connection from the array. This keeps track of when all the downloads are complete
-        for var i=0; i<self.connectionsInProgress.count; i++ {
-            if connection == self.connectionsInProgress[i] {
-                self.connectionsInProgress.removeAtIndex(i)
+        for var i=0; i<self.tasksInProgress.count; i++ {
+            if task == self.tasksInProgress[i] {
+                self.tasksInProgress.removeAtIndex(i)
             }
         }
         //if all the connections are done, set the downloaded messages property on the data source and clear the placeholder array
-        if self.connectionsInProgress.count == 0 {
+        if self.tasksInProgress.count == 0 {
             PicoDataSource.sharedInstance.downloadedMessages = self.messagePlaceholder
             self.messagePlaceholder = []
         }
     }
-    
 }

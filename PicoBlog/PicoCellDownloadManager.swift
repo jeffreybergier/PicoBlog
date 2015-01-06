@@ -29,31 +29,55 @@
 
 import UIKit
 
-class PicoCellDownloadManager: NSObject, NSURLConnectionDelegate, NSURLConnectionDataDelegate {
+class PicoCellDownloadManager: NSObject, NSURLSessionDelegate, NSURLSessionDataDelegate {
     
-    var connectionsInProgress: [NSURLConnection : FeedTableViewCell] = [:]
-    private var incompleteDataDictionary: [NSURLConnection : NSData] = [:]
+    var finishedImages: [NSURL : UIImage] = [:] {
+        didSet {
+            if finishedImages.count > 50 {
+                self.finishedImages = [:] //clear out the dictionary if it gets too big.
+            }
+        }
+    }
+    var tasksInProgress: [NSURL : NSURLSessionTask] = [:]
     
-    func connection(connection: NSURLConnection, didReceiveData data: NSData) {
-        self.incompleteDataDictionary[connection] = data
+    private var dataInProgress: [NSURLSessionTask : NSMutableData] = [:]
+    private lazy var session: NSURLSession = {
+        let configuration = NSURLSessionConfiguration.defaultSessionConfiguration()
+        let session = NSURLSession(configuration: configuration, delegate: self, delegateQueue:NSOperationQueue.mainQueue())
+        return session
+        }()
+    
+    func downloadImageWithURL(url: NSURL) {
+        let task = self.session.dataTaskWithURL(url)
+        task.resume()
+        self.tasksInProgress[url] = task
     }
     
-    func connectionDidFinishLoading(connection: NSURLConnection) {
-        if let data = self.incompleteDataDictionary[connection] {
-            if let image = UIImage(data: data) {
-                if let cellPointer = self.connectionsInProgress[connection] {
-                    cellPointer.receivedImage(image, ForConnection: connection)
-                }
-            } else {
-                NSLog("Image not found in Data")
-            }
+    func URLSession(session: NSURLSession, dataTask: NSURLSessionDataTask, didReceiveData data: NSData) {
+        if let existingData = self.dataInProgress[dataTask] {
+            existingData.appendData(data)
         } else {
-            NSLog("No Data In Dictionary")
+            self.dataInProgress[dataTask] = NSMutableData(data: data)
         }
     }
     
-    func connection(connection: NSURLConnection, didFailWithError error: NSError) {
-        //self.connectionsInProgress.removeValueForKey(connection)
-    }
-    
+    func URLSession(session: NSURLSession, task: NSURLSessionTask, didCompleteWithError error: NSError?) {
+        if let error = error {
+            //do nothing
+        } else {
+            if let data = self.dataInProgress[task] {
+                if let image = UIImage(data: data) {
+                    self.finishedImages[task.originalRequest.URL] = image
+                    NSNotificationCenter.defaultCenter().postNotificationName("newCellImageDownloaded", object: nil)
+                } else {
+                    NSLog("Image not found in Data")
+                }
+            } else {
+                NSLog("No Data In Dictionary")
+            }
+            
+        }
+        self.dataInProgress.removeValueForKey(task)
+        self.tasksInProgress.removeValueForKey(task.originalRequest.URL)
+    }    
 }

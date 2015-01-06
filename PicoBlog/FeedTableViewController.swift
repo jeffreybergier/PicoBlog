@@ -56,4 +56,30 @@ class FeedTableViewController: UITableViewController {
     @objc private func dataSourceUpdated(notification: NSNotification) {
         self.tableView.reloadData()
     }
+    
+    override func tableView(tableView: UITableView, didEndDisplayingCell cell: UITableViewCell, forRowAtIndexPath indexPath: NSIndexPath) {
+        if let feedCell = cell as? FeedTableViewCell {
+            feedCell.cellDidDisappear()
+        }
+    }
+    
+    override func tableView(tableView: UITableView, willDisplayCell cell: UITableViewCell, forRowAtIndexPath indexPath: NSIndexPath) {
+        if let feedCell = cell as? FeedTableViewCell {
+            feedCell.cellWillAppear()
+        }
+    }
+    
+    override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+        self.tableView.deselectRowAtIndexPath(indexPath, animated: true)
+    }
+    
+    override func didReceiveMemoryWarning() {
+        super.didReceiveMemoryWarning()
+        
+        PicoDataSource.sharedInstance.cellDownloadManager.finishedImages = [:]
+    }
+    
+    deinit {
+        NSNotificationCenter.defaultCenter().removeObserver(self)
+    }
 }
