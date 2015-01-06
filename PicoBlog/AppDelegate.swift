@@ -39,8 +39,24 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
         
-        if let feedTableViewController = self.storyboard.instantiateInitialViewController() as? UINavigationController {
-            self.window.rootViewController = feedTableViewController
+        if let initialViewController = self.storyboard.instantiateInitialViewController() as? UITabBarController {
+            
+            if let tabArray = initialViewController.tabBar.items {
+                for var i=0; i<tabArray.count; i++ {
+                    if let tab = tabArray[i] as? UITabBarItem {
+                        switch i {
+                        case 0:
+                            tab.title = "Feed"
+                        case 1:
+                            tab.title = "Manage"
+                        default:
+                            break
+                        }
+                    }
+                }
+            }
+            
+            self.window.rootViewController = initialViewController
             self.window.backgroundColor = UIColor.whiteColor()
             self.window.makeKeyAndVisible()
         } else {

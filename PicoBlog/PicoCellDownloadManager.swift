@@ -31,14 +31,13 @@ import UIKit
 
 class PicoCellDownloadManager: NSObject, NSURLSessionDelegate, NSURLSessionDataDelegate {
     
+    var tasksInProgress: [NSURL : NSURLSessionTask] = [:]
     var finishedImages: [NSURL : UIImage] = [:] {
         didSet {
-            if finishedImages.count > 50 {
-                self.finishedImages = [:] //clear out the dictionary if it gets too big.
-            }
+            if finishedImages.count > 50 { self.finishedImages = [:] } //clear out the dictionary if it gets too big.
+            NSNotificationCenter.defaultCenter().postNotificationName("newCellImageDownloaded", object: nil)
         }
     }
-    var tasksInProgress: [NSURL : NSURLSessionTask] = [:]
     
     private var dataInProgress: [NSURLSessionTask : NSMutableData] = [:]
     private lazy var session: NSURLSession = {
@@ -68,12 +67,7 @@ class PicoCellDownloadManager: NSObject, NSURLSessionDelegate, NSURLSessionDataD
             if let data = self.dataInProgress[task] {
                 if let image = UIImage(data: data) {
                     self.finishedImages[task.originalRequest.URL] = image
-                    NSNotificationCenter.defaultCenter().postNotificationName("newCellImageDownloaded", object: nil)
-                } else {
-                    NSLog("Image not found in Data")
                 }
-            } else {
-                NSLog("No Data In Dictionary")
             }
             
         }

@@ -34,6 +34,7 @@ class FeedTableViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        self.title = "Feed"
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "dataSourceUpdated:", name: "DataSourceUpdated", object: nil)
         
         self.updateDataSource()
@@ -42,19 +43,32 @@ class FeedTableViewController: UITableViewController {
         self.tableView.dataSource = PicoDataSource.sharedInstance
         self.tableView.estimatedRowHeight = 112.0
         self.tableView.rowHeight = UITableViewAutomaticDimension
+        
+        self.refreshControl = UIRefreshControl()
+        self.refreshControl?.addTarget(self, action: "didPullToRefresh:", forControlEvents: UIControlEvents.ValueChanged)
     }
     
-    @IBAction @objc private func didTapRefreshButton(sender: UIBarButtonItem) {
+    @objc private func didPullToRefresh(refreshControl: UIRefreshControl) {
         self.updateDataSource()
+    }
+    
+    @objc private func dataSourceUpdated(notification: NSNotification) {
+        if let refreshControl = self.refreshControl {
+            if refreshControl.refreshing {
+                refreshControl.endRefreshing()
+            }
+        }
+        let pointlessTimer = NSTimer.scheduledTimerWithTimeInterval(0.33, target: self, selector: "refreshControlFinished:", userInfo: nil, repeats: false)
+    }
+    
+    @objc private func refreshControlFinished(timer: NSTimer) {
+        timer.invalidate()
+        self.tableView.reloadData()
     }
     
     private func updateDataSource() {
         let array = PicoDataSource.sharedInstance.subscriptionManager.readSubscriptionsFromDisk()
         PicoDataSource.sharedInstance.downloadManager.downloadFiles(urlArray: array)
-    }
-    
-    @objc private func dataSourceUpdated(notification: NSNotification) {
-        self.tableView.reloadData()
     }
     
     override func tableView(tableView: UITableView, didEndDisplayingCell cell: UITableViewCell, forRowAtIndexPath indexPath: NSIndexPath) {
