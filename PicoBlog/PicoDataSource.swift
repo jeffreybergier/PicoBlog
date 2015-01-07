@@ -29,7 +29,7 @@
 
 import UIKit
 
-class PicoDataSource: NSObject, UITableViewDataSource {
+class PicoDataSource {
     
     let dateFormatter = NSDateFormatter()
     let downloadManager = PicoDownloadManager()
@@ -58,29 +58,8 @@ class PicoDataSource: NSObject, UITableViewDataSource {
         return Static.instance!
     }
     
-    override init() {
-        super.init()
-        
+    init() {
         self.dateFormatter.dateFormat = "YYYY-MM-dd'-'HH:mm:ssZZZ"
-    }
-    
-    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return self.downloadedMessages.count
-    }
-    
-    func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        var identifierString: NSString
-        if self.downloadedMessages[indexPath.row].picture?.url == nil {
-            identifierString = "PicoMessageCellWithoutImage"
-        } else {
-            identifierString = "PicoMessageCellWithImage"
-        }
-        if let cell = tableView.dequeueReusableCellWithIdentifier(identifierString) as? FeedTableViewCell {
-            cell.messagePost = self.downloadedMessages[indexPath.row]
-            return cell
-        } else {
-            return UITableViewCell()
-        }
     }
 
     func dictionaryFromPicoMessage(picoMessage: PicoMessage) -> [NSString : NSObject] {

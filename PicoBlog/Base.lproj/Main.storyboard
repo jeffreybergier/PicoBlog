@@ -187,16 +187,43 @@
         <scene sceneID="roJ-i2-7St">
             <objects>
                 <tableViewController id="xAE-a7-wUH" customClass="FeedListTableViewController" customModule="PicoBlog" customModuleProvider="target" sceneMemberID="viewController">
-                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="2O4-xo-exi">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="89" sectionHeaderHeight="22" sectionFooterHeight="22" id="2O4-xo-exi">
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <prototypes>
-                            <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="Test" id="2d1-9q-Bhn">
+                            <tableViewCell contentMode="scaleToFill" selectionStyle="default" accessoryType="disclosureIndicator" indentationWidth="10" reuseIdentifier="FeedListTableViewCell" rowHeight="77" id="2d1-9q-Bhn" customClass="FeedListTableViewCell" customModule="PicoBlog" customModuleProvider="target">
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="2d1-9q-Bhn" id="Jpk-7H-f1w">
                                     <autoresizingMask key="autoresizingMask"/>
+                                    <subviews>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="252" verticalCompressionResistancePriority="752" text="username" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="NV6-6H-N5P">
+                                            <rect key="frame" x="8" y="8" width="73.5" height="33"/>
+                                            <fontDescription key="fontDescription" style="UICTFontTextStyleHeadline"/>
+                                            <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="253" verticalCompressionResistancePriority="753" text="http://www.website.com/url/url2/picofeed.pico" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="NpR-Wh-CWZ">
+                                            <rect key="frame" x="8" y="49" width="338" height="19.5"/>
+                                            <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
+                                            <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                    </subviews>
+                                    <constraints>
+                                        <constraint firstItem="NpR-Wh-CWZ" firstAttribute="top" secondItem="NV6-6H-N5P" secondAttribute="bottom" constant="8" id="8Nj-as-EH9"/>
+                                        <constraint firstAttribute="trailingMargin" relation="greaterThanOrEqual" secondItem="NV6-6H-N5P" secondAttribute="trailing" id="NLf-Ih-dAO"/>
+                                        <constraint firstAttribute="trailingMargin" relation="greaterThanOrEqual" secondItem="NpR-Wh-CWZ" secondAttribute="trailing" id="U1l-Ph-mSc"/>
+                                        <constraint firstItem="NV6-6H-N5P" firstAttribute="top" secondItem="Jpk-7H-f1w" secondAttribute="topMargin" id="YZF-mV-bwW"/>
+                                        <constraint firstAttribute="bottomMargin" secondItem="NpR-Wh-CWZ" secondAttribute="bottom" id="k7j-Wk-usq"/>
+                                        <constraint firstItem="NpR-Wh-CWZ" firstAttribute="leading" secondItem="Jpk-7H-f1w" secondAttribute="leadingMargin" id="poi-e0-NTw"/>
+                                        <constraint firstItem="NV6-6H-N5P" firstAttribute="leading" secondItem="Jpk-7H-f1w" secondAttribute="leadingMargin" id="xLo-hg-uEK"/>
+                                    </constraints>
                                 </tableViewCellContentView>
+                                <connections>
+                                    <outlet property="feedURLTextLabel" destination="NpR-Wh-CWZ" id="NHJ-Sn-fqY"/>
+                                    <outlet property="feedUsernameTextLabel" destination="NV6-6H-N5P" id="9gN-me-Gwy"/>
+                                </connections>
                             </tableViewCell>
                         </prototypes>
                         <connections>

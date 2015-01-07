@@ -30,9 +30,33 @@
 import UIKit
 
 class FeedListTableViewController: UITableViewController {
+    
+    var subscriptionList: [(username: NSString, url: NSURL)] = []
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
         self.title = "Manage"
+        
+        self.tableView.delegate = self
+        self.tableView.dataSource = self
+        self.tableView.estimatedRowHeight = 86.0
+        self.tableView.rowHeight = UITableViewAutomaticDimension
+        
+        self.subscriptionList = PicoDataSource.sharedInstance.subscriptionManager.readSubscriptionsFromDisk()
+    }
+    
+    override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return self.subscriptionList.count
+    }
+    
+    override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+        if let cell = tableView.dequeueReusableCellWithIdentifier("FeedListTableViewCell") as? FeedListTableViewCell {
+            cell.feedUsernameTextLabel?.text = self.subscriptionList[indexPath.row].username
+            cell.feedURLTextLabel?.text = self.subscriptionList[indexPath.row].url.description
+            return cell
+        } else {
+            return UITableViewCell()
+        }
     }
 }

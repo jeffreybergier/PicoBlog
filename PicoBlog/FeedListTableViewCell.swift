@@ -1,8 +1,8 @@
 //
-// PicoSubscriptionManager.swift
+// FeedListTableViewCell.swift
 // PicoBlog
 //
-// Created by Jeffrey Bergier on 12/31/14.
+// Created by Jeffrey Bergier on 1/6/15.
 //
 // The MIT License (MIT)
 //
@@ -29,25 +29,13 @@
 
 import UIKit
 
-class PicoSubscriptionManager {
+class FeedListTableViewCell: UITableViewCell {
     
-    func readSubscriptionsFromDisk() -> [(username: NSString, url: NSURL)] {
-        
-        // fake data files for now
-        let array: [(username: NSString, url: NSURL?)] = [
-            ("jeffberg", NSURL(string: "http://www.jeffburg.com/pico/jeffburg.pico")),
-            ("amazeballs", NSURL(string: "http://www.jeffburg.com/pico/amazeballs.pico"))
-        ]
-        
-        // NSURL's are optional. Must check them before returning the array
-        var verifiedArray: [(username: NSString, url: NSURL)] = []
-        for tuple in array {
-            if let url = tuple.url {
-                let verifiedTuple: (username: NSString, url: NSURL) = (tuple.username, url)
-                verifiedArray.append(verifiedTuple)
-            }
-        }
-        
-        return verifiedArray
+    @IBOutlet weak var feedURLTextLabel: UILabel?
+    @IBOutlet weak var feedUsernameTextLabel: UILabel?
+    
+    override func awakeFromNib() {
+        super.awakeFromNib()
+        //
     }
 }

@@ -40,7 +40,7 @@ class FeedTableViewController: UITableViewController {
         self.updateDataSource()
         
         self.tableView.delegate = self
-        self.tableView.dataSource = PicoDataSource.sharedInstance
+        self.tableView.dataSource = self
         self.tableView.estimatedRowHeight = 112.0
         self.tableView.rowHeight = UITableViewAutomaticDimension
         
@@ -91,6 +91,25 @@ class FeedTableViewController: UITableViewController {
         super.didReceiveMemoryWarning()
         
         PicoDataSource.sharedInstance.cellDownloadManager.finishedImages = [:]
+    }
+    
+    override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return PicoDataSource.sharedInstance.downloadedMessages.count
+    }
+    
+    override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+        var identifierString: NSString
+        if PicoDataSource.sharedInstance.downloadedMessages[indexPath.row].picture?.url == nil {
+            identifierString = "PicoMessageCellWithoutImage"
+        } else {
+            identifierString = "PicoMessageCellWithImage"
+        }
+        if let cell = tableView.dequeueReusableCellWithIdentifier(identifierString) as? FeedTableViewCell {
+            cell.messagePost = PicoDataSource.sharedInstance.downloadedMessages[indexPath.row]
+            return cell
+        } else {
+            return UITableViewCell()
+        }
     }
     
     deinit {

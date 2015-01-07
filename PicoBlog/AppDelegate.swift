@@ -39,18 +39,20 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
         
-        if let initialViewController = self.storyboard.instantiateInitialViewController() as? UITabBarController {
+        if let initialViewController = self.storyboard.instantiateInitialViewController() as? UIViewController {
             
-            if let tabArray = initialViewController.tabBar.items {
-                for var i=0; i<tabArray.count; i++ {
-                    if let tab = tabArray[i] as? UITabBarItem {
-                        switch i {
-                        case 0:
-                            tab.title = "Feed"
-                        case 1:
-                            tab.title = "Manage"
-                        default:
-                            break
+            if let tabBarController = initialViewController as? UITabBarController {
+                if let tabArray = tabBarController.tabBar.items {
+                    for var i=0; i<tabArray.count; i++ {
+                        if let tab = tabArray[i] as? UITabBarItem {
+                            switch i {
+                            case 0:
+                                tab.title = "Feed"
+                            case 1:
+                                tab.title = "Manage"
+                            default:
+                                break
+                            }
                         }
                     }
                 }

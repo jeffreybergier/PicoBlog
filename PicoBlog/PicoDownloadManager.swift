@@ -46,9 +46,9 @@ class PicoDownloadManager: NSObject, NSURLSessionDelegate, NSURLSessionDataDeleg
         
     }
     
-    func downloadFiles(#urlArray: [NSURL]) {
-        for url in urlArray {
-            let task = self.session.dataTaskWithURL(url)
+    func downloadFiles(#urlArray: [(username: NSString, url: NSURL)]) {
+        for tuple in urlArray {
+            let task = self.session.dataTaskWithURL(tuple.url)
             task.resume()
             self.tasksInProgress.append(task)
             //self.connectionsInProgress.append(connection)

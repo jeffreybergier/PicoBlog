@@ -48,6 +48,8 @@ class FeedTableViewCell: UITableViewCell {
     @IBOutlet private weak var messageDateTextLabel: UILabel?
     
     override func awakeFromNib() {
+        super.awakeFromNib()
+        
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "newCellImageDownloaded:", name: "newCellImageDownloaded", object: nil)
         
         self.dateFormatter.dateStyle = NSDateFormatterStyle.ShortStyle
