@@ -31,23 +31,39 @@ import UIKit
 
 class PicoSubscriptionManager {
     
-    func readSubscriptionsFromDisk() -> [(username: NSString, url: NSURL)] {
-        
-        // fake data files for now
-        let array: [(username: NSString, url: NSURL?)] = [
-            ("jeffberg", NSURL(string: "http://www.jeffburg.com/pico/jeffburg.pico")),
-            ("amazeballs", NSURL(string: "http://www.jeffburg.com/pico/amazeballs.pico"))
-        ]
-        
-        // NSURL's are optional. Must check them before returning the array
-        var verifiedArray: [(username: NSString, url: NSURL)] = []
-        for tuple in array {
-            if let url = tuple.url {
-                let verifiedTuple: (username: NSString, url: NSURL) = (tuple.username, url)
-                verifiedArray.append(verifiedTuple)
+    let userDefaults = NSUserDefaults.standardUserDefaults()
+    
+    func readSubscriptionsFromDisk() -> [Subscription]? {
+        var subscriptions: [Subscription] = []
+        if let subscriptionsArray = self.userDefaults.arrayForKey("Subscriptions") as? [NSDictionary] {
+            for dictionary in subscriptionsArray {
+                if let subscription = Subscription(dictionary: dictionary) {
+                    subscriptions.append(subscription)
+                }
             }
         }
+        if subscriptions.count > 0 {
+            return subscriptions
+        } else {
+            return nil
+        }
+    }
+    
+    func writeSubscriptionsToDisk(subscriptions: [Subscription]) {
+        // fake data files for now
+//        let sub1 = Subscription(url: NSURL(string: "http://www.jeffburg.com/pico/jeffburg.pico")!, date: NSDate(timeIntervalSinceNow: 2000), username: "jeffberg")
+//        let sub2 = Subscription(url: NSURL(string: "http://www.jeffburg.com/pico/amazeballs.pico")!, date: NSDate(timeIntervalSinceNow: 10000), username: "amazeballs")
         
-        return verifiedArray
+        var mutableArray = NSMutableArray()
+//        mutableArray.addObject(sub1.prepareForDisk())
+//        mutableArray.addObject(sub2.prepareForDisk())
+        
+        for subscription in subscriptions {
+            mutableArray.addObject(subscription.prepareForDisk())
+        }
+        if mutableArray.count > 0 {
+            let array = NSArray(array: mutableArray)
+            self.userDefaults.setObject(array, forKey: "Subscriptions")
+        }
     }
 }

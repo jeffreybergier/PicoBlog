@@ -67,8 +67,9 @@ class FeedTableViewController: UITableViewController {
     }
     
     private func updateDataSource() {
-        let array = PicoDataSource.sharedInstance.subscriptionManager.readSubscriptionsFromDisk()
-        PicoDataSource.sharedInstance.downloadManager.downloadFiles(urlArray: array)
+        if let subscriptionArray = PicoDataSource.sharedInstance.subscriptionManager.readSubscriptionsFromDisk() {
+            PicoDataSource.sharedInstance.downloadManager.downloadSubscriptions(subscriptionArray)
+        }
     }
     
     override func tableView(tableView: UITableView, didEndDisplayingCell cell: UITableViewCell, forRowAtIndexPath indexPath: NSIndexPath) {

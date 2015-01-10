@@ -65,6 +65,46 @@ struct PicoMessage {
     }
 }
 
+struct Subscription: Writable {
+    let url: NSURL
+    let date: NSDate
+    let username: NSString
+    
+    init(url: NSURL, date: NSDate, username: NSString) {
+        self.url = url
+        self.date = date
+        self.username = username
+    }
+    
+    init?(dictionary: NSDictionary) {
+        // NSUserDefaults can only accept NSData, NSString, NSNumber, NSDate
+        // We need to convert everything to that.
+        
+        let date = dictionary["date"] as? NSDate
+        let username = dictionary["username"] as? NSString
+        let urlString = dictionary["urlString"] as? NSString
+        var url: NSURL?
+        if let urlString = urlString {
+            url = NSURL(string: urlString)
+        }
+        if date != nil && username != nil && url != nil {
+            self.url = url!
+            self.date = date!
+            self.username = username!
+        } else {
+            return nil
+        }
+    }
+    
+    func prepareForDisk() -> NSDictionary {
+        // NSUserDefaults can only accept NSData, NSString, NSNumber, NSDate
+        // We need to convert everything to that.
+        let urlString: NSString! = self.url.absoluteString
+        let dictionary: NSDictionary = ["urlString" : urlString, "date" : self.date, "username" : self.username]
+        return dictionary
+    }
+}
+
 struct User {
     
     let username: NSString
@@ -78,4 +118,12 @@ struct User {
         self.avatar = (nil, avatarImageURL)
         self.feedURL = feedURL
     }
+}
+
+protocol Writable {
+    // Requires that a Value/Object should be writable and readable from NSUserDefaults
+    // NSUserDefaults can only accept NSData, NSString, NSNumber, NSDate
+    // All other types will have to be converted in these two methods.
+    init?(dictionary: NSDictionary)
+    func prepareForDisk() -> NSDictionary
 }

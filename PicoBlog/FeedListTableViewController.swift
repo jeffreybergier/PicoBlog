@@ -31,7 +31,7 @@ import UIKit
 
 class FeedListTableViewController: UITableViewController {
     
-    var subscriptionList: [(username: NSString, url: NSURL)] = []
+    var subscriptionList: [Subscription] = []
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -43,7 +43,9 @@ class FeedListTableViewController: UITableViewController {
         self.tableView.estimatedRowHeight = 86.0
         self.tableView.rowHeight = UITableViewAutomaticDimension
         
-        self.subscriptionList = PicoDataSource.sharedInstance.subscriptionManager.readSubscriptionsFromDisk()
+        if let newSubscriptions = PicoDataSource.sharedInstance.subscriptionManager.readSubscriptionsFromDisk() {
+            self.subscriptionList = newSubscriptions
+        }
     }
     
     override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
