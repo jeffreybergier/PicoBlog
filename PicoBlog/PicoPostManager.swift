@@ -31,6 +31,7 @@ import UIKit
 
 class PicoPostManager {
     
+    /*
     func createFakeDataAndSaveToDisk() {
         
         let date = NSDate(timeIntervalSinceNow: 0)
@@ -67,5 +68,6 @@ class PicoPostManager {
         let data = NSJSONSerialization.dataWithJSONObject([fakeMessage1Dictionary, fakeMessage2Dictionary], options: NSJSONWritingOptions.PrettyPrinted, error: error)
         data!.writeToURL(fullURL!, atomically: true)
     }
+*/
     
 }

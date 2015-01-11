@@ -48,10 +48,9 @@ class PicoDownloadManager: NSObject, NSURLSessionDelegate, NSURLSessionDataDeleg
     
     func downloadSubscriptions(array: [Subscription]) {
         for subscription in array {
-            let task = self.session.dataTaskWithURL(subscription.url)
+            let task = self.session.dataTaskWithURL(subscription.verifiedURL.url)
             task.resume()
             self.tasksInProgress.append(task)
-            //self.connectionsInProgress.append(connection)
         }
     }
     
@@ -69,9 +68,9 @@ class PicoDownloadManager: NSObject, NSURLSessionDelegate, NSURLSessionDataDeleg
         } else {
             if let data = self.dataInProgress[task] {
                 let downloadedData: AnyObject? = NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions.MutableContainers, error: nil)
-                if let downloadedArray = downloadedData as? [[NSString : NSObject]] {
+                if let downloadedArray = downloadedData as? [NSDictionary] {
                     for downloadedDictionary in downloadedArray {
-                        if let downloadedMessage = PicoDataSource.sharedInstance.picoMessageFromDictionary(downloadedDictionary) {
+                        if let downloadedMessage = PicoMessage(dictionary: downloadedDictionary) {
                             self.messagePlaceholder.append(downloadedMessage)
                         } else {
                             NSLog("\(self): Unable to convert dictionaryObject into PicoMessage: \(downloadedDictionary)")

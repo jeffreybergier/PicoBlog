@@ -53,17 +53,17 @@ class FeedTableViewController: UITableViewController {
     }
     
     @objc private func dataSourceUpdated(notification: NSNotification) {
+        self.tableView.reloadData()
+        let pointlessTimer = NSTimer.scheduledTimerWithTimeInterval(0.3, target: self, selector: "refreshControlFinished:", userInfo: nil, repeats: false)
+    }
+    
+    @objc private func refreshControlFinished(timer: NSTimer) {
+        timer.invalidate()
         if let refreshControl = self.refreshControl {
             if refreshControl.refreshing {
                 refreshControl.endRefreshing()
             }
         }
-        let pointlessTimer = NSTimer.scheduledTimerWithTimeInterval(0.33, target: self, selector: "refreshControlFinished:", userInfo: nil, repeats: false)
-    }
-    
-    @objc private func refreshControlFinished(timer: NSTimer) {
-        timer.invalidate()
-        self.tableView.reloadData()
     }
     
     private func updateDataSource() {
@@ -100,7 +100,7 @@ class FeedTableViewController: UITableViewController {
     
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         var identifierString: NSString
-        if PicoDataSource.sharedInstance.downloadedMessages[indexPath.row].picture?.url == nil {
+        if PicoDataSource.sharedInstance.downloadedMessages[indexPath.row].verifiedPictureURL == nil {
             identifierString = "PicoMessageCellWithoutImage"
         } else {
             identifierString = "PicoMessageCellWithImage"

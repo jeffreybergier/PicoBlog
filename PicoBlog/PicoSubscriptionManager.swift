@@ -45,18 +45,19 @@ class PicoSubscriptionManager {
         if subscriptions.count > 0 {
             return subscriptions
         } else {
+            NSNotificationCenter.defaultCenter().postNotificationName("DataSourceUpdated", object: nil)
             return nil
         }
     }
     
     func writeSubscriptionsToDisk(subscriptions: [Subscription]) {
         // fake data files for now
-//        let sub1 = Subscription(url: NSURL(string: "http://www.jeffburg.com/pico/jeffburg.pico")!, date: NSDate(timeIntervalSinceNow: 2000), username: "jeffberg")
-//        let sub2 = Subscription(url: NSURL(string: "http://www.jeffburg.com/pico/amazeballs.pico")!, date: NSDate(timeIntervalSinceNow: 10000), username: "amazeballs")
+        //let sub1 = Subscription(username: "jeffburg", unverifiedURLString: "http://www.jeffburg.com/pico/jeffburg.pico", unverifiedDateString: "2015-01-02-10:40:52-0800")!
+        //let sub2 = Subscription(username: "amazeballs", unverifiedURLString: "http://www.jeffburg.com/pico/amazeballs.pico", unverifiedDateString: "2015-01-01-10:40:52-0800")!
         
         var mutableArray = NSMutableArray()
-//        mutableArray.addObject(sub1.prepareForDisk())
-//        mutableArray.addObject(sub2.prepareForDisk())
+        //mutableArray.addObject(sub1.prepareForDisk())
+        //mutableArray.addObject(sub2.prepareForDisk())
         
         for subscription in subscriptions {
             mutableArray.addObject(subscription.prepareForDisk())

@@ -41,6 +41,9 @@ class FeedTableViewCell: UITableViewCell {
     
     private let dateFormatter = NSDateFormatter()
     
+    private var avatarURL: NSURL?
+    private var messagePictureURL: NSURL?
+    
     @IBOutlet private weak var userImageView: UIImageView?
     @IBOutlet private weak var messageImageView: UIImageView?
     @IBOutlet private weak var messageTextLabel: UILabel?
@@ -66,11 +69,18 @@ class FeedTableViewCell: UITableViewCell {
         self.messageDateTextLabel?.text = ""
         self.userImageView?.image = nil
         self.messageImageView?.image = nil
+        self.avatarURL = nil
+        self.messagePictureURL = nil
         
         self.messageTextLabel?.text = newMessage.text
         self.usernameTextLabel?.text = newMessage.user.username
-        self.messageDateTextLabel?.text = self.dateFormatter.stringFromDate(newMessage.date)
+        self.messageDateTextLabel?.text = self.dateFormatter.stringFromDate(newMessage.verifiedDate.date)
         
+        self.avatarURL = newMessage.user.verifiedAvatarURL.url
+        if let verifiedMessagePictureURL = self.messagePost?.verifiedPictureURL {
+            self.messagePictureURL = verifiedMessagePictureURL.url
+        }
+
         self.cellWillAppear()
     }
     
@@ -79,25 +89,23 @@ class FeedTableViewCell: UITableViewCell {
     }
     
     func cellDidDisappear() {
-        if let message = self.messagePost {
-            PicoDataSource.sharedInstance.cellDownloadManager.tasksInProgress[message.user.avatar.url]?.suspend()
-            //PicoDataSource.sharedInstance.cellDownloadManager.finishedImages.removeValueForKey(message.user.avatar.url) //this line is optional and it is used to save memory.
+        if let avatarURL = self.avatarURL {
+            PicoDataSource.sharedInstance.cellDownloadManager.tasksInProgress[avatarURL]?.suspend()
         }
-        if let messageImageURL = self.messagePost?.picture?.url {
-            PicoDataSource.sharedInstance.cellDownloadManager.tasksInProgress[messageImageURL]?.suspend()
-            //PicoDataSource.sharedInstance.cellDownloadManager.finishedImages.removeValueForKey(messageImageURL) //this line is optional and it is used to save memory.
+        if let messagePictureURL = self.messagePictureURL {
+            PicoDataSource.sharedInstance.cellDownloadManager.tasksInProgress[messagePictureURL]?.suspend()
         }
     }
     
     func cellWillAppear() {
-        if let message = self.messagePost {
+        if let avatarURL = self.avatarURL {
             if let avatarImageView = self.userImageView {
-                self.populateImageView(avatarImageView, WithURL: message.user.avatar.url)
+                self.populateImageView(avatarImageView, WithURL: avatarURL)
             }
         }
-        if let messageImageURL = self.messagePost?.picture?.url {
+        if let messagePictureURL = self.messagePictureURL {
             if let messageImageView = self.messageImageView {
-                self.populateImageView(messageImageView, WithURL: messageImageURL)
+                self.populateImageView(messageImageView, WithURL: messagePictureURL)
             }
         }
     }

@@ -55,7 +55,7 @@ class FeedListTableViewController: UITableViewController {
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         if let cell = tableView.dequeueReusableCellWithIdentifier("FeedListTableViewCell") as? FeedListTableViewCell {
             cell.feedUsernameTextLabel?.text = self.subscriptionList[indexPath.row].username
-            cell.feedURLTextLabel?.text = self.subscriptionList[indexPath.row].url.description
+            cell.feedURLTextLabel?.text = self.subscriptionList[indexPath.row].verifiedURL.string
             return cell
         } else {
             return UITableViewCell()
