@@ -38,7 +38,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     let dataSource = PicoDataSource.sharedInstance
 
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
-        //self.dataSource.subscriptionManager.writeSubscriptionsToDisk(nil)
         
         if let initialViewController = self.storyboard.instantiateInitialViewController() as? UIViewController {
             

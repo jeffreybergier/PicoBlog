@@ -39,6 +39,8 @@ class FeedTableViewController: UITableViewController {
         
         self.updateDataSource()
         
+        //self.tableView.registerNib(UINib(nibName: "FeedListTableViewCells", bundle: NSBundle.mainBundle()), forCellReuseIdentifier: "FeedListTableViewCells")
+        
         self.tableView.delegate = self
         self.tableView.dataSource = self
         self.tableView.estimatedRowHeight = 112.0
