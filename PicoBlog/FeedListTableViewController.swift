@@ -61,4 +61,8 @@ class FeedListTableViewController: UITableViewController {
             return UITableViewCell()
         }
     }
+    
+    @IBAction private func unwindFromAddFeedViewController(segue: UIStoryboardSegue) {
+        
+    }
 }

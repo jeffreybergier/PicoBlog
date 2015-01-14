@@ -231,11 +231,88 @@
                             <outlet property="delegate" destination="xAE-a7-wUH" id="c3x-Sf-ESV"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" id="gw1-H2-FBI"/>
+                    <navigationItem key="navigationItem" id="gw1-H2-FBI">
+                        <barButtonItem key="leftBarButtonItem" systemItem="edit" id="UzV-nv-f3V"/>
+                        <barButtonItem key="rightBarButtonItem" systemItem="add" id="Fa9-1y-Lgh">
+                            <connections>
+                                <segue destination="75n-ED-q70" kind="presentation" id="asX-PI-xJR"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Rqc-yK-SJK" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="1726" y="-282"/>
+        </scene>
+        <!--Add Feed View Controller-->
+        <scene sceneID="TMW-L1-VYf">
+            <objects>
+                <viewController id="Ltc-wY-gRa" customClass="AddFeedViewController" customModule="PicoBlog" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="vJb-OJ-Nlg"/>
+                        <viewControllerLayoutGuide type="bottom" id="5c9-M9-6ku"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="4S7-mu-R9e">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" animating="YES" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="ia4-rH-Vc8">
+                                <rect key="frame" x="564" y="104" width="20" height="20"/>
+                            </activityIndicatorView>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="PicoBlog FeedURL" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="YeB-7g-aiO">
+                                <rect key="frame" x="16" y="72" width="141.5" height="19.5"/>
+                                <fontDescription key="fontDescription" style="UICTFontTextStyleHeadline"/>
+                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="http://feedurl.pico" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="i8F-o2-wqa">
+                                <rect key="frame" x="16" y="99" width="536" height="30"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits"/>
+                                <connections>
+                                    <action selector="feedURLTextDidChange:" destination="Ltc-wY-gRa" eventType="editingChanged" id="Z86-p0-qvj"/>
+                                </connections>
+                            </textField>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" allowsSelection="NO" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" translatesAutoresizingMaskIntoConstraints="NO" id="Up3-9g-gcy">
+                                <rect key="frame" x="16" y="137" width="568" height="454.5"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                            </tableView>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="5c9-M9-6ku" firstAttribute="top" secondItem="Up3-9g-gcy" secondAttribute="bottom" constant="8" symbolic="YES" id="72X-kb-Qzv"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="Up3-9g-gcy" secondAttribute="trailing" id="Bjs-i7-Rqy"/>
+                            <constraint firstItem="i8F-o2-wqa" firstAttribute="top" secondItem="YeB-7g-aiO" secondAttribute="bottom" constant="8" symbolic="YES" id="Ddf-bh-qgl"/>
+                            <constraint firstItem="i8F-o2-wqa" firstAttribute="centerY" secondItem="ia4-rH-Vc8" secondAttribute="centerY" id="Jdj-jD-pVi"/>
+                            <constraint firstItem="Up3-9g-gcy" firstAttribute="top" secondItem="i8F-o2-wqa" secondAttribute="bottom" constant="8" symbolic="YES" id="QvT-u7-WCg"/>
+                            <constraint firstItem="YeB-7g-aiO" firstAttribute="top" secondItem="vJb-OJ-Nlg" secondAttribute="bottom" constant="8" symbolic="YES" id="Rca-4B-0Ur"/>
+                            <constraint firstItem="ia4-rH-Vc8" firstAttribute="leading" secondItem="i8F-o2-wqa" secondAttribute="trailing" constant="12" id="S6E-l8-yFu"/>
+                            <constraint firstItem="i8F-o2-wqa" firstAttribute="leading" secondItem="4S7-mu-R9e" secondAttribute="leadingMargin" id="b4S-1t-gOq"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="ia4-rH-Vc8" secondAttribute="trailing" id="dPf-uR-PKN"/>
+                            <constraint firstItem="YeB-7g-aiO" firstAttribute="leading" secondItem="4S7-mu-R9e" secondAttribute="leadingMargin" id="fsA-Ah-18P"/>
+                            <constraint firstItem="Up3-9g-gcy" firstAttribute="leading" secondItem="4S7-mu-R9e" secondAttribute="leadingMargin" id="m6O-9l-loI"/>
+                        </constraints>
+                    </view>
+                    <navigationItem key="navigationItem" id="PAB-A3-IsF">
+                        <barButtonItem key="leftBarButtonItem" systemItem="cancel" id="ABW-3O-DVl">
+                            <connections>
+                                <segue destination="Wdh-3U-mwD" kind="unwind" unwindAction="unwindFromAddFeedViewController:" id="K0l-JS-2ni"/>
+                            </connections>
+                        </barButtonItem>
+                        <barButtonItem key="rightBarButtonItem" systemItem="save" id="WVL-TG-mYo"/>
+                    </navigationItem>
+                    <connections>
+                        <outlet property="feedLoadingSpinner" destination="ia4-rH-Vc8" id="9fV-gv-Apz"/>
+                        <outlet property="feedPreviewTableView" destination="Up3-9g-gcy" id="M5T-9K-w9s"/>
+                        <outlet property="feedURLTextField" destination="i8F-o2-wqa" id="zpH-Oc-gy8"/>
+                        <outlet property="feedURLTextFieldTrailingConstraint" destination="S6E-l8-yFu" id="Og9-td-kCp"/>
+                        <outlet property="feedURLTitleLabel" destination="YeB-7g-aiO" id="NhZ-7V-mpK"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="sq0-td-rxi" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <exit id="Wdh-3U-mwD" userLabel="Exit" sceneMemberID="exit"/>
+            </objects>
+            <point key="canvasLocation" x="3302" y="-730.5"/>
         </scene>
         <!--Tab Bar Controller-->
         <scene sceneID="Ndf-18-Ona">
@@ -274,6 +351,24 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="t7u-Y6-oXW" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="914" y="-282"/>
+        </scene>
+        <!--Navigation Controller-->
+        <scene sceneID="EeX-UM-rSC">
+            <objects>
+                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="75n-ED-q70" sceneMemberID="viewController">
+                    <toolbarItems/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="2iZ-zU-L6l">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <nil name="viewControllers"/>
+                    <connections>
+                        <segue destination="Ltc-wY-gRa" kind="relationship" relationship="rootViewController" id="tnq-gz-mhS"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Tgx-xK-qN2" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="2490" y="-731"/>
         </scene>
     </scenes>
 </document>
