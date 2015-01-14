@@ -38,13 +38,7 @@ class PicoDownloadManager: NSObject, NSURLSessionDelegate, NSURLSessionDataDeleg
         let configuration = NSURLSessionConfiguration.defaultSessionConfiguration()
         let session = NSURLSession(configuration: configuration, delegate: self, delegateQueue:NSOperationQueue.mainQueue())
         return session
-    }()
-    
-    override init() {
-        super.init()
-        
-        
-    }
+        }()
     
     func downloadSubscriptions(array: [Subscription]) {
         for subscription in array {
