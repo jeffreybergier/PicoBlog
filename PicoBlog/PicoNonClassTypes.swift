@@ -39,11 +39,13 @@ struct PicoMessage: Writable {
     
     var verifiedPictureURL: VerifiedURL?
     var location: CLLocation?
+    var unknownItems: [String : String]?
     
-    init?(CompleteUser messageUser: User, unverifiedDateString: String, messageText: String, unverifiedPictureURLString: String?) {
+    init?(CompleteUser messageUser: User, unverifiedDateString: String, messageText: String, unverifiedPictureURLString: String?, unknownItems: [String : String]?) {
         self.user = messageUser
         self.text = messageText
         self.verifiedPictureURL = VerifiedURL(unverifiedURLString: unverifiedPictureURLString)
+        self.unknownItems = unknownItems
         
         if let verifiedDate = VerifiedDate(unverifiedDateString: unverifiedDateString) {
             self.verifiedDate = verifiedDate
@@ -53,28 +55,55 @@ struct PicoMessage: Writable {
         }
     }
     
-    init?(IncompleteUsername username: String, unverifiedUserAvatarURLString: String, unverifiedUserFeedURLString: String, unverifiedMessageDateString: String, messageText: String, unverifiedPictureURLString: String?) {
+    init?(IncompleteUsername username: String, unverifiedUserAvatarURLString: String, unverifiedUserFeedURLString: String, unverifiedMessageDateString: String, messageText: String, unverifiedPictureURLString: String?, unknownItems: [String : String]?) {
         
         if let user = User(username: username, unverifiedFeedURLString: unverifiedUserFeedURLString, unverifiedAvatarURLString: unverifiedUserAvatarURLString) {
-            self.init(CompleteUser: user, unverifiedDateString: unverifiedMessageDateString, messageText: messageText, unverifiedPictureURLString: unverifiedPictureURLString)
+            self.init(CompleteUser: user, unverifiedDateString: unverifiedMessageDateString, messageText: messageText, unverifiedPictureURLString: unverifiedPictureURLString, unknownItems: nil)
         } else {
             return nil
         }
     }
     
     init?(dictionary: NSDictionary) {
-        //REQUIRED
-        let messageDate = dictionary["date"] as? String
-        let username = dictionary["username"] as? String
-        let userFeedURL = dictionary["userFeedURL"] as? String
-        let userAvatarImageURL = dictionary["userAvatarImageURL"] as? String
-        let messageText = dictionary["messageText"] as? String
+        // REQUIRED
+        var messageDate: String?
+        var username: String?
+        var userFeedURL: String?
+        var userAvatarImageURL: String?
+        var messageText: String?
         
-        //OPTIONAL
-        let messagePictureURL = dictionary["messagePictureURL"] as? String
+        // OPTIONAL
+        var messagePictureURL: String?
         
-        //CREATE THE MESSAGE
-        //nesting the if lets leads to really unreadable code, so I'm doing this nil check
+        // Extras
+        var extrasDictionary: [String : String]?
+        
+        // Loop through the dictionary so that expected data can be pulled out.
+        // Unexpected data will be put into a dictionary for possible use later.
+        for (value, key) in dictionary {
+            if let stringValue = value as? String {
+                switch stringValue {
+                case "date":
+                    messageDate = key as? String
+                case "username":
+                    username = key as? String
+                case "userFeedURL":
+                    userFeedURL = key as? String
+                case "userAvatarImageURL":
+                    userAvatarImageURL = key as? String
+                case "messageText":
+                    messageText = key as? String
+                case "messagePictureURL":
+                    messagePictureURL = key as? String
+                default:
+                    extrasDictionary = [:] //allocate the dictionary
+                    extrasDictionary![stringValue] = key as? String //now we know its safe, thus the !
+                }
+            }
+        }
+        
+        // CREATE THE MESSAGE
+        // nesting the if lets leads to really unreadable code, so I'm doing this nil check
         var user: User?
         var message: PicoMessage?
         
@@ -85,7 +114,7 @@ struct PicoMessage: Writable {
         }
         
         if (user != nil && messageDate != nil && messageText != nil) {
-            self.init(CompleteUser: user!, unverifiedDateString: messageDate!, messageText: messageText!, unverifiedPictureURLString: messagePictureURL)
+            self.init(CompleteUser: user!, unverifiedDateString: messageDate!, messageText: messageText!, unverifiedPictureURLString: messagePictureURL, unknownItems: extrasDictionary)
         } else {
             return nil
         }
