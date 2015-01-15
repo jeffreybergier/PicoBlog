@@ -40,8 +40,19 @@ class AddFeedViewController: UIViewController {
     private var feedURLTextFieldConstraint: (loading: CGFloat, notLoading: CGFloat) = (0.0, 0.0)
     private var feedURLIsDownloading = false
     
+    private lazy var urlSession: NSURLSession = {
+        let sessionConfiguration = NSURLSessionConfiguration.defaultSessionConfiguration()
+        let urlSession = NSURLSession(configuration: sessionConfiguration)
+        return urlSession
+        }()
+    
+    private var validSubscription: Subscription?
+    private var messagesContainedInSubscription: [PicoMessage] = []
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        self.title = NSLocalizedString("Add Subscription", comment: "")
         
         self.feedURLTitleLabel.text = NSLocalizedString("Feed URL:", comment: "")
         self.feedLoadingSpinner.stopAnimating()
@@ -50,6 +61,9 @@ class AddFeedViewController: UIViewController {
         self.feedURLTextFieldConstraint.loading = self.feedURLTextFieldTrailingConstraint.constant
         self.feedURLTextFieldConstraint.notLoading = -1 * self.feedLoadingSpinner.frame.size.width
         self.feedURLTextFieldTrailingConstraint.constant = self.feedURLTextFieldConstraint.notLoading
+        
+        self.feedPreviewTableView.registerNib(UINib(nibName: "FeedTableViewCellWithImage", bundle: NSBundle.mainBundle()), forCellReuseIdentifier: "PicoMessageCellWithImage")
+        self.feedPreviewTableView.registerNib(UINib(nibName: "FeedTableViewCellWithoutImage", bundle: NSBundle.mainBundle()), forCellReuseIdentifier: "PicoMessageCellWithoutImage")
     }
     
     override func viewDidAppear(animated: Bool) {
@@ -61,12 +75,15 @@ class AddFeedViewController: UIViewController {
     @IBAction private func feedURLTextDidChange(sender: UITextField) {
         if let url = NSURL(string: sender.text) {
             self.changeUIToDownloadingState()
+            self.urlSession.dataTaskWithURL(url, completionHandler: { (data: NSData!, response: NSURLResponse!, error: NSError!) -> Void in
+                self.changeUIToNotDownloadingState()
+                if error == nil {
+                    let verifiedData = data
+                } else {
+                    NSLog("\(self.title)VC: Error while downloading subscription: \(response.URL)")
+                }
+            })
         }
-    }
-    
-    @objc private func testTimer(timer: NSTimer) {
-        timer.invalidate()
-        self.changeUIToNotDownloadingState()
     }
     
     private func changeUIToDownloadingState() {
@@ -81,7 +98,6 @@ class AddFeedViewController: UIViewController {
                 self.feedURLTextFieldTrailingConstraint.constant = self.feedURLTextFieldConstraint.loading
                 self.view.layoutIfNeeded()
             }, completion: { (finished) -> Void in
-                NSTimer.scheduledTimerWithTimeInterval(5.0, target: self, selector: "testTimer:", userInfo: nil, repeats: false)
                 return ()
         })
     }
