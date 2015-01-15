@@ -90,10 +90,10 @@ class FeedTableViewCell: UITableViewCell {
     
     func cellDidDisappear() {
         if let avatarURL = self.avatarURL {
-            PicoDataSource.sharedInstance.cellDownloadManager.tasksInProgress[avatarURL]?.suspend()
+            PicoDataSource.sharedInstance.cellDownloadManager.imageTasksInProgress[avatarURL]?.suspend()
         }
         if let messagePictureURL = self.messagePictureURL {
-            PicoDataSource.sharedInstance.cellDownloadManager.tasksInProgress[messagePictureURL]?.suspend()
+            PicoDataSource.sharedInstance.cellDownloadManager.imageTasksInProgress[messagePictureURL]?.suspend()
         }
     }
     
@@ -112,15 +112,15 @@ class FeedTableViewCell: UITableViewCell {
     
     private func populateImageView(imageView: UIImageView, WithURL url: NSURL) {
         if imageView.image == nil {
-            if let image = PicoDataSource.sharedInstance.cellDownloadManager.finishedImages[url] {
+            if let image = PicoDataSource.sharedInstance.cellDownloadManager.imageDataFinished[url] {
                 imageView.image = image
-                PicoDataSource.sharedInstance.cellDownloadManager.tasksInProgress[url]?.cancel()
-                PicoDataSource.sharedInstance.cellDownloadManager.tasksInProgress.removeValueForKey(url)
+                PicoDataSource.sharedInstance.cellDownloadManager.imageTasksInProgress[url]?.cancel()
+                PicoDataSource.sharedInstance.cellDownloadManager.imageTasksInProgress.removeValueForKey(url)
             } else {
-                if let existingTask = PicoDataSource.sharedInstance.cellDownloadManager.tasksInProgress[url] {
+                if let existingTask = PicoDataSource.sharedInstance.cellDownloadManager.imageTasksInProgress[url] {
                     existingTask.resume()
                 } else {
-                    PicoDataSource.sharedInstance.cellDownloadManager.downloadImageWithURL(url)
+                    PicoDataSource.sharedInstance.cellDownloadManager.downloadURLArray([url])
                 }
             }
         }

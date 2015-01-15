@@ -35,7 +35,7 @@ class PicoDataSource {
     let downloadManager = PicoDownloadManager()
     let postManager = PicoPostManager()
     let subscriptionManager = PicoSubscriptionManager()
-    let cellDownloadManager = PicoCellDownloadManager()
+    let cellDownloadManager = DownloadManager(identifier: .CellImages)
     
     var currentUser = User(username: "jeffburg", unverifiedFeedURLString: "http://www.jeffburg.com/pico/feed1.pico", unverifiedAvatarURLString: "http://www.jeffburg.com/pico/images/123456789_small.jpeg")!
     var downloadedMessages: [PicoMessage] = [] {

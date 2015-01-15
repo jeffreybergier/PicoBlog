@@ -275,3 +275,7 @@ protocol Writable {
     init?(dictionary: NSDictionary)
     func prepareForDisk() -> NSDictionary
 }
+
+enum DownloadManagerIdentifier {
+    case Subscriptions, CellImages
+}

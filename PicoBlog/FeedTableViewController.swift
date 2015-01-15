@@ -94,7 +94,7 @@ class FeedTableViewController: UITableViewController {
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         
-        PicoDataSource.sharedInstance.cellDownloadManager.finishedImages = [:]
+        PicoDataSource.sharedInstance.cellDownloadManager.imageDataFinished = [:]
     }
     
     override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
