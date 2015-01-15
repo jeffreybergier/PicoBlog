@@ -39,7 +39,8 @@ class FeedTableViewController: UITableViewController {
         
         self.updateDataSource()
         
-        //self.tableView.registerNib(UINib(nibName: "FeedListTableViewCells", bundle: NSBundle.mainBundle()), forCellReuseIdentifier: "FeedListTableViewCells")
+        self.tableView.registerNib(UINib(nibName: "FeedTableViewCellWithImage", bundle: NSBundle.mainBundle()), forCellReuseIdentifier: "PicoMessageCellWithImage")
+        self.tableView.registerNib(UINib(nibName: "FeedTableViewCellWithoutImage", bundle: NSBundle.mainBundle()), forCellReuseIdentifier: "PicoMessageCellWithoutImage")
         
         self.tableView.delegate = self
         self.tableView.dataSource = self
@@ -105,14 +106,13 @@ class FeedTableViewController: UITableViewController {
         if PicoDataSource.sharedInstance.downloadedMessages[indexPath.row].verifiedPictureURL == nil {
             identifierString = "PicoMessageCellWithoutImage"
         } else {
-            identifierString = "PicoMessageCellWithImage"
+            identifierString = "PicoMessageCellWithImage" //"PicoMessageCellWithImage"
         }
-        if let cell = tableView.dequeueReusableCellWithIdentifier(identifierString) as? FeedTableViewCell {
+        let cell: AnyObject = tableView.dequeueReusableCellWithIdentifier(identifierString, forIndexPath: indexPath)
+        if let cell = cell as? FeedTableViewCell {
             cell.messagePost = PicoDataSource.sharedInstance.downloadedMessages[indexPath.row]
-            return cell
-        } else {
-            return UITableViewCell()
         }
+        return cell as UITableViewCell
     }
     
     deinit {

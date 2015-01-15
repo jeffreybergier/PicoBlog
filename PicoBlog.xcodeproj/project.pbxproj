@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		732BA0DA1A560E690079D07F /* PicoNonClassTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 732BA0D91A560E690079D07F /* PicoNonClassTypes.swift */; };
+		73400DA21A67471B0033D949 /* FeedTableViewCellWithImage.xib in Resources */ = {isa = PBXBuildFile; fileRef = 73400DA11A67471B0033D949 /* FeedTableViewCellWithImage.xib */; };
+		73400DA41A6751210033D949 /* FeedTableViewCellWithoutImage.xib in Resources */ = {isa = PBXBuildFile; fileRef = 73400DA31A6751210033D949 /* FeedTableViewCellWithoutImage.xib */; };
 		7354C3481A5B83890059D185 /* FeedListTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7354C3471A5B83890059D185 /* FeedListTableViewController.swift */; };
 		736301B51A58A3640011FC87 /* PicoCellDownloadManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 736301B41A58A3640011FC87 /* PicoCellDownloadManager.swift */; };
 		73636CB11A6604BB000451D8 /* AddFeedViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73636CB01A6604BB000451D8 /* AddFeedViewController.swift */; };
@@ -37,6 +39,8 @@
 
 /* Begin PBXFileReference section */
 		732BA0D91A560E690079D07F /* PicoNonClassTypes.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PicoNonClassTypes.swift; sourceTree = "<group>"; };
+		73400DA11A67471B0033D949 /* FeedTableViewCellWithImage.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = FeedTableViewCellWithImage.xib; sourceTree = "<group>"; };
+		73400DA31A6751210033D949 /* FeedTableViewCellWithoutImage.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = FeedTableViewCellWithoutImage.xib; sourceTree = "<group>"; };
 		7354C3471A5B83890059D185 /* FeedListTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FeedListTableViewController.swift; sourceTree = "<group>"; };
 		736301B41A58A3640011FC87 /* PicoCellDownloadManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PicoCellDownloadManager.swift; sourceTree = "<group>"; };
 		73636CB01A6604BB000451D8 /* AddFeedViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddFeedViewController.swift; sourceTree = "<group>"; };
@@ -164,6 +168,8 @@
 			isa = PBXGroup;
 			children = (
 				737FBD771A549626004AAE3A /* Main.storyboard */,
+				73400DA11A67471B0033D949 /* FeedTableViewCellWithImage.xib */,
+				73400DA31A6751210033D949 /* FeedTableViewCellWithoutImage.xib */,
 			);
 			name = View;
 			sourceTree = "<group>";
@@ -250,8 +256,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				737FBD791A549626004AAE3A /* Main.storyboard in Resources */,
+				73400DA21A67471B0033D949 /* FeedTableViewCellWithImage.xib in Resources */,
 				737FBD7E1A549626004AAE3A /* LaunchScreen.xib in Resources */,
 				737FBD7B1A549626004AAE3A /* Images.xcassets in Resources */,
+				73400DA41A6751210033D949 /* FeedTableViewCellWithoutImage.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
