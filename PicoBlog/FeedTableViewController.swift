@@ -71,7 +71,11 @@ class FeedTableViewController: UITableViewController {
     
     private func updateDataSource() {
         if let subscriptionArray = PicoDataSource.sharedInstance.subscriptionManager.readSubscriptionsFromDisk() {
-            PicoDataSource.sharedInstance.downloadManager.downloadSubscriptions(subscriptionArray)
+            var urlArray: [NSURL] = []
+            for subscription in subscriptionArray {
+                urlArray.append(subscription.verifiedURL.url)
+            }
+            PicoDataSource.sharedInstance.downloadManager.downloadURLArray(urlArray)
         }
     }
     

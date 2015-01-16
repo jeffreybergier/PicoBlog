@@ -23,7 +23,6 @@
 		73E2DEBC1A54CA9600D34E95 /* PicoDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73E2DEBB1A54CA9600D34E95 /* PicoDataSource.swift */; };
 		73E2DEBE1A54CAEB00D34E95 /* PicoSubscriptionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73E2DEBD1A54CAEB00D34E95 /* PicoSubscriptionManager.swift */; };
 		73E2DEC01A54CB3300D34E95 /* PicoPostManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73E2DEBF1A54CB3300D34E95 /* PicoPostManager.swift */; };
-		73E2DEC21A54CB4600D34E95 /* PicoDownloadManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73E2DEC11A54CB4600D34E95 /* PicoDownloadManager.swift */; };
 		73F0B15D1A5498E400D7BF2C /* FeedTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73F0B15C1A5498E400D7BF2C /* FeedTableViewController.swift */; };
 /* End PBXBuildFile section */
 
@@ -287,7 +286,6 @@
 				73E2DEC01A54CB3300D34E95 /* PicoPostManager.swift in Sources */,
 				736301B51A58A3640011FC87 /* DownloadManager.swift in Sources */,
 				73F0B15D1A5498E400D7BF2C /* FeedTableViewController.swift in Sources */,
-				73E2DEC21A54CB4600D34E95 /* PicoDownloadManager.swift in Sources */,
 				7354C3481A5B83890059D185 /* FeedListTableViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

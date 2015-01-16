@@ -32,22 +32,13 @@ import UIKit
 class PicoDataSource {
     
     let dateFormatter = NSDateFormatter()
-    let downloadManager = PicoDownloadManager()
     let postManager = PicoPostManager()
     let subscriptionManager = PicoSubscriptionManager()
+    let downloadManager = DownloadManager(identifier: .Subscriptions)
     let cellDownloadManager = DownloadManager(identifier: .CellImages)
     
     var currentUser = User(username: "jeffburg", unverifiedFeedURLString: "http://www.jeffburg.com/pico/feed1.pico", unverifiedAvatarURLString: "http://www.jeffburg.com/pico/images/123456789_small.jpeg")!
-    var downloadedMessages: [PicoMessage] = [] {
-        didSet {
-            self.downloadedMessages.sort({
-                let firstDate = $0.verifiedDate.date
-                let secondDate = $1.verifiedDate.date
-                return firstDate.compare(secondDate) == NSComparisonResult.OrderedAscending
-            })
-            NSNotificationCenter.defaultCenter().postNotificationName("DataSourceUpdated", object: nil)
-        }
-    }
+    var downloadedMessages: [PicoMessage] = []
     
     class var sharedInstance: PicoDataSource {
         struct Static {
@@ -64,5 +55,27 @@ class PicoDataSource {
     
     init() {
         self.dateFormatter.dateFormat = "YYYY-MM-dd'-'HH:mm:ssZZZ"
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "newMessagesDownloaded:", name: "newMessagesDownloaded", object: nil)
+    }
+    
+    @objc private func newMessagesDownloaded(notification: NSNotification) {
+        let messageDictionary = self.downloadManager.picoMessagesFinished
+        var messageArray: [PicoMessage] = []
+        for (key, value) in messageDictionary {
+            messageArray += value
+        }
+        messageArray.sort({
+            let firstDate = $0.verifiedDate.date
+            let secondDate = $1.verifiedDate.date
+            return firstDate.compare(secondDate) == NSComparisonResult.OrderedAscending
+        })
+        self.downloadedMessages = messageArray
+        if messageDictionary.count == self.subscriptionManager.readSubscriptionsFromDisk()?.count {
+            NSNotificationCenter.defaultCenter().postNotificationName("DataSourceUpdated", object: nil)
+        }
+    }
+    
+    deinit {
+        NSNotificationCenter.defaultCenter().removeObserver(self)
     }
 }

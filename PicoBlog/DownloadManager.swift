@@ -50,7 +50,7 @@ class DownloadManager: NSObject, NSURLSessionDelegate, NSURLSessionDataDelegate 
     private var imageDataInProgress: [NSURLSessionTask : NSMutableData] = [:]
     
     // Subscriptions Properties
-    var picoMessageDataFinished: [PicoMessage] = []
+    var picoMessagesFinished: [NSURL : [PicoMessage]] = [:]
     private var picoMessageTasksInProgress: [NSURL : NSURLSessionTask] = [:]
     private var picoMessageDataInProgress: [NSURLSessionTask : NSMutableData] = [:]
     
@@ -66,7 +66,7 @@ class DownloadManager: NSObject, NSURLSessionDelegate, NSURLSessionDataDelegate 
             switch self.identifier {
             case .CellImages:
                 self.imageTasksInProgress[url] = task
-            case .Subscriptions:
+            case .SingleSubscription, .Subscriptions:
                 self.picoMessageTasksInProgress[url] = task
             }
         }
@@ -77,7 +77,7 @@ class DownloadManager: NSObject, NSURLSessionDelegate, NSURLSessionDataDelegate 
         switch self.identifier {
         case .CellImages:
             dataInProgress = self.imageDataInProgress[dataTask]
-        case .Subscriptions:
+        case .SingleSubscription, .Subscriptions:
             dataInProgress = self.picoMessageDataInProgress[dataTask]
         }
         
@@ -87,7 +87,7 @@ class DownloadManager: NSObject, NSURLSessionDelegate, NSURLSessionDataDelegate 
             switch self.identifier {
             case .CellImages:
                 self.imageDataInProgress[dataTask] = NSMutableData(data: data)
-            case .Subscriptions:
+            case .SingleSubscription, .Subscriptions:
                 self.picoMessageDataInProgress[dataTask] = NSMutableData(data: data)
             }
         }
@@ -96,28 +96,74 @@ class DownloadManager: NSObject, NSURLSessionDelegate, NSURLSessionDataDelegate 
     func URLSession(session: NSURLSession, task: NSURLSessionTask, didCompleteWithError error: NSError?) {
         switch self.identifier {
         case .CellImages:
-            if error == nil {
-                if let data = self.imageDataInProgress[task] {
-                    if let image = UIImage(data: data) {
-                        self.imageDataFinished[task.originalRequest.URL] = image
-                    }
+            self.imageTasksInProgress.removeValueForKey(task.originalRequest.URL)
+        case .SingleSubscription, .Subscriptions:
+            self.picoMessageTasksInProgress.removeValueForKey(task.originalRequest.URL)
+        }
+        
+        switch self.identifier {
+        case .CellImages:
+            if let data = self.imageDataInProgress[task] {
+                if let image = UIImage(data: data) {
+                    self.imageDataFinished[task.originalRequest.URL] = image
                 }
             }
             self.imageDataInProgress.removeValueForKey(task)
             self.imageTasksInProgress.removeValueForKey(task.originalRequest.URL)
-        case .Subscriptions:
-            if error == nil {
-                if let data = self.picoMessageDataInProgress[task] {
-                    let jsonData: AnyObject? = NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions.MutableContainers, error: nil)
-                    if let jsonArray = jsonData as? [NSDictionary] {
-                        for jsonDictionary in jsonArray {
-                            if let downloadedMessage = PicoMessage(dictionary: jsonDictionary) {
-                                self.picoMessageDataFinished.append(downloadedMessage)
-                            }
-                        }
-                    }
+        case .SingleSubscription, .Subscriptions:
+            if let messageArray = self.generatePicoMessagesFromJSONArray(self.verifyJSONData(self.picoMessageDataInProgress[task])) {
+                self.picoMessagesFinished[task.originalRequest.URL] = messageArray
+                self.postAppropriateSuccessNotification()
+            }
+        }
+        self.postAppropriateFailureNotification(error: error)
+    }
+    
+    private func verifyJSONData(data: NSData?) -> [NSDictionary]? {
+        if let data = data {
+            let jsonData: AnyObject? = NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions.MutableContainers, error: nil)
+            if let jsonArray = jsonData as? [NSDictionary] {
+                return jsonArray
+            }
+        }
+        return nil
+    }
+    
+    private func generatePicoMessagesFromJSONArray(jsonArray: [NSDictionary]?) -> [PicoMessage]? {
+        if let array = jsonArray {
+            var picoMessageArray: [PicoMessage] = []
+            for dictionary in array {
+                if let message = PicoMessage(dictionary: dictionary) {
+                    picoMessageArray.append(message)
                 }
             }
+            if picoMessageArray.count > 0 {
+                return picoMessageArray
+            }
+        }
+        return nil
+    }
+    
+    private func postAppropriateSuccessNotification() {
+        switch self.identifier {
+        case .Subscriptions:
+            NSNotificationCenter.defaultCenter().postNotificationName("newMessagesDownloaded", object: nil)
+        case .SingleSubscription:
+            NSNotificationCenter.defaultCenter().postNotificationName("newMessagesDownloadedForSingleSubscription", object: nil)
+        default:
+            break
+        }
+    }
+    
+    private func postAppropriateFailureNotification(error: NSError? = nil) {
+        if let error = error {
+            NSLog("\(self): Error: \(error)")
+        }
+        switch self.identifier {
+        case .SingleSubscription:
+            NSNotificationCenter.defaultCenter().postNotificationName("newMessagesFailedToDownloadForSingleSubscription", object: nil)
+        default:
+            break
         }
     }
 }

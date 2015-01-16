@@ -134,14 +134,14 @@
                                 </connections>
                             </textField>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" allowsSelection="NO" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" translatesAutoresizingMaskIntoConstraints="NO" id="Up3-9g-gcy">
-                                <rect key="frame" x="16" y="137" width="568" height="454.5"/>
+                                <rect key="frame" x="0.0" y="137" width="600" height="454.5"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                             </tableView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
                             <constraint firstItem="5c9-M9-6ku" firstAttribute="top" secondItem="Up3-9g-gcy" secondAttribute="bottom" constant="8" symbolic="YES" id="72X-kb-Qzv"/>
-                            <constraint firstAttribute="trailingMargin" secondItem="Up3-9g-gcy" secondAttribute="trailing" id="Bjs-i7-Rqy"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="Up3-9g-gcy" secondAttribute="trailing" constant="-16" id="Bjs-i7-Rqy"/>
                             <constraint firstItem="i8F-o2-wqa" firstAttribute="top" secondItem="YeB-7g-aiO" secondAttribute="bottom" constant="8" symbolic="YES" id="Ddf-bh-qgl"/>
                             <constraint firstItem="i8F-o2-wqa" firstAttribute="centerY" secondItem="ia4-rH-Vc8" secondAttribute="centerY" id="Jdj-jD-pVi"/>
                             <constraint firstItem="Up3-9g-gcy" firstAttribute="top" secondItem="i8F-o2-wqa" secondAttribute="bottom" constant="8" symbolic="YES" id="QvT-u7-WCg"/>
@@ -150,7 +150,7 @@
                             <constraint firstItem="i8F-o2-wqa" firstAttribute="leading" secondItem="4S7-mu-R9e" secondAttribute="leadingMargin" id="b4S-1t-gOq"/>
                             <constraint firstAttribute="trailingMargin" secondItem="ia4-rH-Vc8" secondAttribute="trailing" id="dPf-uR-PKN"/>
                             <constraint firstItem="YeB-7g-aiO" firstAttribute="leading" secondItem="4S7-mu-R9e" secondAttribute="leadingMargin" id="fsA-Ah-18P"/>
-                            <constraint firstItem="Up3-9g-gcy" firstAttribute="leading" secondItem="4S7-mu-R9e" secondAttribute="leadingMargin" id="m6O-9l-loI"/>
+                            <constraint firstItem="Up3-9g-gcy" firstAttribute="leading" secondItem="4S7-mu-R9e" secondAttribute="leadingMargin" constant="-16" id="m6O-9l-loI"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="PAB-A3-IsF">
