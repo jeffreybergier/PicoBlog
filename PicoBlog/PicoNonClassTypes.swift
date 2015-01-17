@@ -168,8 +168,12 @@ struct Subscription: Writable {
     let verifiedDate: VerifiedDate
     let verifiedURL: VerifiedURL
     
-    init?(username: String, unverifiedURLString: String?, unverifiedDateString: String?) {
-        self.username = username
+    init?(username: String?, unverifiedURLString: String?, unverifiedDateString: String?) {
+        if let username = username {
+            self.username = username
+        } else {
+            return nil
+        }
         
         if let verifiedDate = VerifiedDate(unverifiedDateString: unverifiedDateString) {
             self.verifiedDate = verifiedDate

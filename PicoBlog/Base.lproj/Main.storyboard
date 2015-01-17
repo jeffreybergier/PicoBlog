@@ -134,13 +134,13 @@
                                 </connections>
                             </textField>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" allowsSelection="NO" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" translatesAutoresizingMaskIntoConstraints="NO" id="Up3-9g-gcy">
-                                <rect key="frame" x="0.0" y="137" width="600" height="454.5"/>
+                                <rect key="frame" x="0.0" y="137" width="600" height="463"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                             </tableView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
-                            <constraint firstItem="5c9-M9-6ku" firstAttribute="top" secondItem="Up3-9g-gcy" secondAttribute="bottom" constant="8" symbolic="YES" id="72X-kb-Qzv"/>
+                            <constraint firstItem="5c9-M9-6ku" firstAttribute="top" secondItem="Up3-9g-gcy" secondAttribute="bottom" id="72X-kb-Qzv"/>
                             <constraint firstAttribute="trailingMargin" secondItem="Up3-9g-gcy" secondAttribute="trailing" constant="-16" id="Bjs-i7-Rqy"/>
                             <constraint firstItem="i8F-o2-wqa" firstAttribute="top" secondItem="YeB-7g-aiO" secondAttribute="bottom" constant="8" symbolic="YES" id="Ddf-bh-qgl"/>
                             <constraint firstItem="i8F-o2-wqa" firstAttribute="centerY" secondItem="ia4-rH-Vc8" secondAttribute="centerY" id="Jdj-jD-pVi"/>
@@ -159,7 +159,11 @@
                                 <segue destination="Wdh-3U-mwD" kind="unwind" unwindAction="unwindFromAddFeedViewController:" id="K0l-JS-2ni"/>
                             </connections>
                         </barButtonItem>
-                        <barButtonItem key="rightBarButtonItem" systemItem="save" id="WVL-TG-mYo"/>
+                        <barButtonItem key="rightBarButtonItem" systemItem="save" id="WVL-TG-mYo">
+                            <connections>
+                                <action selector="didTapSaveButton:" destination="Ltc-wY-gRa" id="Ll5-FO-R7C"/>
+                            </connections>
+                        </barButtonItem>
                     </navigationItem>
                     <connections>
                         <outlet property="feedLoadingSpinner" destination="ia4-rH-Vc8" id="9fV-gv-Apz"/>
@@ -167,6 +171,7 @@
                         <outlet property="feedURLTextField" destination="i8F-o2-wqa" id="zpH-Oc-gy8"/>
                         <outlet property="feedURLTextFieldTrailingConstraint" destination="S6E-l8-yFu" id="Og9-td-kCp"/>
                         <outlet property="feedURLTitleLabel" destination="YeB-7g-aiO" id="NhZ-7V-mpK"/>
+                        <outlet property="saveButton" destination="WVL-TG-mYo" id="fcm-ac-Afp"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="sq0-td-rxi" userLabel="First Responder" sceneMemberID="firstResponder"/>

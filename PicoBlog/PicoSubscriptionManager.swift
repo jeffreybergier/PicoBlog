@@ -34,6 +34,7 @@ class PicoSubscriptionManager {
     let userDefaults = NSUserDefaults.standardUserDefaults()
     
     func readSubscriptionsFromDisk() -> [Subscription]? {
+        self.userDefaults.synchronize()
         var subscriptions: [Subscription] = []
         if let subscriptionsArray = self.userDefaults.arrayForKey("Subscriptions") as? [NSDictionary] {
             for dictionary in subscriptionsArray {
@@ -55,7 +56,7 @@ class PicoSubscriptionManager {
         }
     }
     
-    func writeSubscriptionsToDisk(subscriptions: [Subscription]) {
+    func overwriteSubscriptionsToDisk(subscriptions: [Subscription]) -> NSError? {
         var mutableArray = NSMutableArray()
         
         for subscription in subscriptions {
@@ -64,6 +65,16 @@ class PicoSubscriptionManager {
         if mutableArray.count > 0 {
             let array = NSArray(array: mutableArray)
             self.userDefaults.setObject(array, forKey: "Subscriptions")
+            self.userDefaults.synchronize()
         }
+        return nil
+    }
+    
+    func appendSubscriptionToDisk(newSubscription: Subscription) -> NSError? {
+        if var subsriptionsAlreadyOnDisk = self.readSubscriptionsFromDisk() {
+            subsriptionsAlreadyOnDisk.append(newSubscription)
+            self.overwriteSubscriptionsToDisk(subsriptionsAlreadyOnDisk)
+        }
+        return nil
     }
 }

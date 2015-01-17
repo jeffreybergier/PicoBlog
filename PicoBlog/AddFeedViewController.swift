@@ -36,11 +36,20 @@ class AddFeedViewController: UIViewController, UITableViewDataSource, UITableVie
     @IBOutlet private weak var feedPreviewTableView: UITableView?
     @IBOutlet private weak var feedLoadingSpinner: UIActivityIndicatorView?
     @IBOutlet private weak var feedURLTextFieldTrailingConstraint: NSLayoutConstraint?
+    @IBOutlet weak var saveButton: UIBarButtonItem?
     
     private var feedURLTextFieldConstraint: (loading: CGFloat, notLoading: CGFloat) = (0.0, 0.0)
     private var feedURLTextFieldTimer: NSTimer?
-    private var isWaitingBeforeStartingURLSession = true
     private var messages: [PicoMessage]?
+    private var feedIsValid: Bool = false {
+        didSet {
+            if self.feedIsValid {
+                self.changeUIToSuccessfulVerificationState()
+            } else {
+                self.changeUIToFailedVerificationState()
+            }
+        }
+    }
     
     private let downloadManager: DownloadManager = DownloadManager(identifier: .SingleSubscription)
     
@@ -48,35 +57,46 @@ class AddFeedViewController: UIViewController, UITableViewDataSource, UITableVie
         super.viewDidLoad()
         
         self.title = NSLocalizedString("Add Subscription", comment: "")
+        
+        // register for notifications
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "subscriptionDownloadedSuccessfully:", name: "newMessagesDownloadedForSingleSubscription", object: nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "subscriptionDownloadFailed:", name: "newMessagesFailedToDownloadForSingleSubscription", object: nil)
         
+        // configure text
         self.feedURLTitleLabel?.text = NSLocalizedString("Feed URL:", comment: "")
         self.feedLoadingSpinner?.stopAnimating()
         
-        // configure the tableview
-        self.feedPreviewTableView?.dataSource = self
-        self.feedPreviewTableView?.delegate = self
+        //disable save button
+        self.feedIsValid = false
         
         // prepare the constants for animating the text input field
         self.feedURLTextFieldConstraint.loading = self.feedURLTextFieldTrailingConstraint!.constant
         self.feedURLTextFieldConstraint.notLoading = -1 * self.feedLoadingSpinner!.frame.size.width
         self.feedURLTextFieldTrailingConstraint?.constant = self.feedURLTextFieldConstraint.notLoading
         
+        // configure the tableview
         self.feedPreviewTableView?.registerNib(UINib(nibName: "FeedTableViewCellWithImage", bundle: NSBundle.mainBundle()), forCellReuseIdentifier: "PicoMessageCellWithImage")
         self.feedPreviewTableView?.registerNib(UINib(nibName: "FeedTableViewCellWithoutImage", bundle: NSBundle.mainBundle()), forCellReuseIdentifier: "PicoMessageCellWithoutImage")
-    }
-    
-    override func viewDidAppear(animated: Bool) {
-        super.viewDidAppear(animated)
+        self.feedPreviewTableView?.delegate = self
+        self.feedPreviewTableView?.dataSource = self
     }
     
     @IBAction private func feedURLTextDidChange(sender: UITextField) {
+        self.feedIsValid = false
         self.changeUIToDownloadingState()
         if let timer = self.feedURLTextFieldTimer {
             timer.invalidate()
         }
         self.feedURLTextFieldTimer = NSTimer.scheduledTimerWithTimeInterval(2.0, target: self, selector: "urlSessionShouldStartTimerFired:", userInfo: nil, repeats: true)
+    }
+    @IBAction private func didTapSaveButton(sender: UIBarButtonItem) {
+        if let subscription = self.createSubscriptionFromTextField() {
+            if let error = PicoDataSource.sharedInstance.subscriptionManager.appendSubscriptionToDisk(subscription) {
+                // do some error handling
+            } else {
+                self.dismissViewControllerAnimated(true, completion: nil)
+            }
+        }
     }
     
     @objc private func urlSessionShouldStartTimerFired(timer: NSTimer) {
@@ -89,6 +109,7 @@ class AddFeedViewController: UIViewController, UITableViewDataSource, UITableVie
     @objc private func subscriptionDownloadedSuccessfully(notification: NSNotification) {
         self.changeUIToNotDownloadingState()
         if self.downloadManager.picoMessagesFinished.count == 1 {
+            self.feedIsValid = true
             for (key, value) in self.downloadManager.picoMessagesFinished {
                 self.messages = value
             }
@@ -101,7 +122,15 @@ class AddFeedViewController: UIViewController, UITableViewDataSource, UITableVie
     }
     
     @objc private func subscriptionDownloadFailed(notification: NSNotification) {
-        self.changeUIToNotDownloadingState()
+        //self.feedIsValid = false
+    }
+    
+    private func createSubscriptionFromTextField() -> Subscription? {
+        let username: String? = self.messages?.last?.user.username
+        let dateString: String = PicoDataSource.sharedInstance.dateFormatter.stringFromDate(NSDate(timeIntervalSinceNow: 0))
+        let urlString: String? = self.feedURLTextField?.text
+        let subscription = Subscription(username: username, unverifiedURLString: urlString, unverifiedDateString: dateString)
+        return subscription
     }
     
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
@@ -129,6 +158,13 @@ class AddFeedViewController: UIViewController, UITableViewDataSource, UITableVie
         return rows
     }
 
+    private func changeUIToFailedVerificationState() {
+        self.saveButton?.enabled = false
+    }
+    
+    private func changeUIToSuccessfulVerificationState() {
+        self.saveButton?.enabled = true
+    }
     
     private func changeUIToDownloadingState() {
         self.feedLoadingSpinner?.startAnimating()
