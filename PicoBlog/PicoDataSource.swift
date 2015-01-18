@@ -55,7 +55,7 @@ class PicoDataSource {
     
     init() {
         self.dateFormatter.dateFormat = "YYYY-MM-dd'-'HH:mm:ssZZZ"
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "newMessagesDownloaded:", name: "newMessagesDownloaded", object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "newMessagesDownloaded:", name: "newMessagesDownloaded", object: self.downloadManager)
     }
     
     @objc private func newMessagesDownloaded(notification: NSNotification) {
@@ -71,7 +71,7 @@ class PicoDataSource {
         })
         self.downloadedMessages = messageArray
         if messageDictionary.count == self.subscriptionManager.readSubscriptionsFromDisk()?.count {
-            NSNotificationCenter.defaultCenter().postNotificationName("DataSourceUpdated", object: nil)
+            NSNotificationCenter.defaultCenter().postNotificationName("DataSourceUpdated", object: self)
         }
     }
     

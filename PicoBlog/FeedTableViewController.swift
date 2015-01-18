@@ -35,7 +35,7 @@ class FeedTableViewController: UITableViewController {
         super.viewDidLoad()
         
         self.title = "Feed"
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "dataSourceUpdated:", name: "DataSourceUpdated", object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "dataSourceUpdated:", name: "DataSourceUpdated", object: PicoDataSource.sharedInstance)
         
         self.updateDataSource()
         

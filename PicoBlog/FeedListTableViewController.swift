@@ -29,14 +29,15 @@
 
 import UIKit
 
-class FeedListTableViewController: UITableViewController {
+class FeedListTableViewController: UITableViewController, UISplitViewControllerDelegate {
     
     var subscriptionList: [Subscription]?
+    var loadedOnceAlready = false
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        self.title = "Manage"
+        self.title = NSLocalizedString("Following", comment: "")
         
         self.tableView.delegate = self
         self.tableView.dataSource = self
@@ -45,12 +46,22 @@ class FeedListTableViewController: UITableViewController {
         
         self.navigationItem.leftBarButtonItem = self.editButtonItem()
         
+        self.splitViewController?.delegate = self
+        
         self.subscriptionList = PicoDataSource.sharedInstance.subscriptionManager.readSubscriptionsFromDisk()
         self.tableView.reloadData()
     }
     
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        //
+        if let navigationController = segue.destinationViewController as? UINavigationController {
+            if let singleFeedTableViewController = navigationController.viewControllers.last as? SingleFeedTableViewController {
+                if let selectedIndexPath = self.tableView.indexPathForSelectedRow() {
+                    if let subscriptionList = self.subscriptionList {
+                        singleFeedTableViewController.subscription = subscriptionList[selectedIndexPath.row]
+                    }
+                }
+            }
+        }
     }
     
     override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -87,5 +98,18 @@ class FeedListTableViewController: UITableViewController {
     @IBAction private func unwindFromAddFeedViewController(segue: UIStoryboardSegue) {
         self.subscriptionList = PicoDataSource.sharedInstance.subscriptionManager.readSubscriptionsFromDisk()
         self.tableView.reloadData()
+    }
+    
+    func splitViewController(splitViewController: UISplitViewController, collapseSecondaryViewController secondaryViewController: UIViewController!, ontoPrimaryViewController primaryViewController: UIViewController!) -> Bool {
+        // this is such a weird issue and a bad way to solve it. But even apple's Master/Detail template does this an its awful.
+        // It fixes a bug where when the splitViewController loads it automatically shows the detail view instead of the master view.
+        var collapse = false
+        
+        if self.loadedOnceAlready == false {
+            collapse = true
+            self.loadedOnceAlready = true
+        }
+        
+        return collapse
     }
 }

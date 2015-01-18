@@ -60,7 +60,6 @@
 		73E2DEBB1A54CA9600D34E95 /* PicoDataSource.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PicoDataSource.swift; sourceTree = "<group>"; };
 		73E2DEBD1A54CAEB00D34E95 /* PicoSubscriptionManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PicoSubscriptionManager.swift; sourceTree = "<group>"; };
 		73E2DEBF1A54CB3300D34E95 /* PicoPostManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PicoPostManager.swift; sourceTree = "<group>"; };
-		73E2DEC11A54CB4600D34E95 /* PicoDownloadManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PicoDownloadManager.swift; sourceTree = "<group>"; };
 		73F0B15C1A5498E400D7BF2C /* FeedTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FeedTableViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -147,7 +146,6 @@
 				73E2DEBB1A54CA9600D34E95 /* PicoDataSource.swift */,
 				73E2DEBD1A54CAEB00D34E95 /* PicoSubscriptionManager.swift */,
 				73E2DEBF1A54CB3300D34E95 /* PicoPostManager.swift */,
-				73E2DEC11A54CB4600D34E95 /* PicoDownloadManager.swift */,
 				736301B41A58A3640011FC87 /* DownloadManager.swift */,
 			);
 			name = Model;

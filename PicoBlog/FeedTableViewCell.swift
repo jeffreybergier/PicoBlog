@@ -53,7 +53,7 @@ class FeedTableViewCell: UITableViewCell {
     override func awakeFromNib() {
         super.awakeFromNib()
         
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "newCellImageDownloaded:", name: "newCellImageDownloaded", object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "newCellImageDownloaded:", name: "newCellImageDownloaded", object: PicoDataSource.sharedInstance.cellDownloadManager)
         
         self.dateFormatter.dateStyle = NSDateFormatterStyle.ShortStyle
         self.dateFormatter.timeStyle = NSDateFormatterStyle.ShortStyle
@@ -125,42 +125,6 @@ class FeedTableViewCell: UITableViewCell {
             }
         }
     }
-    
-//    private func populateAvatarImage() {
-//        if self.userImageView?.image == nil {
-//            if let message = self.messagePost {
-//                if let image = PicoDataSource.sharedInstance.cellDownloadManager.finishedImages[message.user.avatar.url] {
-//                    self.userImageView?.image = image
-//                    PicoDataSource.sharedInstance.cellDownloadManager.tasksInProgress[message.user.avatar.url]?.cancel()
-//                    PicoDataSource.sharedInstance.cellDownloadManager.tasksInProgress.removeValueForKey(message.user.avatar.url)
-//                } else {
-//                    if let existingTask = PicoDataSource.sharedInstance.cellDownloadManager.tasksInProgress[message.user.avatar.url] {
-//                        existingTask.resume()
-//                    } else {
-//                        PicoDataSource.sharedInstance.cellDownloadManager.downloadImageWithURL(message.user.avatar.url)
-//                    }
-//                }
-//            }
-//        }
-//    }
-//    
-//    private func populateMessageImage() {
-//        if self.messageImageView?.image == nil {
-//            if let messageImageURL = self.messagePost?.picture?.url {
-//                if let image = PicoDataSource.sharedInstance.cellDownloadManager.finishedImages[messageImageURL] {
-//                    self.messageImageView?.image = image
-//                    PicoDataSource.sharedInstance.cellDownloadManager.tasksInProgress[messageImageURL]?.cancel()
-//                    PicoDataSource.sharedInstance.cellDownloadManager.tasksInProgress.removeValueForKey(messageImageURL)
-//                } else {
-//                    if let existingTask = PicoDataSource.sharedInstance.cellDownloadManager.tasksInProgress[messageImageURL] {
-//                        existingTask.resume()
-//                    } else {
-//                        PicoDataSource.sharedInstance.cellDownloadManager.downloadImageWithURL(messageImageURL)
-//                    }
-//                }
-//            }
-//        }
-//    }
     
     deinit {
         NSNotificationCenter.defaultCenter().removeObserver(self)

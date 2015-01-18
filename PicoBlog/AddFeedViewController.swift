@@ -59,8 +59,8 @@ class AddFeedViewController: UIViewController, UITableViewDataSource, UITableVie
         self.title = NSLocalizedString("Add Subscription", comment: "")
         
         // register for notifications
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "subscriptionDownloadedSuccessfully:", name: "newMessagesDownloadedForSingleSubscription", object: nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "subscriptionDownloadFailed:", name: "newMessagesFailedToDownloadForSingleSubscription", object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "subscriptionDownloadedSuccessfully:", name: "newMessagesDownloadedForSingleSubscription", object: self.downloadManager)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "subscriptionDownloadFailed:", name: "newMessagesFailedToDownloadForSingleSubscription", object: self.downloadManager)
         
         // configure text
         self.feedURLTitleLabel?.text = NSLocalizedString("Feed URL:", comment: "")
@@ -80,6 +80,8 @@ class AddFeedViewController: UIViewController, UITableViewDataSource, UITableVie
         self.feedPreviewTableView?.delegate = self
         self.feedPreviewTableView?.dataSource = self
         self.feedPreviewTableView?.scrollIndicatorInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: -4)
+        self.feedPreviewTableView?.estimatedRowHeight = 112.0
+        self.feedPreviewTableView?.rowHeight = UITableViewAutomaticDimension
     }
     
     @IBAction private func feedURLTextDidChange(sender: UITextField) {

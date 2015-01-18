@@ -47,9 +47,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                         if let tab = tabArray[i] as? UITabBarItem {
                             switch i {
                             case 0:
-                                tab.title = "Feed"
+                                tab.title = NSLocalizedString("Feed", comment: "")
                             case 1:
-                                tab.title = "Manage"
+                                tab.title = NSLocalizedString("Following", comment: "")
                             default:
                                 break
                             }

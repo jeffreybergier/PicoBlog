@@ -44,7 +44,7 @@ class DownloadManager: NSObject, NSURLSessionDelegate, NSURLSessionDataDelegate 
     var imageDataFinished: [NSURL : UIImage] = [:] {
         didSet {
             if imageDataFinished.count > 50 { self.imageDataFinished = [:] } //clear out the dictionary if it gets too big.
-            NSNotificationCenter.defaultCenter().postNotificationName("newCellImageDownloaded", object: nil)
+            NSNotificationCenter.defaultCenter().postNotificationName("newCellImageDownloaded", object: self)
         }
     }
     private var imageDataInProgress: [NSURLSessionTask : NSMutableData] = [:]
@@ -147,9 +147,9 @@ class DownloadManager: NSObject, NSURLSessionDelegate, NSURLSessionDataDelegate 
     private func postAppropriateSuccessNotification() {
         switch self.identifier {
         case .Subscriptions:
-            NSNotificationCenter.defaultCenter().postNotificationName("newMessagesDownloaded", object: nil)
+            NSNotificationCenter.defaultCenter().postNotificationName("newMessagesDownloaded", object: self)
         case .SingleSubscription:
-            NSNotificationCenter.defaultCenter().postNotificationName("newMessagesDownloadedForSingleSubscription", object: nil)
+            NSNotificationCenter.defaultCenter().postNotificationName("newMessagesDownloadedForSingleSubscription", object: self)
         default:
             break
         }
@@ -161,7 +161,7 @@ class DownloadManager: NSObject, NSURLSessionDelegate, NSURLSessionDataDelegate 
         }
         switch self.identifier {
         case .SingleSubscription:
-            NSNotificationCenter.defaultCenter().postNotificationName("newMessagesFailedToDownloadForSingleSubscription", object: nil)
+            NSNotificationCenter.defaultCenter().postNotificationName("newMessagesFailedToDownloadForSingleSubscription", object: self)
         default:
             break
         }
