@@ -70,6 +70,25 @@ class PicoSubscriptionManager {
         return nil
     }
     
+    func deleteSubscriptionsFromDisk(deletedSubscriptions: [Subscription]) -> NSError? {
+        if var currentSubscriptions = self.readSubscriptionsFromDisk() {
+            for deletedSubscription in deletedSubscriptions {
+                for (index, currentSubscription) in enumerate(currentSubscriptions) {
+                    if deletedSubscription.verifiedURL.string == currentSubscription.verifiedURL.string {
+                        currentSubscriptions.removeAtIndex(index)
+                        break
+                    }
+                }
+            }
+            if let error = self.overwriteSubscriptionsToDisk(currentSubscriptions) {
+                return error
+            }
+        } else {
+            return NSError(domain: "PicoBlog", code: 502, userInfo: nil)
+        }
+        return nil
+    }
+    
     func appendSubscriptionToDisk(newSubscription: Subscription) -> NSError? {
         if var subsriptionsAlreadyOnDisk = self.readSubscriptionsFromDisk() {
             var subscriptionAlreadyExists = false

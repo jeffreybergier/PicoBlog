@@ -92,7 +92,6 @@
                         </connections>
                     </tableView>
                     <navigationItem key="navigationItem" id="gw1-H2-FBI">
-                        <barButtonItem key="leftBarButtonItem" systemItem="edit" id="UzV-nv-f3V"/>
                         <barButtonItem key="rightBarButtonItem" systemItem="add" id="Fa9-1y-Lgh">
                             <connections>
                                 <segue destination="75n-ED-q70" kind="presentation" id="asX-PI-xJR"/>
@@ -128,7 +127,7 @@
                             <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="http://feedurl.pico" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="i8F-o2-wqa">
                                 <rect key="frame" x="16" y="99" width="536" height="30"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                <textInputTraits key="textInputTraits"/>
+                                <textInputTraits key="textInputTraits" keyboardType="URL"/>
                                 <connections>
                                     <action selector="feedURLTextDidChange:" destination="Ltc-wY-gRa" eventType="editingChanged" id="Z86-p0-qvj"/>
                                 </connections>

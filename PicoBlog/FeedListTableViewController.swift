@@ -31,11 +31,7 @@ import UIKit
 
 class FeedListTableViewController: UITableViewController {
     
-    var subscriptionList: [Subscription] = [] {
-        didSet {
-            self.tableView.reloadData()
-        }
-    }
+    var subscriptionList: [Subscription] = []
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -47,8 +43,11 @@ class FeedListTableViewController: UITableViewController {
         self.tableView.estimatedRowHeight = 86.0
         self.tableView.rowHeight = UITableViewAutomaticDimension
         
+        self.navigationItem.leftBarButtonItem = self.editButtonItem()
+        
         if let newSubscriptions = PicoDataSource.sharedInstance.subscriptionManager.readSubscriptionsFromDisk() {
             self.subscriptionList = newSubscriptions
+            self.tableView.reloadData()
         }
     }
     
@@ -66,9 +65,29 @@ class FeedListTableViewController: UITableViewController {
         }
     }
     
+    override func tableView(tableView: UITableView, canEditRowAtIndexPath indexPath: NSIndexPath) -> Bool {
+        return true
+    }
+    
+    override func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath) {
+        if editingStyle == UITableViewCellEditingStyle.Delete {
+            if let error = PicoDataSource.sharedInstance.subscriptionManager.deleteSubscriptionsFromDisk([self.subscriptionList[indexPath.row]]) {
+                // do some error handling
+            } else {
+                if let newSubscriptions = PicoDataSource.sharedInstance.subscriptionManager.readSubscriptionsFromDisk() {
+                    tableView.beginUpdates()
+                    self.subscriptionList = newSubscriptions
+                    tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: UITableViewRowAnimation.Left)
+                    tableView.endUpdates()
+                }
+            }
+        }
+    }
+    
     @IBAction private func unwindFromAddFeedViewController(segue: UIStoryboardSegue) {
         if let newSubscriptions = PicoDataSource.sharedInstance.subscriptionManager.readSubscriptionsFromDisk() {
             self.subscriptionList = newSubscriptions
+            self.tableView.reloadData()
         }
     }
 }
