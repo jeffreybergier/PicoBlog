@@ -72,8 +72,23 @@ class PicoSubscriptionManager {
     
     func appendSubscriptionToDisk(newSubscription: Subscription) -> NSError? {
         if var subsriptionsAlreadyOnDisk = self.readSubscriptionsFromDisk() {
-            subsriptionsAlreadyOnDisk.append(newSubscription)
-            self.overwriteSubscriptionsToDisk(subsriptionsAlreadyOnDisk)
+            var subscriptionAlreadyExists = false
+            for existingSubscription in subsriptionsAlreadyOnDisk {
+                if existingSubscription.verifiedURL.trimmedString == newSubscription.verifiedURL.trimmedString {
+                    subscriptionAlreadyExists = true
+                    break
+                }
+            }
+            if subscriptionAlreadyExists == false {
+                subsriptionsAlreadyOnDisk.append(newSubscription)
+                if let error = self.overwriteSubscriptionsToDisk(subsriptionsAlreadyOnDisk) {
+                    // error provided by nsuserdefaults method
+                    return error
+                }
+            } else {
+                // made up error for subscription already exists
+                return NSError(domain: "PicoBlog", code: 501, userInfo: nil)
+            }
         }
         return nil
     }

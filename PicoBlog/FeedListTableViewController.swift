@@ -31,7 +31,11 @@ import UIKit
 
 class FeedListTableViewController: UITableViewController {
     
-    var subscriptionList: [Subscription] = []
+    var subscriptionList: [Subscription] = [] {
+        didSet {
+            self.tableView.reloadData()
+        }
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -63,6 +67,8 @@ class FeedListTableViewController: UITableViewController {
     }
     
     @IBAction private func unwindFromAddFeedViewController(segue: UIStoryboardSegue) {
-        
+        if let newSubscriptions = PicoDataSource.sharedInstance.subscriptionManager.readSubscriptionsFromDisk() {
+            self.subscriptionList = newSubscriptions
+        }
     }
 }

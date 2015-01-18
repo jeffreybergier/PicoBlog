@@ -154,14 +154,14 @@
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="PAB-A3-IsF">
-                        <barButtonItem key="leftBarButtonItem" systemItem="cancel" id="ABW-3O-DVl">
+                        <barButtonItem key="leftBarButtonItem" tag="101" systemItem="cancel" id="ABW-3O-DVl">
                             <connections>
                                 <segue destination="Wdh-3U-mwD" kind="unwind" unwindAction="unwindFromAddFeedViewController:" id="K0l-JS-2ni"/>
                             </connections>
                         </barButtonItem>
-                        <barButtonItem key="rightBarButtonItem" systemItem="save" id="WVL-TG-mYo">
+                        <barButtonItem key="rightBarButtonItem" tag="102" systemItem="save" id="WVL-TG-mYo">
                             <connections>
-                                <action selector="didTapSaveButton:" destination="Ltc-wY-gRa" id="Ll5-FO-R7C"/>
+                                <segue destination="Wdh-3U-mwD" kind="unwind" unwindAction="unwindFromAddFeedViewController:" id="0Ng-T8-NbV"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>

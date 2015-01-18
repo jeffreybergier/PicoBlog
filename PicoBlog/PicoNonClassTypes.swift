@@ -230,6 +230,7 @@ struct VerifiedDate: DateVerifiable {
 
 struct VerifiedURL: URLVerifiable {
     let string: String
+    let trimmedString: String
     var url: NSURL {
         get {
             return NSURL(string: self.string)!
@@ -239,15 +240,65 @@ struct VerifiedURL: URLVerifiable {
     init?(unverifiedURLString: String?) {
         var success = false
         if let unverifiedURLString = unverifiedURLString {
-            if let url = NSURL(string: unverifiedURLString) {
-                success = true
+            if VerifiedURL.stringContainsURL(unverifiedURLString) {
+                if let url = NSURL(string: unverifiedURLString) {
+                    success = true
+                }
             }
         }
         if success {
             self.string = unverifiedURLString!
+            self.trimmedString = VerifiedURL.trimURLString(unverifiedURLString!)
         } else {
             return nil
         }
+    }
+    
+    static func stringContainsURL(string: String) -> Bool {
+        var matches = false
+        let urlRegEx: NSString = "(http|https)://((\\w)*|([0-9]*)|([-|_])*)+([\\.|/]((\\w)*|([0-9]*)|([-|_])*))+"
+        if let predicate = NSPredicate(format: "SELF MATCHES %@", urlRegEx) {
+            matches = predicate.evaluateWithObject(string)
+        }
+        return matches
+    }
+    
+    static func trimURLString(string: String) -> String {
+        var compiledString = ""
+        var slashStringArray: [String] = []
+        let separatedBySlash = string.componentsSeparatedByString("/")
+        for string in separatedBySlash {
+            if string == "http:" || string == "https:" || string == "" {
+                // do nothing
+            } else {
+                slashStringArray.append(string)
+            }
+        }
+        
+        let dotStringArray = slashStringArray[0].componentsSeparatedByString(".")
+        for var i = 0; i < dotStringArray.count; i++ {
+            if dotStringArray[i] == "www" {
+                // do nothing
+            } else {
+                compiledString += dotStringArray[i]
+                if i < dotStringArray.count - 1 {
+                    compiledString += "."
+                }
+            }
+        }
+    
+        for var i = 0; i<slashStringArray.count; i++ {
+            if i == 0 {
+                compiledString += "/"
+            } else {
+                compiledString += slashStringArray[i]
+                if i < slashStringArray.count - 1 {
+                    compiledString += "/"
+                }
+            }
+        }
+        
+        return compiledString
     }
 }
 

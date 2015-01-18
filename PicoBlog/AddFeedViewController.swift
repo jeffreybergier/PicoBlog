@@ -79,24 +79,42 @@ class AddFeedViewController: UIViewController, UITableViewDataSource, UITableVie
         self.feedPreviewTableView?.registerNib(UINib(nibName: "FeedTableViewCellWithoutImage", bundle: NSBundle.mainBundle()), forCellReuseIdentifier: "PicoMessageCellWithoutImage")
         self.feedPreviewTableView?.delegate = self
         self.feedPreviewTableView?.dataSource = self
+        self.feedPreviewTableView?.scrollIndicatorInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: -4)
     }
     
     @IBAction private func feedURLTextDidChange(sender: UITextField) {
         self.feedIsValid = false
         self.changeUIToDownloadingState()
+        self.messages = nil
+        self.feedPreviewTableView?.reloadData()
         if let timer = self.feedURLTextFieldTimer {
             timer.invalidate()
         }
         self.feedURLTextFieldTimer = NSTimer.scheduledTimerWithTimeInterval(2.0, target: self, selector: "urlSessionShouldStartTimerFired:", userInfo: nil, repeats: true)
     }
-    @IBAction private func didTapSaveButton(sender: UIBarButtonItem) {
-        if let subscription = self.createSubscriptionFromTextField() {
-            if let error = PicoDataSource.sharedInstance.subscriptionManager.appendSubscriptionToDisk(subscription) {
-                // do some error handling
-            } else {
-                self.dismissViewControllerAnimated(true, completion: nil)
+    
+    override func shouldPerformSegueWithIdentifier(identifier: String?, sender: AnyObject?) -> Bool {
+        var shouldSegue = true
+        
+        if let button = sender as? UIBarButtonItem {
+            switch button.tag {
+            case 101:
+                // cancel button
+                break
+            case 102:
+                // Save Button
+                if let subscription = self.createSubscriptionFromTextField() {
+                    if let error = PicoDataSource.sharedInstance.subscriptionManager.appendSubscriptionToDisk(subscription) {
+                        // do some error handling
+                        shouldSegue = false
+                    }
+                }
+            default:
+                break
             }
         }
+        
+        return shouldSegue
     }
     
     @objc private func urlSessionShouldStartTimerFired(timer: NSTimer) {
@@ -117,12 +135,12 @@ class AddFeedViewController: UIViewController, UITableViewDataSource, UITableVie
             NSLog("\(self): Somehow there was more than 1 array of messages. This should not happen since we are downloading a single Subscription.")
         }
         self.downloadManager.picoMessagesFinished = [:]
-        self.view.endEditing(true)
         self.feedPreviewTableView?.reloadData()
     }
     
     @objc private func subscriptionDownloadFailed(notification: NSNotification) {
         //self.feedIsValid = false
+        self.changeUIToNotDownloadingState()
     }
     
     private func createSubscriptionFromTextField() -> Subscription? {
@@ -140,7 +158,7 @@ class AddFeedViewController: UIViewController, UITableViewDataSource, UITableVie
             if messages[indexPath.row].verifiedPictureURL == nil {
                 identifierString = "PicoMessageCellWithoutImage"
             } else {
-                identifierString = "PicoMessageCellWithImage" //"PicoMessageCellWithImage"
+                identifierString = "PicoMessageCellWithImage"
             }
             cell = tableView.dequeueReusableCellWithIdentifier(identifierString, forIndexPath: indexPath)
             if let cell = cell as? FeedTableViewCell {
@@ -164,6 +182,10 @@ class AddFeedViewController: UIViewController, UITableViewDataSource, UITableVie
     
     private func changeUIToSuccessfulVerificationState() {
         self.saveButton?.enabled = true
+    }
+    
+    func scrollViewDidScroll(scrollView: UIScrollView) {
+        self.view.endEditing(true)
     }
     
     private func changeUIToDownloadingState() {
