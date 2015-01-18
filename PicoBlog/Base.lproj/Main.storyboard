@@ -43,6 +43,20 @@
             </objects>
             <point key="canvasLocation" x="914" y="499"/>
         </scene>
+        <!--Item-->
+        <scene sceneID="DCs-3p-ynT">
+            <objects>
+                <splitViewController id="Fua-dx-3PM" sceneMemberID="viewController">
+                    <tabBarItem key="tabBarItem" title="Item" id="drE-hi-9D6"/>
+                    <connections>
+                        <segue destination="e9b-1f-4md" kind="relationship" relationship="masterViewController" id="Eal-7V-djg"/>
+                        <segue destination="70S-cZ-az8" kind="relationship" relationship="detailViewController" id="Icw-sN-VZC"/>
+                    </connections>
+                </splitViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="OmU-SS-owv" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="736" y="-497"/>
+        </scene>
         <!--Feed List Table View Controller-->
         <scene sceneID="roJ-i2-7St">
             <objects>
@@ -83,6 +97,7 @@
                                 <connections>
                                     <outlet property="feedURLTextLabel" destination="NpR-Wh-CWZ" id="NHJ-Sn-fqY"/>
                                     <outlet property="feedUsernameTextLabel" destination="NV6-6H-N5P" id="9gN-me-Gwy"/>
+                                    <segue destination="bgj-sa-mTN" kind="showDetail" id="Kg3-tp-CS7"/>
                                 </connections>
                             </tableViewCell>
                         </prototypes>
@@ -101,7 +116,23 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Rqc-yK-SJK" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1726" y="-282"/>
+            <point key="canvasLocation" x="2224" y="-1011"/>
+        </scene>
+        <!--Navigation Controller-->
+        <scene sceneID="0jB-rI-6YD">
+            <objects>
+                <navigationController id="70S-cZ-az8" sceneMemberID="viewController">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="bii-TE-N9M">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <connections>
+                        <segue destination="bgj-sa-mTN" kind="relationship" relationship="rootViewController" id="vCg-up-6k8"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="HCE-8S-0pQ" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1494" y="-189"/>
         </scene>
         <!--Add Feed View Controller-->
         <scene sceneID="TMW-L1-VYf">
@@ -176,7 +207,7 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="sq0-td-rxi" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <exit id="Wdh-3U-mwD" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
-            <point key="canvasLocation" x="3302" y="-730.5"/>
+            <point key="canvasLocation" x="3694" y="-1011"/>
         </scene>
         <!--Tab Bar Controller-->
         <scene sceneID="Ndf-18-Ona">
@@ -190,7 +221,7 @@
                     </tabBar>
                     <connections>
                         <segue destination="Fwp-Jv-Cdv" kind="relationship" relationship="viewControllers" id="mtD-rC-kBC"/>
-                        <segue destination="e9b-1f-4md" kind="relationship" relationship="viewControllers" id="yX7-mT-Fhp"/>
+                        <segue destination="Fua-dx-3PM" kind="relationship" relationship="viewControllers" id="3fl-1G-JIc"/>
                     </connections>
                 </tabBarController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="pFP-F7-euk" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -214,7 +245,7 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="t7u-Y6-oXW" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="914" y="-282"/>
+            <point key="canvasLocation" x="1494" y="-1011"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="EeX-UM-rSC">
@@ -232,7 +263,29 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Tgx-xK-qN2" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2490" y="-731"/>
+            <point key="canvasLocation" x="2918" y="-1011"/>
+        </scene>
+        <!--Single Feed Table View Controller-->
+        <scene sceneID="VhO-LL-nT7">
+            <objects>
+                <tableViewController id="bgj-sa-mTN" customClass="SingleFeedTableViewController" customModule="PicoBlog" customModuleProvider="target" sceneMemberID="viewController">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="V2O-tP-YbD">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <connections>
+                            <outlet property="dataSource" destination="bgj-sa-mTN" id="g7o-PF-OGv"/>
+                            <outlet property="delegate" destination="bgj-sa-mTN" id="E8W-pU-4fz"/>
+                        </connections>
+                    </tableView>
+                    <navigationItem key="navigationItem" id="0pS-Ic-oOC"/>
+                </tableViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="yNX-3Z-i3a" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="2224" y="-189"/>
         </scene>
     </scenes>
+    <inferredMetricsTieBreakers>
+        <segue reference="vCg-up-6k8"/>
+    </inferredMetricsTieBreakers>
 </document>

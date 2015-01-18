@@ -31,7 +31,7 @@ import UIKit
 
 class FeedListTableViewController: UITableViewController {
     
-    var subscriptionList: [Subscription] = []
+    var subscriptionList: [Subscription]?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -45,20 +45,22 @@ class FeedListTableViewController: UITableViewController {
         
         self.navigationItem.leftBarButtonItem = self.editButtonItem()
         
-        if let newSubscriptions = PicoDataSource.sharedInstance.subscriptionManager.readSubscriptionsFromDisk() {
-            self.subscriptionList = newSubscriptions
-            self.tableView.reloadData()
-        }
+        self.subscriptionList = PicoDataSource.sharedInstance.subscriptionManager.readSubscriptionsFromDisk()
+        self.tableView.reloadData()
+    }
+    
+    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+        //
     }
     
     override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return self.subscriptionList.count
+        return self.subscriptionList?.count ?? 0
     }
     
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         if let cell = tableView.dequeueReusableCellWithIdentifier("FeedListTableViewCell") as? FeedListTableViewCell {
-            cell.feedUsernameTextLabel?.text = self.subscriptionList[indexPath.row].username
-            cell.feedURLTextLabel?.text = self.subscriptionList[indexPath.row].verifiedURL.string
+            cell.feedUsernameTextLabel?.text = self.subscriptionList![indexPath.row].username
+            cell.feedURLTextLabel?.text = self.subscriptionList![indexPath.row].verifiedURL.string
             return cell
         } else {
             return UITableViewCell()
@@ -71,23 +73,19 @@ class FeedListTableViewController: UITableViewController {
     
     override func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath) {
         if editingStyle == UITableViewCellEditingStyle.Delete {
-            if let error = PicoDataSource.sharedInstance.subscriptionManager.deleteSubscriptionsFromDisk([self.subscriptionList[indexPath.row]]) {
+            if let error = PicoDataSource.sharedInstance.subscriptionManager.deleteSubscriptionsFromDisk([self.subscriptionList![indexPath.row]]) {
                 // do some error handling
             } else {
-                if let newSubscriptions = PicoDataSource.sharedInstance.subscriptionManager.readSubscriptionsFromDisk() {
-                    tableView.beginUpdates()
-                    self.subscriptionList = newSubscriptions
-                    tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: UITableViewRowAnimation.Left)
-                    tableView.endUpdates()
-                }
+                tableView.beginUpdates()
+                self.subscriptionList = PicoDataSource.sharedInstance.subscriptionManager.readSubscriptionsFromDisk()
+                tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: UITableViewRowAnimation.Left)
+                tableView.endUpdates()
             }
         }
     }
     
     @IBAction private func unwindFromAddFeedViewController(segue: UIStoryboardSegue) {
-        if let newSubscriptions = PicoDataSource.sharedInstance.subscriptionManager.readSubscriptionsFromDisk() {
-            self.subscriptionList = newSubscriptions
-            self.tableView.reloadData()
-        }
+        self.subscriptionList = PicoDataSource.sharedInstance.subscriptionManager.readSubscriptionsFromDisk()
+        self.tableView.reloadData()
     }
 }

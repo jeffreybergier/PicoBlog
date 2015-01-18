@@ -10,6 +10,7 @@
 		732BA0DA1A560E690079D07F /* PicoNonClassTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 732BA0D91A560E690079D07F /* PicoNonClassTypes.swift */; };
 		73400DA21A67471B0033D949 /* FeedTableViewCellWithImage.xib in Resources */ = {isa = PBXBuildFile; fileRef = 73400DA11A67471B0033D949 /* FeedTableViewCellWithImage.xib */; };
 		73400DA41A6751210033D949 /* FeedTableViewCellWithoutImage.xib in Resources */ = {isa = PBXBuildFile; fileRef = 73400DA31A6751210033D949 /* FeedTableViewCellWithoutImage.xib */; };
+		734273131A6B614800BE2B68 /* SingleFeedTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 734273121A6B614800BE2B68 /* SingleFeedTableViewController.swift */; };
 		7354C3481A5B83890059D185 /* FeedListTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7354C3471A5B83890059D185 /* FeedListTableViewController.swift */; };
 		736301B51A58A3640011FC87 /* DownloadManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 736301B41A58A3640011FC87 /* DownloadManager.swift */; };
 		73636CB11A6604BB000451D8 /* AddFeedViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73636CB01A6604BB000451D8 /* AddFeedViewController.swift */; };
@@ -40,6 +41,7 @@
 		732BA0D91A560E690079D07F /* PicoNonClassTypes.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PicoNonClassTypes.swift; sourceTree = "<group>"; };
 		73400DA11A67471B0033D949 /* FeedTableViewCellWithImage.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = FeedTableViewCellWithImage.xib; sourceTree = "<group>"; };
 		73400DA31A6751210033D949 /* FeedTableViewCellWithoutImage.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = FeedTableViewCellWithoutImage.xib; sourceTree = "<group>"; };
+		734273121A6B614800BE2B68 /* SingleFeedTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SingleFeedTableViewController.swift; sourceTree = "<group>"; };
 		7354C3471A5B83890059D185 /* FeedListTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FeedListTableViewController.swift; sourceTree = "<group>"; };
 		736301B41A58A3640011FC87 /* DownloadManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DownloadManager.swift; sourceTree = "<group>"; };
 		73636CB01A6604BB000451D8 /* AddFeedViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddFeedViewController.swift; sourceTree = "<group>"; };
@@ -158,6 +160,7 @@
 				7373D8221A575B1A006CA25B /* FeedTableViewCell.swift */,
 				7354C3471A5B83890059D185 /* FeedListTableViewController.swift */,
 				736ECB911A5CE332000C2BB1 /* FeedListTableViewCell.swift */,
+				734273121A6B614800BE2B68 /* SingleFeedTableViewController.swift */,
 				73636CB01A6604BB000451D8 /* AddFeedViewController.swift */,
 			);
 			name = Controller;
@@ -287,6 +290,7 @@
 				736301B51A58A3640011FC87 /* DownloadManager.swift in Sources */,
 				73F0B15D1A5498E400D7BF2C /* FeedTableViewController.swift in Sources */,
 				7354C3481A5B83890059D185 /* FeedListTableViewController.swift in Sources */,
+				734273131A6B614800BE2B68 /* SingleFeedTableViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
