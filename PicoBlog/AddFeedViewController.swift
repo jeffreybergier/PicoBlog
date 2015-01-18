@@ -121,8 +121,19 @@ class AddFeedViewController: UIViewController, UITableViewDataSource, UITableVie
     
     @objc private func urlSessionShouldStartTimerFired(timer: NSTimer) {
         timer.invalidate()
-        if let url = NSURL(string: self.feedURLTextField!.text) {
-            self.downloadManager.downloadURLArray([url])
+        if let originalString: String = self.feedURLTextField?.text {
+            let array = originalString.componentsSeparatedByString(":")
+            var correctedString: String
+            
+            if array.first == "http" || array.first == "https" {
+                correctedString = originalString
+            } else {
+                correctedString = "http://" + originalString
+            }
+            
+            if let url = NSURL(string: correctedString) {
+                self.downloadManager.downloadURLArray([url])
+            }
         }
     }
     
