@@ -16,7 +16,7 @@ Pico Blog will take a cue from the old world of the internet. The technology mod
 ## Story Backlog
 ### MVP Stories
   1. ~~The hosted files must conform to a standard plain text format (i.e. JSON, RSS, XML, etc). A format must be chosen and clear key, value pairs chosen for what a message needs to contain. (username, message, date, picture link?, etc)~~
-  1. The user needs be able to subscribe to multiple other users feeds. They are files hosted on any HTTP / HTTPS server.
+  1. ~~The user needs be able to subscribe to multiple other users feeds. They are files hosted on any HTTP / HTTPS server.~~
   1. ~~The user needs be able to see all the messages from all of the subscribed URL's in date order in a table view.~~
   1. The user needs to post new messages by using the Transmit extension to upload a file with the new message via FTP/SFTP to their server.
  
