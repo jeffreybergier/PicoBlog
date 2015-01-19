@@ -52,6 +52,13 @@ class FeedListTableViewController: UITableViewController, UISplitViewControllerD
         self.tableView.reloadData()
     }
     
+    override func viewDidAppear(animated: Bool) {
+        super.viewDidAppear(animated)
+        if let selectedCellIndex = self.tableView.indexPathForSelectedRow() {
+            self.tableView.deselectRowAtIndexPath(selectedCellIndex, animated: true)
+        }
+    }
+    
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
         if let navigationController = segue.destinationViewController as? UINavigationController {
             if let singleFeedTableViewController = navigationController.viewControllers.last as? SingleFeedTableViewController {
@@ -111,5 +118,9 @@ class FeedListTableViewController: UITableViewController, UISplitViewControllerD
         }
         
         return collapse
+    }
+    
+    override func supportedInterfaceOrientations() -> Int {
+        return Int(UIInterfaceOrientationMask.All.rawValue)
     }
 }

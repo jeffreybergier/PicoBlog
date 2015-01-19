@@ -110,13 +110,17 @@ class FeedTableViewController: UITableViewController {
         if PicoDataSource.sharedInstance.downloadedMessages[indexPath.row].verifiedPictureURL == nil {
             identifierString = "PicoMessageCellWithoutImage"
         } else {
-            identifierString = "PicoMessageCellWithImage" //"PicoMessageCellWithImage"
+            identifierString = "PicoMessageCellWithImage"
         }
         let cell: AnyObject = tableView.dequeueReusableCellWithIdentifier(identifierString, forIndexPath: indexPath)
         if let cell = cell as? FeedTableViewCell {
             cell.messagePost = PicoDataSource.sharedInstance.downloadedMessages[indexPath.row]
         }
         return cell as UITableViewCell
+    }
+    
+    override func supportedInterfaceOrientations() -> Int {
+        return Int(UIInterfaceOrientationMask.All.rawValue)
     }
     
     deinit {

@@ -231,6 +231,10 @@ class AddFeedViewController: UIViewController, UITableViewDataSource, UITableVie
         })
     }
     
+    override func supportedInterfaceOrientations() -> Int {
+        return Int(UIInterfaceOrientationMask.All.rawValue)
+    }
+    
     deinit {
         NSNotificationCenter.defaultCenter().removeObserver(self)
     }

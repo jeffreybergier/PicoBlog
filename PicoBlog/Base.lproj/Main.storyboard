@@ -22,10 +22,10 @@
             </objects>
             <point key="canvasLocation" x="254" y="-657"/>
         </scene>
-        <!--Tab Bar Controller-->
+        <!--Upside Down Tab Bar Controller-->
         <scene sceneID="yde-82-i9V">
             <objects>
-                <tabBarController id="og3-U9-zBM" sceneMemberID="viewController">
+                <tabBarController id="og3-U9-zBM" customClass="UpsideDownTabBarController" customModule="PicoBlog" customModuleProvider="target" sceneMemberID="viewController">
                     <nil key="simulatedBottomBarMetrics"/>
                     <tabBar key="tabBar" contentMode="scaleToFill" id="499-9G-IS1">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="49"/>
