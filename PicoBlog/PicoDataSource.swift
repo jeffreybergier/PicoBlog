@@ -38,7 +38,6 @@ class PicoDataSource {
     let cellDownloadManager = DownloadManager(identifier: .CellImages)
     
     var currentUser = User(username: "jeffburg", unverifiedFeedURLString: "http://www.jeffburg.com/pico/feed1.pico", unverifiedAvatarURLString: "http://www.jeffburg.com/pico/images/123456789_small.jpeg")!
-    var downloadedMessages: [PicoMessage] = []
     
     class var sharedInstance: PicoDataSource {
         struct Static {
@@ -55,27 +54,5 @@ class PicoDataSource {
     
     init() {
         self.dateFormatter.dateFormat = "YYYY-MM-dd'-'HH:mm:ssZZZ"
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "newMessagesDownloaded:", name: "newMessagesDownloaded", object: self.downloadManager)
-    }
-    
-    @objc private func newMessagesDownloaded(notification: NSNotification) {
-        let messageDictionary = self.downloadManager.picoMessagesFinished
-        var messageArray: [PicoMessage] = []
-        for (key, value) in messageDictionary {
-            messageArray += value
-        }
-        messageArray.sort({
-            let firstDate = $0.verifiedDate.date
-            let secondDate = $1.verifiedDate.date
-            return firstDate.compare(secondDate) == NSComparisonResult.OrderedAscending
-        })
-        self.downloadedMessages = messageArray
-        if messageDictionary.count == self.subscriptionManager.readSubscriptionsFromDisk()?.count {
-            NSNotificationCenter.defaultCenter().postNotificationName("DataSourceUpdated", object: self)
-        }
-    }
-    
-    deinit {
-        NSNotificationCenter.defaultCenter().removeObserver(self)
     }
 }

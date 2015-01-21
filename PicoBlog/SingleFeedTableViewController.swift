@@ -33,18 +33,27 @@ class SingleFeedTableViewController: UITableViewController {
     
     var subscription: Subscription? {
         didSet {
-            self.downloadManager.downloadURLArray([self.subscription!.verifiedURL.url])
+            if let subscription = self.subscription {
+                if let messages = PicoDataSource.sharedInstance.downloadManager.picoMessagesFinished[subscription] {
+                    self.messages = messages
+                } else {
+                    PicoDataSource.sharedInstance.downloadManager.downloadSubscriptionArray([subscription])
+                }
+            }
         }
     }
-    private var messages: [PicoMessage]?
-    private let downloadManager: DownloadManager = DownloadManager(identifier: .SingleSubscription)
+    private var messages: [PicoMessage]? {
+        didSet {
+            self.tableView.reloadData()
+        }
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         // register for notifications
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "subscriptionDownloadedSuccessfully:", name: "newMessagesDownloadedForSingleSubscription", object: self.downloadManager)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "subscriptionDownloadFailed:", name: "newMessagesFailedToDownloadForSingleSubscription", object: self.downloadManager)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "subscriptionDownloadedSuccessfully:", name: "newMessagesDownloadedForSingleSubscription", object: PicoDataSource.sharedInstance.downloadManager)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "subscriptionDownloadFailed:", name: "newMessagesFailedToDownloadForSingleSubscription", object: PicoDataSource.sharedInstance.downloadManager)
         
         // configure the navigation bar for the splitviewcontroller
         self.navigationItem.leftBarButtonItem = splitViewController?.displayModeButtonItem()
@@ -60,15 +69,11 @@ class SingleFeedTableViewController: UITableViewController {
     }
     
     @objc private func subscriptionDownloadedSuccessfully(notification: NSNotification) {
-        if self.downloadManager.picoMessagesFinished.count == 1 {
-            for (key, value) in self.downloadManager.picoMessagesFinished {
-                self.messages = value
+        if let subscription = self.subscription {
+            if let messages = PicoDataSource.sharedInstance.downloadManager.picoMessagesFinished[subscription] {
+                self.messages = messages
             }
-        } else {
-            NSLog("\(self): Somehow there was more than 1 array of messages. This should not happen since we are downloading a single Subscription.")
         }
-        self.downloadManager.picoMessagesFinished = [:]
-        self.tableView.reloadData()
     }
     
     @objc private func subscriptionDownloadFailed(notification: NSNotification) {

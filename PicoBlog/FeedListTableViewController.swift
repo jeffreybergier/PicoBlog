@@ -49,6 +49,9 @@ class FeedListTableViewController: UITableViewController, UISplitViewControllerD
         self.splitViewController?.delegate = self
         
         self.subscriptionList = PicoDataSource.sharedInstance.subscriptionManager.readSubscriptionsFromDisk()
+        if let subscriptionList = self.subscriptionList {
+            PicoDataSource.sharedInstance.downloadManager.downloadSubscriptionArray(subscriptionList)
+        }
         self.tableView.reloadData()
     }
     

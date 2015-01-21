@@ -30,9 +30,8 @@
 import UIKit
 import CoreLocation
 
-struct PicoMessage: Writable {
+struct PicoMessage: Writable, Hashable {
     
-    let id: String
     let user: User
     let text: String
     let verifiedDate: VerifiedDate
@@ -49,7 +48,6 @@ struct PicoMessage: Writable {
         
         if let verifiedDate = VerifiedDate(unverifiedDateString: unverifiedDateString) {
             self.verifiedDate = verifiedDate
-            self.id = unverifiedDateString + messageText
         } else {
             return nil
         }
@@ -134,9 +132,17 @@ struct PicoMessage: Writable {
         return NSDictionary(dictionary: mutableDictionary)
     }
     
-    private func generateMD5(#seedString: NSString) -> NSString {
-        return seedString
+    var hashValue: Int {
+        get {
+            let combinedString = self.verifiedDate.string + self.text
+            return combinedString.hashValue
+        }
     }
+}
+
+// This is for Equatable on PicoMessage struct
+func ==(lhs: PicoMessage, rhs: PicoMessage) -> Bool {
+    return lhs.verifiedDate.string == rhs.verifiedDate.string && lhs.text == rhs.text
 }
 
 struct User {
@@ -163,7 +169,7 @@ struct User {
     }
 }
 
-struct Subscription: Writable {
+struct Subscription: Writable, Hashable {
     let username: String
     let verifiedDate: VerifiedDate
     let verifiedURL: VerifiedURL
@@ -204,6 +210,17 @@ struct Subscription: Writable {
         let dictionary: NSDictionary = ["urlString" : self.verifiedURL.string, "dateString" : self.verifiedDate.string, "username" : self.username]
         return dictionary
     }
+    
+    var hashValue: Int {
+        get {
+            let combinedString = self.verifiedURL.string + self.verifiedDate.string
+            return combinedString.hashValue
+        }
+    }
+}
+// This is for Equatable on Subscription struct
+func ==(lhs: Subscription, rhs: Subscription) -> Bool {
+    return lhs.verifiedURL.string == rhs.verifiedURL.string && lhs.verifiedDate.string == rhs.verifiedDate.string
 }
 
 struct VerifiedDate: DateVerifiable {

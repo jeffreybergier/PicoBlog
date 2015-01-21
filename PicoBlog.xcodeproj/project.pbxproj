@@ -25,7 +25,6 @@
 		73E2DEBC1A54CA9600D34E95 /* PicoDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73E2DEBB1A54CA9600D34E95 /* PicoDataSource.swift */; };
 		73E2DEBE1A54CAEB00D34E95 /* PicoSubscriptionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73E2DEBD1A54CAEB00D34E95 /* PicoSubscriptionManager.swift */; };
 		73E2DEC01A54CB3300D34E95 /* PicoPostManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73E2DEBF1A54CB3300D34E95 /* PicoPostManager.swift */; };
-		73F0B15D1A5498E400D7BF2C /* FeedTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73F0B15C1A5498E400D7BF2C /* FeedTableViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -62,7 +61,6 @@
 		73E2DEBB1A54CA9600D34E95 /* PicoDataSource.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PicoDataSource.swift; sourceTree = "<group>"; };
 		73E2DEBD1A54CAEB00D34E95 /* PicoSubscriptionManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PicoSubscriptionManager.swift; sourceTree = "<group>"; };
 		73E2DEBF1A54CB3300D34E95 /* PicoPostManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PicoPostManager.swift; sourceTree = "<group>"; };
-		73F0B15C1A5498E400D7BF2C /* FeedTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FeedTableViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -157,7 +155,6 @@
 			isa = PBXGroup;
 			children = (
 				7370A18D1A6C87870032AF12 /* UpsideDownTabBarController.swift */,
-				73F0B15C1A5498E400D7BF2C /* FeedTableViewController.swift */,
 				7373D8221A575B1A006CA25B /* FeedTableViewCell.swift */,
 				7354C3471A5B83890059D185 /* FeedListTableViewController.swift */,
 				736ECB911A5CE332000C2BB1 /* FeedListTableViewCell.swift */,
@@ -290,7 +287,6 @@
 				73636CB11A6604BB000451D8 /* AddFeedViewController.swift in Sources */,
 				73E2DEC01A54CB3300D34E95 /* PicoPostManager.swift in Sources */,
 				736301B51A58A3640011FC87 /* DownloadManager.swift in Sources */,
-				73F0B15D1A5498E400D7BF2C /* FeedTableViewController.swift in Sources */,
 				7354C3481A5B83890059D185 /* FeedListTableViewController.swift in Sources */,
 				734273131A6B614800BE2B68 /* SingleFeedTableViewController.swift in Sources */,
 			);
