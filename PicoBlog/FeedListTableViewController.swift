@@ -32,12 +32,13 @@ import UIKit
 class FeedListTableViewController: UITableViewController, UISplitViewControllerDelegate {
     
     var subscriptionList: [Subscription]?
-    var loadedOnceAlready = false
+    private var loadedOnceAlready = false
+    private var cellIndexPathOffset = 1
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        self.title = NSLocalizedString("Following", comment: "")
+        self.title = NSLocalizedString("Menu", comment: "")
         
         self.tableView.delegate = self
         self.tableView.dataSource = self
@@ -67,7 +68,13 @@ class FeedListTableViewController: UITableViewController, UISplitViewControllerD
             if let singleFeedTableViewController = navigationController.viewControllers.last as? SingleFeedTableViewController {
                 if let selectedIndexPath = self.tableView.indexPathForSelectedRow() {
                     if let subscriptionList = self.subscriptionList {
-                        singleFeedTableViewController.subscription = subscriptionList[selectedIndexPath.row]
+                        if selectedIndexPath.row < self.cellIndexPathOffset {
+                            singleFeedTableViewController.subscriptions = subscriptionList
+                            singleFeedTableViewController.title = NSLocalizedString("Feed", comment: "")
+                        } else {
+                            singleFeedTableViewController.subscriptions = [subscriptionList[selectedIndexPath.row - self.cellIndexPathOffset]]
+                            singleFeedTableViewController.title = NSLocalizedString("\(subscriptionList[selectedIndexPath.row - self.cellIndexPathOffset].username)", comment: "")
+                        }
                     }
                 }
             }
@@ -75,17 +82,24 @@ class FeedListTableViewController: UITableViewController, UISplitViewControllerD
     }
     
     override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return self.subscriptionList?.count ?? 0
+        if let subscriptionListCount = self.subscriptionList?.count {
+            return subscriptionListCount + self.cellIndexPathOffset
+        } else {
+            return 0
+        }
     }
     
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        if let cell = tableView.dequeueReusableCellWithIdentifier("FeedListTableViewCell") as? FeedListTableViewCell {
-            cell.feedUsernameTextLabel?.text = self.subscriptionList![indexPath.row].username
-            cell.feedURLTextLabel?.text = self.subscriptionList![indexPath.row].verifiedURL.string
-            return cell
-        } else {
-            return UITableViewCell()
+        var cell: AnyObject!
+        cell = tableView.dequeueReusableCellWithIdentifier("FeedListTableViewCell")
+        if let cell = cell as? FeedListTableViewCell {
+            if indexPath.row < self.cellIndexPathOffset {
+                cell.feedUsernameTextLabel?.text = "All Subscriptions"
+            } else {
+                cell.feedUsernameTextLabel?.text = self.subscriptionList![indexPath.row - self.cellIndexPathOffset].username
+            }
         }
+        return cell as UITableViewCell
     }
     
     override func tableView(tableView: UITableView, canEditRowAtIndexPath indexPath: NSIndexPath) -> Bool {

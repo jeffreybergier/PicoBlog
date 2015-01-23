@@ -39,25 +39,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
         
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "notificationPosted:", name: nil, object: nil)
+        
         if let initialViewController = self.storyboard.instantiateInitialViewController() as? UIViewController {
-            
-            if let tabBarController = initialViewController as? UITabBarController {
-                if let tabArray = tabBarController.tabBar.items {
-                    for var i=0; i<tabArray.count; i++ {
-                        if let tab = tabArray[i] as? UITabBarItem {
-                            switch i {
-                            case 0:
-                                tab.title = NSLocalizedString("Feed", comment: "")
-                            case 1:
-                                tab.title = NSLocalizedString("Following", comment: "")
-                            default:
-                                break
-                            }
-                        }
-                    }
-                }
-            }
-            
             self.window.rootViewController = initialViewController
             self.window.backgroundColor = UIColor.whiteColor()
             self.window.makeKeyAndVisible()
@@ -66,6 +50,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
         
         return true
+    }
+    
+    @objc private func notificationPosted(notification: NSNotification) {
+        let name = notification.name
+        
+        if !name.hasPrefix("UI") && !name.hasPrefix("_UI") && !name.hasPrefix("_NS") && !name.hasPrefix("NS") && !name.hasSuffix("Scrolling") && !name.hasPrefix("Buffer") {
+            NSLog("AppDelegate: Notification Posted: \(notification.name)")
+        }
     }
 
     func applicationWillResignActive(application: UIApplication) {

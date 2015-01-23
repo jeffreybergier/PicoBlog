@@ -6,60 +6,6 @@
     </dependencies>
     <scenes>
         <!--Item-->
-        <scene sceneID="3vl-9Q-gZ3">
-            <objects>
-                <navigationController id="f8U-Lb-vlh" sceneMemberID="viewController">
-                    <tabBarItem key="tabBarItem" title="Item" id="f1S-Lr-7Ju"/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="IfS-gc-jha">
-                        <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
-                        <autoresizingMask key="autoresizingMask"/>
-                    </navigationBar>
-                    <connections>
-                        <segue destination="2zQ-SW-l1E" kind="relationship" relationship="rootViewController" id="nfK-Rw-H1R"/>
-                    </connections>
-                </navigationController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="HQ1-w2-Sv1" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="254" y="-657"/>
-        </scene>
-        <!--Upside Down Tab Bar Controller-->
-        <scene sceneID="yde-82-i9V">
-            <objects>
-                <tabBarController id="og3-U9-zBM" customClass="UpsideDownTabBarController" customModule="PicoBlog" customModuleProvider="target" sceneMemberID="viewController">
-                    <nil key="simulatedBottomBarMetrics"/>
-                    <tabBar key="tabBar" contentMode="scaleToFill" id="499-9G-IS1">
-                        <rect key="frame" x="0.0" y="0.0" width="320" height="49"/>
-                        <autoresizingMask key="autoresizingMask"/>
-                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
-                    </tabBar>
-                    <connections>
-                        <segue destination="f8U-Lb-vlh" kind="relationship" relationship="viewControllers" id="3vP-uM-QuT"/>
-                    </connections>
-                </tabBarController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="lEP-yh-p2I" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="-702" y="347"/>
-        </scene>
-        <!--Pico-->
-        <scene sceneID="PHb-dZ-kU0">
-            <objects>
-                <tableViewController restorationIdentifier="FeedTableViewController" id="2zQ-SW-l1E" customClass="FeedTableViewController" customModule="PicoBlog" customModuleProvider="target" sceneMemberID="viewController">
-                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="134" sectionHeaderHeight="22" sectionFooterHeight="22" id="0nD-2Y-YEO">
-                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                        <connections>
-                            <outlet property="dataSource" destination="2zQ-SW-l1E" id="dG0-aE-IYC"/>
-                            <outlet property="delegate" destination="2zQ-SW-l1E" id="g9x-KO-nAo"/>
-                        </connections>
-                    </tableView>
-                    <navigationItem key="navigationItem" title="Pico" id="Lus-Jc-rxz"/>
-                </tableViewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="Ehy-uy-5i8" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="1108" y="-657"/>
-        </scene>
-        <!--Item-->
         <scene sceneID="DCs-3p-ynT">
             <objects>
                 <splitViewController id="Fua-dx-3PM" sceneMemberID="viewController">
@@ -83,36 +29,26 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <prototypes>
-                            <tableViewCell contentMode="scaleToFill" selectionStyle="default" accessoryType="disclosureIndicator" indentationWidth="10" reuseIdentifier="FeedListTableViewCell" rowHeight="77" id="2d1-9q-Bhn" customClass="FeedListTableViewCell" customModule="PicoBlog" customModuleProvider="target">
+                            <tableViewCell contentMode="scaleToFill" selectionStyle="default" accessoryType="disclosureIndicator" indentationWidth="10" reuseIdentifier="FeedListTableViewCell" rowHeight="55" id="2d1-9q-Bhn" customClass="FeedListTableViewCell" customModule="PicoBlog" customModuleProvider="target">
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="2d1-9q-Bhn" id="Jpk-7H-f1w">
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="252" verticalCompressionResistancePriority="752" text="username" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="NV6-6H-N5P">
-                                            <rect key="frame" x="8" y="8" width="73.5" height="33"/>
+                                            <rect key="frame" x="8" y="16" width="73.5" height="22.5"/>
                                             <fontDescription key="fontDescription" style="UICTFontTextStyleHeadline"/>
-                                            <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
-                                            <nil key="highlightedColor"/>
-                                        </label>
-                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="253" verticalCompressionResistancePriority="753" text="http://www.website.com/url/url2/picofeed.pico" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="NpR-Wh-CWZ">
-                                            <rect key="frame" x="8" y="49" width="338" height="19.5"/>
-                                            <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
                                             <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                             <nil key="highlightedColor"/>
                                         </label>
                                     </subviews>
                                     <constraints>
-                                        <constraint firstItem="NpR-Wh-CWZ" firstAttribute="top" secondItem="NV6-6H-N5P" secondAttribute="bottom" constant="8" id="8Nj-as-EH9"/>
                                         <constraint firstAttribute="trailingMargin" relation="greaterThanOrEqual" secondItem="NV6-6H-N5P" secondAttribute="trailing" id="NLf-Ih-dAO"/>
-                                        <constraint firstAttribute="trailingMargin" relation="greaterThanOrEqual" secondItem="NpR-Wh-CWZ" secondAttribute="trailing" id="U1l-Ph-mSc"/>
-                                        <constraint firstItem="NV6-6H-N5P" firstAttribute="top" secondItem="Jpk-7H-f1w" secondAttribute="topMargin" id="YZF-mV-bwW"/>
-                                        <constraint firstAttribute="bottomMargin" secondItem="NpR-Wh-CWZ" secondAttribute="bottom" id="k7j-Wk-usq"/>
-                                        <constraint firstItem="NpR-Wh-CWZ" firstAttribute="leading" secondItem="Jpk-7H-f1w" secondAttribute="leadingMargin" id="poi-e0-NTw"/>
+                                        <constraint firstItem="NV6-6H-N5P" firstAttribute="top" secondItem="Jpk-7H-f1w" secondAttribute="topMargin" constant="8" id="YZF-mV-bwW"/>
+                                        <constraint firstAttribute="bottomMargin" secondItem="NV6-6H-N5P" secondAttribute="bottom" constant="8" id="stm-jf-GSd"/>
                                         <constraint firstItem="NV6-6H-N5P" firstAttribute="leading" secondItem="Jpk-7H-f1w" secondAttribute="leadingMargin" id="xLo-hg-uEK"/>
                                     </constraints>
                                 </tableViewCellContentView>
                                 <connections>
-                                    <outlet property="feedURLTextLabel" destination="NpR-Wh-CWZ" id="NHJ-Sn-fqY"/>
                                     <outlet property="feedUsernameTextLabel" destination="NV6-6H-N5P" id="9gN-me-Gwy"/>
                                     <segue destination="70S-cZ-az8" kind="showDetail" id="dyg-Vq-fLG"/>
                                 </connections>
@@ -224,7 +160,7 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="sq0-td-rxi" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <exit id="Wdh-3U-mwD" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
-            <point key="canvasLocation" x="3582" y="260"/>
+            <point key="canvasLocation" x="3706" y="260"/>
         </scene>
         <!--Item-->
         <scene sceneID="o01-Je-qMv">
@@ -261,7 +197,7 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Tgx-xK-qN2" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2806" y="260"/>
+            <point key="canvasLocation" x="2930" y="260"/>
         </scene>
         <!--Single Feed Table View Controller-->
         <scene sceneID="VhO-LL-nT7">
@@ -284,6 +220,6 @@
         </scene>
     </scenes>
     <inferredMetricsTieBreakers>
-        <segue reference="Icw-sN-VZC"/>
+        <segue reference="dyg-Vq-fLG"/>
     </inferredMetricsTieBreakers>
 </document>

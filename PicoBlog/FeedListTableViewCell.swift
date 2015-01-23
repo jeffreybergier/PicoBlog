@@ -31,7 +31,6 @@ import UIKit
 
 class FeedListTableViewCell: UITableViewCell {
     
-    @IBOutlet weak var feedURLTextLabel: UILabel?
     @IBOutlet weak var feedUsernameTextLabel: UILabel?
     
     override func awakeFromNib() {

@@ -31,17 +31,12 @@ import UIKit
 
 class SingleFeedTableViewController: UITableViewController {
     
-    var subscription: Subscription? {
+    var subscriptions: [Subscription]? {
         didSet {
-            if let subscription = self.subscription {
-                if let messages = PicoDataSource.sharedInstance.downloadManager.picoMessagesFinished[subscription] {
-                    self.messages = messages
-                } else {
-                    PicoDataSource.sharedInstance.downloadManager.downloadSubscriptionArray([subscription])
-                }
-            }
+            self.didSetSubscriptionsProperty()
         }
     }
+    private var messagesDictionary: [Subscription : [PicoMessage]] = [:]
     private var messages: [PicoMessage]? {
         didSet {
             self.tableView.reloadData()
@@ -64,16 +59,48 @@ class SingleFeedTableViewController: UITableViewController {
         self.tableView.registerNib(UINib(nibName: "FeedTableViewCellWithoutImage", bundle: NSBundle.mainBundle()), forCellReuseIdentifier: "PicoMessageCellWithoutImage")
         self.tableView.delegate = self
         self.tableView.dataSource = self
-        self.tableView.estimatedRowHeight = 112.0
+        self.tableView.estimatedRowHeight = 60.0
         self.tableView.rowHeight = UITableViewAutomaticDimension
     }
     
-    @objc private func subscriptionDownloadedSuccessfully(notification: NSNotification) {
-        if let subscription = self.subscription {
-            if let messages = PicoDataSource.sharedInstance.downloadManager.picoMessagesFinished[subscription] {
-                self.messages = messages
+    private func didSetSubscriptionsProperty() {
+        if let subscriptions = self.subscriptions {
+            for subscription in subscriptions {
+                if let newMessages = PicoDataSource.sharedInstance.downloadManager.picoMessagesFinished[subscription] {
+                    self.messagesDictionary[subscription] = newMessages
+                } else {
+                    PicoDataSource.sharedInstance.downloadManager.downloadSubscriptionArray([subscription])
+                }
+            }
+            NSLog("ArrayCount: \(self.subscriptions?.count)... DictCount: \(self.messagesDictionary.count)")
+            if self.subscriptions?.count == self.messagesDictionary.count {
+                for (key, value) in self.messagesDictionary {
+                    if self.messages != nil {
+                        var unsortedMessages: [PicoMessage] = self.messages!
+                        unsortedMessages += value
+                        let sortedMessages = self.sortPicoMessageArrayByDate(unsortedMessages)
+                        self.messages = sortedMessages
+                    } else {
+                        self.messages = self.sortPicoMessageArrayByDate(value)
+                    }
+                }
             }
         }
+    }
+    
+    private func sortPicoMessageArrayByDate(inputArray: [PicoMessage]) -> [PicoMessage] {
+        var sortedArray = inputArray
+        sortedArray.sort({
+            let firstDate = $0.verifiedDate.date
+            let secondDate = $1.verifiedDate.date
+            return firstDate.compare(secondDate) == NSComparisonResult.OrderedAscending
+        })
+
+        return sortedArray
+    }
+    
+    @objc private func subscriptionDownloadedSuccessfully(notification: NSNotification) {
+        self.didSetSubscriptionsProperty()
     }
     
     @objc private func subscriptionDownloadFailed(notification: NSNotification) {
