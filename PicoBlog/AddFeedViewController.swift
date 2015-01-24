@@ -36,8 +36,15 @@ class AddFeedViewController: UIViewController, UITableViewDataSource, UITableVie
     @IBOutlet private weak var feedPreviewTableView: UITableView?
     @IBOutlet private weak var feedLoadingSpinner: UIActivityIndicatorView?
     @IBOutlet private weak var feedURLTextFieldTrailingConstraint: NSLayoutConstraint?
-    @IBOutlet weak var saveButton: UIBarButtonItem?
+    @IBOutlet private weak var saveButton: UIBarButtonItem?
     
+    private let downloadManager = PicoDataSource.sharedInstance.downloadManager
+    
+    private var subscription: Subscription? {
+        didSet {
+            NSLog("\(self.subscription)")
+        }
+    }
     private var feedURLTextFieldConstraint: (loading: CGFloat, notLoading: CGFloat) = (0.0, 0.0)
     private var feedURLTextFieldTimer: NSTimer?
     private var messages: [PicoMessage]?
@@ -51,16 +58,14 @@ class AddFeedViewController: UIViewController, UITableViewDataSource, UITableVie
         }
     }
     
-    private let downloadManager: DownloadManager = DownloadManager(identifier: .SingleSubscription)
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         
         self.title = NSLocalizedString("Add Subscription", comment: "")
         
         // register for notifications
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "subscriptionDownloadedSuccessfully:", name: "newMessagesDownloadedForSingleSubscription", object: self.downloadManager)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "subscriptionDownloadFailed:", name: "newMessagesFailedToDownloadForSingleSubscription", object: self.downloadManager)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "subscriptionDownloadedSuccessfully:", name: "subscriptionDownloadedSuccessfully", object: PicoDataSource.sharedInstance.downloadManager)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "subscriptionDownloadFailed:", name: "subscriptionDownloadFailed", object: PicoDataSource.sharedInstance.downloadManager)
         
         // configure text
         self.feedURLTitleLabel?.text = NSLocalizedString("Feed URL:", comment: "")
@@ -87,6 +92,7 @@ class AddFeedViewController: UIViewController, UITableViewDataSource, UITableVie
     @IBAction private func feedURLTextDidChange(sender: UITextField) {
         self.feedIsValid = false
         self.changeUIToDownloadingState()
+        self.subscription = nil
         self.messages = nil
         self.feedPreviewTableView?.reloadData()
         if let timer = self.feedURLTextFieldTimer {
@@ -131,28 +137,28 @@ class AddFeedViewController: UIViewController, UITableViewDataSource, UITableVie
                 correctedString = "http://" + originalString
             }
             
-            if let url = NSURL(string: correctedString) {
-                self.downloadManager.downloadURLArray([url])
+            if let tempSubscription = Subscription(username: "tempTemp", unverifiedURLString: correctedString, unverifiedDateString: PicoDataSource.sharedInstance.dateFormatter.stringFromDate(NSDate(timeIntervalSinceNow: 0))) {
+                self.subscription = tempSubscription
+                PicoDataSource.sharedInstance.downloadManager.downloadSubscriptionArray([tempSubscription])
             }
         }
     }
     
     @objc private func subscriptionDownloadedSuccessfully(notification: NSNotification) {
         self.changeUIToNotDownloadingState()
-        if self.downloadManager.picoMessagesFinished.count == 1 {
-            self.feedIsValid = true
-            for (key, value) in self.downloadManager.picoMessagesFinished {
-                self.messages = value
+        
+        if let subscription = self.subscription {
+            if let messages = PicoDataSource.sharedInstance.downloadManager.picoMessagesFinished[subscription] {
+                self.feedIsValid = true
+                self.messages = messages
             }
-        } else {
-            NSLog("\(self): Somehow there was more than 1 array of messages. This should not happen since we are downloading a single Subscription.")
         }
-        self.downloadManager.picoMessagesFinished = [:]
         self.feedPreviewTableView?.reloadData()
     }
     
     @objc private func subscriptionDownloadFailed(notification: NSNotification) {
         //self.feedIsValid = false
+        self.subscription = nil
         self.changeUIToNotDownloadingState()
     }
     

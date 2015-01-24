@@ -33,13 +33,32 @@ class SingleFeedTableViewController: UITableViewController {
     
     var subscriptions: [Subscription]? {
         didSet {
+            if let subscriptions = self.subscriptions {
+                if subscriptions.count > 1 {
+                    self.title = NSLocalizedString("Feed", comment: "")
+                } else {
+                    if let lastObject = subscriptions.last {
+                        self.title = NSLocalizedString("\(lastObject.username)", comment: "")
+                    }
+                }
+            }
             self.didSetSubscriptionsProperty()
+        }
+    }
+    weak var fakeSplitViewController: UISplitViewController? { //For some reason, this VC's splitviewcontroller property is nil?!
+        didSet {
+            // configure the navigation bar for the splitviewcontroller
+            self.navigationItem.leftBarButtonItem = self.fakeSplitViewController?.displayModeButtonItem()
+            self.navigationItem.leftItemsSupplementBackButton = true
         }
     }
     private var messagesDictionary: [Subscription : [PicoMessage]] = [:]
     private var messages: [PicoMessage]? {
         didSet {
-            self.tableView.reloadData()
+            if self.messages != nil {
+                self.tableView.reloadData()
+                let pointlessRefreshControlTimer = NSTimer.scheduledTimerWithTimeInterval(0.3, target: self, selector: "pointlessRefreshControlTimer:", userInfo: nil, repeats: false)
+            }
         }
     }
     
@@ -47,12 +66,12 @@ class SingleFeedTableViewController: UITableViewController {
         super.viewDidLoad()
         
         // register for notifications
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "subscriptionDownloadedSuccessfully:", name: "newMessagesDownloadedForSingleSubscription", object: PicoDataSource.sharedInstance.downloadManager)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "subscriptionDownloadFailed:", name: "newMessagesFailedToDownloadForSingleSubscription", object: PicoDataSource.sharedInstance.downloadManager)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "subscriptionDownloadedSuccessfully:", name: "subscriptionDownloadedSuccessfully", object: PicoDataSource.sharedInstance.downloadManager)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "subscriptionDownloadFailed:", name: "subscriptionDownloadFailed", object: PicoDataSource.sharedInstance.downloadManager)
         
-        // configure the navigation bar for the splitviewcontroller
-        self.navigationItem.leftBarButtonItem = splitViewController?.displayModeButtonItem()
-        self.navigationItem.leftItemsSupplementBackButton = true
+        // configure pull to refresh
+        self.refreshControl = UIRefreshControl()
+        self.refreshControl?.addTarget(self, action: "userPulledToRefresh:", forControlEvents: UIControlEvents.ValueChanged)
         
         // configure the tableview
         self.tableView.registerNib(UINib(nibName: "FeedTableViewCellWithImage", bundle: NSBundle.mainBundle()), forCellReuseIdentifier: "PicoMessageCellWithImage")
@@ -72,7 +91,6 @@ class SingleFeedTableViewController: UITableViewController {
                     PicoDataSource.sharedInstance.downloadManager.downloadSubscriptionArray([subscription])
                 }
             }
-            NSLog("ArrayCount: \(self.subscriptions?.count)... DictCount: \(self.messagesDictionary.count)")
             if self.subscriptions?.count == self.messagesDictionary.count {
                 for (key, value) in self.messagesDictionary {
                     if self.messages != nil {
@@ -105,6 +123,31 @@ class SingleFeedTableViewController: UITableViewController {
     
     @objc private func subscriptionDownloadFailed(notification: NSNotification) {
         // do some error handling
+        if self.refreshControl?.refreshing == true {
+            self.refreshControl?.endRefreshing()
+        }
+    }
+    
+    @objc private func userPulledToRefresh(sender: UIRefreshControl) {
+        // clear out the messages array
+        self.messages = nil
+        
+        // remove the messages already downloaded in the data source dictionary
+        if let subscriptions = self.subscriptions {
+            for subscription in subscriptions {
+                PicoDataSource.sharedInstance.downloadManager.picoMessagesFinished.removeValueForKey(subscription)
+            }
+        }
+        
+        // run through setup as if this view controller were loading for the first time.
+        self.didSetSubscriptionsProperty()
+    }
+    
+    @objc private func pointlessRefreshControlTimer(timer: NSTimer) {
+        timer.invalidate()
+        if self.refreshControl?.refreshing == true {
+            self.refreshControl?.endRefreshing()
+        }
     }
     
     override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {

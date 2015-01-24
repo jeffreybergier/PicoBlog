@@ -349,5 +349,5 @@ protocol Writable {
 }
 
 enum DownloadManagerIdentifier {
-    case Subscriptions, CellImages, SingleSubscription
+    case Subscriptions, CellImages
 }

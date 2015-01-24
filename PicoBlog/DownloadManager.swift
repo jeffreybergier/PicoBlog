@@ -44,7 +44,6 @@ class DownloadManager: NSObject, NSURLSessionDelegate, NSURLSessionDataDelegate 
     var imageDataFinished: [NSURL : UIImage] = [:] {
         didSet {
             if imageDataFinished.count > 50 { self.imageDataFinished = [:] } //clear out the dictionary if it gets too big.
-            NSNotificationCenter.defaultCenter().postNotificationName("newCellImageDownloaded", object: self)
         }
     }
     private var imageDataInProgress: [NSURLSessionTask : NSMutableData] = [:]
@@ -53,19 +52,6 @@ class DownloadManager: NSObject, NSURLSessionDelegate, NSURLSessionDataDelegate 
     var picoMessagesFinished: [Subscription : [PicoMessage]] = [:]
     private var picoMessageTasksInProgress: [NSURL : (task: NSURLSessionTask, subscription: Subscription)] = [:]
     private var picoMessageDataInProgress: [NSURLSessionTask : NSMutableData] = [:]
-    private var subscriptionDownloadsInProgress: Int = 0 {
-        didSet {
-            // this is an attempt to reset this number to 0 if networking issues happen
-            // this is probably important to solve bugs because this object is basically a singleton
-            if self.subscriptionDownloadsInProgress != 0 {
-                if let timer = self.subscriptionTimer {
-                    timer.invalidate()
-                    self.subscriptionTimer = nil
-                }
-                self.subscriptionTimer = NSTimer.scheduledTimerWithTimeInterval(10.0, target: self, selector: "subscriptionDownloadTimeoutTimerFired:", userInfo: nil, repeats: false)
-            }
-        }
-    }
     private var subscriptionTimer: NSTimer?
     
     init(identifier: DownloadManagerIdentifier) {
@@ -80,6 +66,8 @@ class DownloadManager: NSObject, NSURLSessionDelegate, NSURLSessionDataDelegate 
             switch self.identifier {
             case .CellImages:
                 self.imageTasksInProgress[url] = task
+            case .Subscriptions:
+                NSLog("\(self): This method should not be used on this instance. This is a subscription instance and this method is for images.")
             default:
                 break
             }
@@ -91,12 +79,23 @@ class DownloadManager: NSObject, NSURLSessionDelegate, NSURLSessionDataDelegate 
             let task = self.session.dataTaskWithURL(subscription.verifiedURL.url)
             task.resume()
             switch self.identifier {
-            case .SingleSubscription, .Subscriptions:
+            case .Subscriptions:
                 self.picoMessageTasksInProgress[subscription.verifiedURL.url] = (task, subscription)
-                self.subscriptionDownloadsInProgress++
             default:
                 break
             }
+        }
+        switch self.identifier {
+        case .Subscriptions:
+            // this is an attempt to reset this number to 0 if networking issues happen
+            // this is probably important to solve bugs because this object is basically a singleton
+            if let timer = self.subscriptionTimer {
+                timer.invalidate()
+                self.subscriptionTimer = nil
+            }
+            self.subscriptionTimer = NSTimer.scheduledTimerWithTimeInterval(12.0, target: self, selector: "subscriptionDownloadTimeoutTimerFired:", userInfo: nil, repeats: false)
+        default:
+            break
         }
     }
     
@@ -105,7 +104,7 @@ class DownloadManager: NSObject, NSURLSessionDelegate, NSURLSessionDataDelegate 
         switch self.identifier {
         case .CellImages:
             dataInProgress = self.imageDataInProgress[dataTask]
-        case .SingleSubscription, .Subscriptions:
+        case .Subscriptions:
             dataInProgress = self.picoMessageDataInProgress[dataTask]
         }
         
@@ -115,7 +114,7 @@ class DownloadManager: NSObject, NSURLSessionDelegate, NSURLSessionDataDelegate 
             switch self.identifier {
             case .CellImages:
                 self.imageDataInProgress[dataTask] = NSMutableData(data: data)
-            case .SingleSubscription, .Subscriptions:
+            case .Subscriptions:
                 self.picoMessageDataInProgress[dataTask] = NSMutableData(data: data)
             }
         }
@@ -123,32 +122,38 @@ class DownloadManager: NSObject, NSURLSessionDelegate, NSURLSessionDataDelegate 
     
     func URLSession(session: NSURLSession, task: NSURLSessionTask, didCompleteWithError error: NSError?) {
         switch self.identifier {
+        
         case .CellImages:
             if let data = self.imageDataInProgress[task] {
                 if let image = UIImage(data: data) {
                     self.imageDataFinished[task.originalRequest.URL] = image
+                    self.postAppropriateSuccessNotification()
                 }
             }
             self.imageDataInProgress.removeValueForKey(task)
             self.imageTasksInProgress.removeValueForKey(task.originalRequest.URL)
-        case .SingleSubscription, .Subscriptions:
+        
+        case .Subscriptions:
             if let tuple = self.picoMessageTasksInProgress[task.originalRequest.URL] {
                 if let messageArray = self.generatePicoMessagesFromJSONArray(self.verifyJSONData(self.picoMessageDataInProgress[task])) {
                     self.picoMessagesFinished[tuple.subscription] = messageArray
-                    self.subscriptionDownloadsInProgress--
                     self.postAppropriateSuccessNotification()
                 }
             }
+            self.picoMessageDataInProgress.removeValueForKey(task)
             self.picoMessageTasksInProgress.removeValueForKey(task.originalRequest.URL)
         }
+       
         self.postAppropriateFailureNotification(error: error)
     }
     
     @objc private func subscriptionDownloadTimeoutTimerFired(timer: NSTimer) {
         timer.invalidate()
         self.subscriptionTimer = nil
-        if self.subscriptionDownloadsInProgress != 0 {
-            self.subscriptionDownloadsInProgress == 0
+        if self.picoMessageTasksInProgress.count > 0 {
+            for (key, value) in self.picoMessageTasksInProgress {
+                self.picoMessageTasksInProgress.removeValueForKey(key)
+            }
             self.postAppropriateSuccessNotification()
         }
     }
@@ -181,11 +186,11 @@ class DownloadManager: NSObject, NSURLSessionDelegate, NSURLSessionDataDelegate 
     private func postAppropriateSuccessNotification() {
         switch self.identifier {
         case .Subscriptions:
-            if self.subscriptionDownloadsInProgress == 0 {
-                NSNotificationCenter.defaultCenter().postNotificationName("DataSourceUpdated", object: self)
+            if self.picoMessageTasksInProgress.count == 0 {
+                NSNotificationCenter.defaultCenter().postNotificationName("subscriptionDownloadedSuccessfully", object: self)
             }
-        case .SingleSubscription:
-            NSNotificationCenter.defaultCenter().postNotificationName("newMessagesDownloadedForSingleSubscription", object: self)
+        case .CellImages:
+            NSNotificationCenter.defaultCenter().postNotificationName("newCellImageDownloaded", object: self)
         default:
             break
         }
@@ -195,8 +200,8 @@ class DownloadManager: NSObject, NSURLSessionDelegate, NSURLSessionDataDelegate 
         if let error = error {
             NSLog("\(self): Error: \(error)")
             switch self.identifier {
-            case .SingleSubscription:
-                NSNotificationCenter.defaultCenter().postNotificationName("newMessagesFailedToDownloadForSingleSubscription", object: self)
+            case .Subscriptions:
+                NSNotificationCenter.defaultCenter().postNotificationName("subscriptionDownloadFailed", object: self)
             default:
                 break
             }

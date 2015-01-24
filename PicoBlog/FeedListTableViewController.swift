@@ -33,7 +33,7 @@ class FeedListTableViewController: UITableViewController, UISplitViewControllerD
     
     var subscriptionList: [Subscription]?
     private var loadedOnceAlready = false
-    private var cellIndexPathOffset = 1
+    //private let cellIndexPathOffset = 1
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -68,24 +68,31 @@ class FeedListTableViewController: UITableViewController, UISplitViewControllerD
             if let singleFeedTableViewController = navigationController.viewControllers.last as? SingleFeedTableViewController {
                 if let selectedIndexPath = self.tableView.indexPathForSelectedRow() {
                     if let subscriptionList = self.subscriptionList {
-                        if selectedIndexPath.row < self.cellIndexPathOffset {
+                        if selectedIndexPath.section == 0 {
                             singleFeedTableViewController.subscriptions = subscriptionList
-                            singleFeedTableViewController.title = NSLocalizedString("Feed", comment: "")
                         } else {
-                            singleFeedTableViewController.subscriptions = [subscriptionList[selectedIndexPath.row - self.cellIndexPathOffset]]
-                            singleFeedTableViewController.title = NSLocalizedString("\(subscriptionList[selectedIndexPath.row - self.cellIndexPathOffset].username)", comment: "")
+                            singleFeedTableViewController.subscriptions = [subscriptionList[selectedIndexPath.row /*- self.cellIndexPathOffset*/]]
                         }
                     }
+                    singleFeedTableViewController.fakeSplitViewController = segue.sourceViewController.splitViewController
                 }
             }
         }
     }
     
+    override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
+        return 2
+    }
+
     override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if let subscriptionListCount = self.subscriptionList?.count {
-            return subscriptionListCount + self.cellIndexPathOffset
+        if section == 0 {
+            return 1
         } else {
-            return 0
+            if let subscriptionListCount = self.subscriptionList?.count {
+                return subscriptionListCount //+ self.cellIndexPathOffset
+            } else {
+                return 0
+            }
         }
     }
     
@@ -93,28 +100,35 @@ class FeedListTableViewController: UITableViewController, UISplitViewControllerD
         var cell: AnyObject!
         cell = tableView.dequeueReusableCellWithIdentifier("FeedListTableViewCell")
         if let cell = cell as? FeedListTableViewCell {
-            if indexPath.row < self.cellIndexPathOffset {
+            if indexPath.section == 0 {
                 cell.feedUsernameTextLabel?.text = "All Subscriptions"
             } else {
-                cell.feedUsernameTextLabel?.text = self.subscriptionList![indexPath.row - self.cellIndexPathOffset].username
+                cell.feedUsernameTextLabel?.text = self.subscriptionList![indexPath.row /*- self.cellIndexPathOffset */].username
             }
         }
         return cell as UITableViewCell
     }
     
     override func tableView(tableView: UITableView, canEditRowAtIndexPath indexPath: NSIndexPath) -> Bool {
-        return true
+        if indexPath.section == 0 {
+            return false
+        } else {
+            return true
+        }
     }
     
     override func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath) {
-        if editingStyle == UITableViewCellEditingStyle.Delete {
-            if let error = PicoDataSource.sharedInstance.subscriptionManager.deleteSubscriptionsFromDisk([self.subscriptionList![indexPath.row]]) {
-                // do some error handling
-            } else {
-                tableView.beginUpdates()
-                self.subscriptionList = PicoDataSource.sharedInstance.subscriptionManager.readSubscriptionsFromDisk()
-                tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: UITableViewRowAnimation.Left)
-                tableView.endUpdates()
+        if indexPath.section > 0 {
+            if editingStyle == UITableViewCellEditingStyle.Delete {
+                if let error = PicoDataSource.sharedInstance.subscriptionManager.deleteSubscriptionsFromDisk([self.subscriptionList![indexPath.row]]) {
+                    // do some error handling
+                } else {
+                    tableView.beginUpdates()
+                    self.subscriptionList = PicoDataSource.sharedInstance.subscriptionManager.readSubscriptionsFromDisk()
+                    tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: UITableViewRowAnimation.Left)
+                    tableView.endUpdates()
+                    //tableView.endEditing(true)
+                }
             }
         }
     }

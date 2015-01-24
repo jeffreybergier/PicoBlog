@@ -39,7 +39,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
         
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "notificationPosted:", name: nil, object: nil)
+        //NSNotificationCenter.defaultCenter().addObserver(self, selector: "notificationPosted:", name: nil, object: nil)
         
         if let initialViewController = self.storyboard.instantiateInitialViewController() as? UIViewController {
             self.window.rootViewController = initialViewController
