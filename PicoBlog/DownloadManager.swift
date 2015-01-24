@@ -31,8 +31,6 @@ import UIKit
 
 class DownloadManager: NSObject, NSURLSessionDelegate, NSURLSessionDataDelegate {
     
-    let identifier: DownloadManagerIdentifier
-    
     private lazy var session: NSURLSession = {
         let configuration = NSURLSessionConfiguration.defaultSessionConfiguration()
         let session = NSURLSession(configuration: configuration, delegate: self, delegateQueue:NSOperationQueue.mainQueue())
@@ -40,171 +38,38 @@ class DownloadManager: NSObject, NSURLSessionDelegate, NSURLSessionDataDelegate 
         }()
     
     // CellImages Properties
-    var imageTasksInProgress: [NSURL : NSURLSessionTask] = [:]
-    var imageDataFinished: [NSURL : UIImage] = [:] {
-        didSet {
-            if imageDataFinished.count > 50 { self.imageDataFinished = [:] } //clear out the dictionary if it gets too big.
-        }
-    }
-    private var imageDataInProgress: [NSURLSessionTask : NSMutableData] = [:]
-    
-    // Subscriptions Properties
-    var picoMessagesFinished: [Subscription : [PicoMessage]] = [:]
-    private var picoMessageTasksInProgress: [NSURL : (task: NSURLSessionTask, subscription: Subscription)] = [:]
-    private var picoMessageDataInProgress: [NSURLSessionTask : NSMutableData] = [:]
-    private var subscriptionTimer: NSTimer?
-    
-    init(identifier: DownloadManagerIdentifier) {
-        self.identifier = identifier
-        super.init()
-    }
+    var dataFinished: [NSURL : NSData] = [:]
+    var tasksInProgress: [NSURL : NSURLSessionTask] = [:]
+    private var dataInProgress: [NSURLSessionTask : NSMutableData] = [:]
     
     func downloadURLArray(urlArray: [NSURL]) {
         for url in urlArray {
             let task = self.session.dataTaskWithURL(url)
             task.resume()
-            switch self.identifier {
-            case .CellImages:
-                self.imageTasksInProgress[url] = task
-            case .Subscriptions:
-                NSLog("\(self): This method should not be used on this instance. This is a subscription instance and this method is for images.")
-            default:
-                break
-            }
-        }
-    }
-    
-    func downloadSubscriptionArray(subscriptionArray: [Subscription]) {
-        for subscription in subscriptionArray {
-            let task = self.session.dataTaskWithURL(subscription.verifiedURL.url)
-            task.resume()
-            switch self.identifier {
-            case .Subscriptions:
-                self.picoMessageTasksInProgress[subscription.verifiedURL.url] = (task, subscription)
-            default:
-                break
-            }
-        }
-        switch self.identifier {
-        case .Subscriptions:
-            // this is an attempt to reset this number to 0 if networking issues happen
-            // this is probably important to solve bugs because this object is basically a singleton
-            if let timer = self.subscriptionTimer {
-                timer.invalidate()
-                self.subscriptionTimer = nil
-            }
-            self.subscriptionTimer = NSTimer.scheduledTimerWithTimeInterval(12.0, target: self, selector: "subscriptionDownloadTimeoutTimerFired:", userInfo: nil, repeats: false)
-        default:
-            break
+            self.tasksInProgress[url] = task
         }
     }
     
     func URLSession(session: NSURLSession, dataTask: NSURLSessionDataTask, didReceiveData data: NSData) {
-        var dataInProgress: NSMutableData?
-        switch self.identifier {
-        case .CellImages:
-            dataInProgress = self.imageDataInProgress[dataTask]
-        case .Subscriptions:
-            dataInProgress = self.picoMessageDataInProgress[dataTask]
-        }
-        
-        if let existingData = dataInProgress {
+        if let existingData = self.dataInProgress[dataTask] {
             existingData.appendData(data)
         } else {
-            switch self.identifier {
-            case .CellImages:
-                self.imageDataInProgress[dataTask] = NSMutableData(data: data)
-            case .Subscriptions:
-                self.picoMessageDataInProgress[dataTask] = NSMutableData(data: data)
-            }
+            self.dataInProgress[dataTask] = NSMutableData(data: data)
         }
     }
     
-    func URLSession(session: NSURLSession, task: NSURLSessionTask, didCompleteWithError error: NSError?) {
-        switch self.identifier {
-        
-        case .CellImages:
-            if let data = self.imageDataInProgress[task] {
-                if let image = UIImage(data: data) {
-                    self.imageDataFinished[task.originalRequest.URL] = image
-                    self.postAppropriateSuccessNotification()
-                }
+    func URLSession(session: NSURLSession, task: NSURLSessionTask, didCompleteWithError error: NSError!) {
+        if error == nil {
+            if let mutableData = self.dataInProgress[task] {
+                let immutableData = NSData(data: mutableData)
+                self.dataFinished[task.originalRequest.URL] = immutableData
+                NSNotificationCenter.defaultCenter().postNotificationName("dataDownloadedSuccessfully", object: self)
             }
-            self.imageDataInProgress.removeValueForKey(task)
-            self.imageTasksInProgress.removeValueForKey(task.originalRequest.URL)
-        
-        case .Subscriptions:
-            if let tuple = self.picoMessageTasksInProgress[task.originalRequest.URL] {
-                if let messageArray = self.generatePicoMessagesFromJSONArray(self.verifyJSONData(self.picoMessageDataInProgress[task])) {
-                    self.picoMessagesFinished[tuple.subscription] = messageArray
-                    self.postAppropriateSuccessNotification()
-                }
-            }
-            self.picoMessageDataInProgress.removeValueForKey(task)
-            self.picoMessageTasksInProgress.removeValueForKey(task.originalRequest.URL)
+        } else {
+            NSLog("\(self): Error downloading data: \(error)")
+            NSNotificationCenter.defaultCenter().postNotificationName("dataDownloadFailed", object: self)
         }
-       
-        self.postAppropriateFailureNotification(error: error)
-    }
-    
-    @objc private func subscriptionDownloadTimeoutTimerFired(timer: NSTimer) {
-        timer.invalidate()
-        self.subscriptionTimer = nil
-        if self.picoMessageTasksInProgress.count > 0 {
-            for (key, value) in self.picoMessageTasksInProgress {
-                self.picoMessageTasksInProgress.removeValueForKey(key)
-            }
-            self.postAppropriateSuccessNotification()
-        }
-    }
-    
-    private func verifyJSONData(data: NSData?) -> [NSDictionary]? {
-        if let data = data {
-            let jsonData: AnyObject? = NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions.MutableContainers, error: nil)
-            if let jsonArray = jsonData as? [NSDictionary] {
-                return jsonArray
-            }
-        }
-        return nil
-    }
-    
-    private func generatePicoMessagesFromJSONArray(jsonArray: [NSDictionary]?) -> [PicoMessage]? {
-        if let array = jsonArray {
-            var picoMessageArray: [PicoMessage] = []
-            for dictionary in array {
-                if let message = PicoMessage(dictionary: dictionary) {
-                    picoMessageArray.append(message)
-                }
-            }
-            if picoMessageArray.count > 0 {
-                return picoMessageArray
-            }
-        }
-        return nil
-    }
-    
-    private func postAppropriateSuccessNotification() {
-        switch self.identifier {
-        case .Subscriptions:
-            if self.picoMessageTasksInProgress.count == 0 {
-                NSNotificationCenter.defaultCenter().postNotificationName("subscriptionDownloadedSuccessfully", object: self)
-            }
-        case .CellImages:
-            NSNotificationCenter.defaultCenter().postNotificationName("newCellImageDownloaded", object: self)
-        default:
-            break
-        }
-    }
-    
-    private func postAppropriateFailureNotification(error: NSError? = nil) {
-        if let error = error {
-            NSLog("\(self): Error: \(error)")
-            switch self.identifier {
-            case .Subscriptions:
-                NSNotificationCenter.defaultCenter().postNotificationName("subscriptionDownloadFailed", object: self)
-            default:
-                break
-            }
-        }
+        self.dataInProgress.removeValueForKey(task)
+        self.tasksInProgress.removeValueForKey(task.originalRequest.URL)
     }
 }

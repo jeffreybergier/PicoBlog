@@ -46,13 +46,7 @@ class PicoSubscriptionManager {
         if subscriptions.count > 0 {
             return subscriptions
         } else {
-            // fake data files for now
-            let sub1 = Subscription(username: "jeffburg", unverifiedURLString: "http://www.jeffburg.com/pico/jeffburg.pico", unverifiedDateString: "2015-01-02-10:40:52-0800")!
-            let sub2 = Subscription(username: "amazeballs", unverifiedURLString: "http://www.jeffburg.com/pico/amazeballs.pico", unverifiedDateString: "2015-01-01-10:40:52-0800")!
-            subscriptions.append(sub1)
-            subscriptions.append(sub2)
-            
-            return subscriptions
+            return nil
         }
     }
     
@@ -65,8 +59,10 @@ class PicoSubscriptionManager {
         if mutableArray.count > 0 {
             let array = NSArray(array: mutableArray)
             self.userDefaults.setObject(array, forKey: "Subscriptions")
-            self.userDefaults.synchronize()
+        } else {
+            self.userDefaults.removeObjectForKey("Subscriptions")
         }
+        self.userDefaults.synchronize()
         return nil
     }
     
@@ -107,6 +103,12 @@ class PicoSubscriptionManager {
             } else {
                 // made up error for subscription already exists
                 return NSError(domain: "PicoBlog", code: 501, userInfo: nil)
+            }
+        } else {
+            // nothing is on the disk, so just set it
+            if let error = self.overwriteSubscriptionsToDisk([newSubscription]) {
+                // error provided by nsuserdefaults method
+                return error
             }
         }
         return nil

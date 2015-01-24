@@ -32,8 +32,6 @@ import UIKit
 class FeedListTableViewController: UITableViewController, UISplitViewControllerDelegate {
     
     var subscriptionList: [Subscription]?
-    private var loadedOnceAlready = false
-    //private let cellIndexPathOffset = 1
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -49,17 +47,20 @@ class FeedListTableViewController: UITableViewController, UISplitViewControllerD
         
         self.splitViewController?.delegate = self
         
-        self.subscriptionList = PicoDataSource.sharedInstance.subscriptionManager.readSubscriptionsFromDisk()
-        if let subscriptionList = self.subscriptionList {
-            PicoDataSource.sharedInstance.downloadManager.downloadSubscriptionArray(subscriptionList)
-        }
+        self.readSubscriptionsFromDisk()
         self.tableView.reloadData()
     }
     
-    override func viewDidAppear(animated: Bool) {
-        super.viewDidAppear(animated)
-        if let selectedCellIndex = self.tableView.indexPathForSelectedRow() {
-            self.tableView.deselectRowAtIndexPath(selectedCellIndex, animated: true)
+    private func readSubscriptionsFromDisk() {
+        self.subscriptionList = PicoDataSource.sharedInstance.subscriptionManager.readSubscriptionsFromDisk()
+        if let subscriptionList = self.subscriptionList {
+            var urlArray: [NSURL] = []
+            for subscription in subscriptionList {
+                urlArray.append(subscription.verifiedURL.url)
+            }
+            if urlArray.count > 0 {
+                PicoDataSource.sharedInstance.messageDownloadManager.downloadURLArray(urlArray)
+            }
         }
     }
     
@@ -74,7 +75,6 @@ class FeedListTableViewController: UITableViewController, UISplitViewControllerD
                             singleFeedTableViewController.subscriptions = [subscriptionList[selectedIndexPath.row /*- self.cellIndexPathOffset*/]]
                         }
                     }
-                    singleFeedTableViewController.fakeSplitViewController = segue.sourceViewController.splitViewController
                 }
             }
         }
@@ -134,20 +134,19 @@ class FeedListTableViewController: UITableViewController, UISplitViewControllerD
     }
     
     @IBAction private func unwindFromAddFeedViewController(segue: UIStoryboardSegue) {
-        self.subscriptionList = PicoDataSource.sharedInstance.subscriptionManager.readSubscriptionsFromDisk()
+        self.readSubscriptionsFromDisk()
         self.tableView.reloadData()
     }
     
     func splitViewController(splitViewController: UISplitViewController, collapseSecondaryViewController secondaryViewController: UIViewController!, ontoPrimaryViewController primaryViewController: UIViewController!) -> Bool {
-        // this is such a weird issue and a bad way to solve it. But even apple's Master/Detail template does this an its awful.
-        // It fixes a bug where when the splitViewController loads it automatically shows the detail view instead of the master view.
         var collapse = false
-        
-        if self.loadedOnceAlready == false {
-            collapse = true
-            self.loadedOnceAlready = true
+        if let secNavController = secondaryViewController as? UINavigationController {
+            if let feedListVC = secNavController.viewControllers.last as? SingleFeedTableViewController {
+                if feedListVC.subscriptions == nil {
+                    collapse = true
+                }
+            }
         }
-        
         return collapse
     }
     

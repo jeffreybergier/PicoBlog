@@ -33,18 +33,23 @@ import UIKit
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
-    let window = UIWindow(frame: UIScreen.mainScreen().bounds)
+    var window: UIWindow?
     let storyboard = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle())
-    let dataSource = PicoDataSource.sharedInstance
 
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
         
         //NSNotificationCenter.defaultCenter().addObserver(self, selector: "notificationPosted:", name: nil, object: nil)
         
-        if let initialViewController = self.storyboard.instantiateInitialViewController() as? UIViewController {
-            self.window.rootViewController = initialViewController
-            self.window.backgroundColor = UIColor.whiteColor()
-            self.window.makeKeyAndVisible()
+        if let storyboardViewController = self.storyboard.instantiateInitialViewController() as? UIViewController {
+            
+            if self.window == nil {
+                self.window = UIWindow(frame: UIScreen.mainScreen().bounds)
+            }
+            
+            self.window!.rootViewController = storyboardViewController
+            self.window!.backgroundColor = UIColor.whiteColor()
+            self.window!.makeKeyAndVisible()
+            
         } else {
             fatalError("AppDelegate: FeedTableViewController did not load from storyboard.")
         }

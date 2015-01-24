@@ -38,13 +38,6 @@ class AddFeedViewController: UIViewController, UITableViewDataSource, UITableVie
     @IBOutlet private weak var feedURLTextFieldTrailingConstraint: NSLayoutConstraint?
     @IBOutlet private weak var saveButton: UIBarButtonItem?
     
-    private let downloadManager = PicoDataSource.sharedInstance.downloadManager
-    
-    private var subscription: Subscription? {
-        didSet {
-            NSLog("\(self.subscription)")
-        }
-    }
     private var feedURLTextFieldConstraint: (loading: CGFloat, notLoading: CGFloat) = (0.0, 0.0)
     private var feedURLTextFieldTimer: NSTimer?
     private var messages: [PicoMessage]?
@@ -62,10 +55,6 @@ class AddFeedViewController: UIViewController, UITableViewDataSource, UITableVie
         super.viewDidLoad()
         
         self.title = NSLocalizedString("Add Subscription", comment: "")
-        
-        // register for notifications
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "subscriptionDownloadedSuccessfully:", name: "subscriptionDownloadedSuccessfully", object: PicoDataSource.sharedInstance.downloadManager)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "subscriptionDownloadFailed:", name: "subscriptionDownloadFailed", object: PicoDataSource.sharedInstance.downloadManager)
         
         // configure text
         self.feedURLTitleLabel?.text = NSLocalizedString("Feed URL:", comment: "")
@@ -89,10 +78,23 @@ class AddFeedViewController: UIViewController, UITableViewDataSource, UITableVie
         self.feedPreviewTableView?.rowHeight = UITableViewAutomaticDimension
     }
     
+    override func viewWillAppear(animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        // register for notifications
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "subscriptionDownloadedSuccessfully:", name: "newMessagesConfirmedByDataSource", object: PicoDataSource.sharedInstance)
+    }
+    
+    override func viewWillDisappear(animated: Bool) {
+        super.viewWillDisappear(animated)
+        
+        // de-register notifications
+        NSNotificationCenter.defaultCenter().removeObserver(self)
+    }
+    
     @IBAction private func feedURLTextDidChange(sender: UITextField) {
         self.feedIsValid = false
         self.changeUIToDownloadingState()
-        self.subscription = nil
         self.messages = nil
         self.feedPreviewTableView?.reloadData()
         if let timer = self.feedURLTextFieldTimer {
@@ -115,7 +117,14 @@ class AddFeedViewController: UIViewController, UITableViewDataSource, UITableVie
                     if let error = PicoDataSource.sharedInstance.subscriptionManager.appendSubscriptionToDisk(subscription) {
                         // do some error handling
                         shouldSegue = false
+                        NSLog("\(self): Failed to save subscription to disk: \(error)")
+                    } else {
+                        // success
+                        NSLog("\(self): Successfully saved subscription to disk")
                     }
+                } else {
+                    shouldSegue = false
+                    NSLog("\(self): Failed to Create Subscription to save to disk")
                 }
             default:
                 break
@@ -127,7 +136,28 @@ class AddFeedViewController: UIViewController, UITableViewDataSource, UITableVie
     
     @objc private func urlSessionShouldStartTimerFired(timer: NSTimer) {
         timer.invalidate()
-        if let originalString: String = self.feedURLTextField?.text {
+        self.feedURLTextFieldTimer = nil
+        
+        if let url = self.generateCorrectedURLFromString(self.feedURLTextField?.text) {
+            PicoDataSource.sharedInstance.messageDownloadManager.downloadURLArray([url])
+        }
+    }
+    
+    @objc private func subscriptionDownloadedSuccessfully(notification: NSNotification) {
+        self.changeUIToNotDownloadingState()
+        
+        if let url = self.generateCorrectedURLFromString(self.feedURLTextField?.text) {
+            if let messageArray = PicoDataSource.sharedInstance.downloadedMessages[url] {
+                self.messages = messageArray
+                self.feedIsValid = true
+            }
+        }
+        
+        self.feedPreviewTableView?.reloadData()
+    }
+    
+    private func generateCorrectedURLFromString(originalString: String?) -> NSURL? {
+        if let originalString: String = originalString {
             let array = originalString.componentsSeparatedByString(":")
             var correctedString: String
             
@@ -137,35 +167,15 @@ class AddFeedViewController: UIViewController, UITableViewDataSource, UITableVie
                 correctedString = "http://" + originalString
             }
             
-            if let tempSubscription = Subscription(username: "tempTemp", unverifiedURLString: correctedString, unverifiedDateString: PicoDataSource.sharedInstance.dateFormatter.stringFromDate(NSDate(timeIntervalSinceNow: 0))) {
-                self.subscription = tempSubscription
-                PicoDataSource.sharedInstance.downloadManager.downloadSubscriptionArray([tempSubscription])
-            }
+            return NSURL(string: correctedString)
         }
-    }
-    
-    @objc private func subscriptionDownloadedSuccessfully(notification: NSNotification) {
-        self.changeUIToNotDownloadingState()
-        
-        if let subscription = self.subscription {
-            if let messages = PicoDataSource.sharedInstance.downloadManager.picoMessagesFinished[subscription] {
-                self.feedIsValid = true
-                self.messages = messages
-            }
-        }
-        self.feedPreviewTableView?.reloadData()
-    }
-    
-    @objc private func subscriptionDownloadFailed(notification: NSNotification) {
-        //self.feedIsValid = false
-        self.subscription = nil
-        self.changeUIToNotDownloadingState()
+        return nil
     }
     
     private func createSubscriptionFromTextField() -> Subscription? {
         let username: String? = self.messages?.last?.user.username
         let dateString: String = PicoDataSource.sharedInstance.dateFormatter.stringFromDate(NSDate(timeIntervalSinceNow: 0))
-        let urlString: String? = self.feedURLTextField?.text
+        let urlString: String? = self.generateCorrectedURLFromString(self.feedURLTextField?.text)?.description
         let subscription = Subscription(username: username, unverifiedURLString: urlString, unverifiedDateString: dateString)
         return subscription
     }

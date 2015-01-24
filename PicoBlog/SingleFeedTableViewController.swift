@@ -45,13 +45,6 @@ class SingleFeedTableViewController: UITableViewController {
             self.didSetSubscriptionsProperty()
         }
     }
-    weak var fakeSplitViewController: UISplitViewController? { //For some reason, this VC's splitviewcontroller property is nil?!
-        didSet {
-            // configure the navigation bar for the splitviewcontroller
-            self.navigationItem.leftBarButtonItem = self.fakeSplitViewController?.displayModeButtonItem()
-            self.navigationItem.leftItemsSupplementBackButton = true
-        }
-    }
     private var messagesDictionary: [Subscription : [PicoMessage]] = [:]
     private var messages: [PicoMessage]? {
         didSet {
@@ -64,10 +57,6 @@ class SingleFeedTableViewController: UITableViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        // register for notifications
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "subscriptionDownloadedSuccessfully:", name: "subscriptionDownloadedSuccessfully", object: PicoDataSource.sharedInstance.downloadManager)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "subscriptionDownloadFailed:", name: "subscriptionDownloadFailed", object: PicoDataSource.sharedInstance.downloadManager)
         
         // configure pull to refresh
         self.refreshControl = UIRefreshControl()
@@ -82,15 +71,47 @@ class SingleFeedTableViewController: UITableViewController {
         self.tableView.rowHeight = UITableViewAutomaticDimension
     }
     
+    override func viewWillAppear(animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        // configure the navigation bar for the splitviewcontroller
+        if self.navigationItem.leftBarButtonItem == nil {
+            self.navigationItem.leftBarButtonItem = self.splitViewController?.displayModeButtonItem()
+        }
+        if self.navigationItem.leftItemsSupplementBackButton != true {
+            self.navigationItem.leftItemsSupplementBackButton = true
+        }
+        
+        // register for notifications
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "subscriptionDownloadedSuccessfully:", name: "newMessagesConfirmedByDataSource", object: PicoDataSource.sharedInstance)
+    }
+    
+    override func viewWillDisappear(animated: Bool) {
+        super.viewWillDisappear(animated)
+        
+        // de-register notifications
+        NSNotificationCenter.defaultCenter().removeObserver(self)
+    }
+    
     private func didSetSubscriptionsProperty() {
         if let subscriptions = self.subscriptions {
+            var urlArray: [NSURL] = []
             for subscription in subscriptions {
-                if let newMessages = PicoDataSource.sharedInstance.downloadManager.picoMessagesFinished[subscription] {
+                if let newMessages = PicoDataSource.sharedInstance.downloadedMessages[subscription.verifiedURL.url] {
                     self.messagesDictionary[subscription] = newMessages
                 } else {
-                    PicoDataSource.sharedInstance.downloadManager.downloadSubscriptionArray([subscription])
+                    if let task = PicoDataSource.sharedInstance.messageDownloadManager.tasksInProgress[subscription.verifiedURL.url] {
+                        task.resume()
+                    } else {
+                        urlArray.append(subscription.verifiedURL.url)
+                    }
                 }
             }
+            
+            if urlArray.count > 0 {
+                PicoDataSource.sharedInstance.messageDownloadManager.downloadURLArray(urlArray)
+            }
+            
             if self.subscriptions?.count == self.messagesDictionary.count {
                 for (key, value) in self.messagesDictionary {
                     if self.messages != nil {
@@ -131,11 +152,12 @@ class SingleFeedTableViewController: UITableViewController {
     @objc private func userPulledToRefresh(sender: UIRefreshControl) {
         // clear out the messages array
         self.messages = nil
+        self.messagesDictionary = [:]
         
         // remove the messages already downloaded in the data source dictionary
         if let subscriptions = self.subscriptions {
             for subscription in subscriptions {
-                PicoDataSource.sharedInstance.downloadManager.picoMessagesFinished.removeValueForKey(subscription)
+                PicoDataSource.sharedInstance.downloadedMessages.removeValueForKey(subscription.verifiedURL.url)
             }
         }
         

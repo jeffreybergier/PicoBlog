@@ -53,7 +53,7 @@ class FeedTableViewCell: UITableViewCell {
     override func awakeFromNib() {
         super.awakeFromNib()
         
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "newCellImageDownloaded:", name: "newCellImageDownloaded", object: PicoDataSource.sharedInstance.cellDownloadManager)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "newCellImageDownloaded:", name: "newImagesConfirmedByDataSource", object: PicoDataSource.sharedInstance)
         
         self.dateFormatter.dateStyle = NSDateFormatterStyle.ShortStyle
         self.dateFormatter.timeStyle = NSDateFormatterStyle.ShortStyle
@@ -90,10 +90,10 @@ class FeedTableViewCell: UITableViewCell {
     
     func cellDidDisappear() {
         if let avatarURL = self.avatarURL {
-            PicoDataSource.sharedInstance.cellDownloadManager.imageTasksInProgress[avatarURL]?.suspend()
+            PicoDataSource.sharedInstance.cellImageDownloadManager.tasksInProgress[avatarURL]?.suspend()
         }
         if let messagePictureURL = self.messagePictureURL {
-            PicoDataSource.sharedInstance.cellDownloadManager.imageTasksInProgress[messagePictureURL]?.suspend()
+            PicoDataSource.sharedInstance.cellImageDownloadManager.tasksInProgress[messagePictureURL]?.suspend()
         }
     }
     
@@ -112,15 +112,13 @@ class FeedTableViewCell: UITableViewCell {
     
     private func populateImageView(imageView: UIImageView, WithURL url: NSURL) {
         if imageView.image == nil {
-            if let image = PicoDataSource.sharedInstance.cellDownloadManager.imageDataFinished[url] {
+            if let image = PicoDataSource.sharedInstance.downloadedImages[url] {
                 imageView.image = image
-                PicoDataSource.sharedInstance.cellDownloadManager.imageTasksInProgress[url]?.cancel()
-                PicoDataSource.sharedInstance.cellDownloadManager.imageTasksInProgress.removeValueForKey(url)
             } else {
-                if let existingTask = PicoDataSource.sharedInstance.cellDownloadManager.imageTasksInProgress[url] {
+                if let existingTask = PicoDataSource.sharedInstance.cellImageDownloadManager.tasksInProgress[url] {
                     existingTask.resume()
                 } else {
-                    PicoDataSource.sharedInstance.cellDownloadManager.downloadURLArray([url])
+                    PicoDataSource.sharedInstance.cellImageDownloadManager.downloadURLArray([url])
                 }
             }
         }
