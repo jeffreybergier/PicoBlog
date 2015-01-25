@@ -37,7 +37,7 @@ class AddFeedViewController: UIViewController, UITableViewDataSource, UITableVie
     @IBOutlet private weak var feedLoadingSpinner: UIActivityIndicatorView?
     @IBOutlet private weak var feedURLTextFieldTrailingConstraint: NSLayoutConstraint?
     @IBOutlet private weak var saveButton: UIBarButtonItem?
-    
+        
     private var feedURLTextFieldConstraint: (loading: CGFloat, notLoading: CGFloat) = (0.0, 0.0)
     private var feedURLTextFieldTimer: NSTimer?
     private var messages: [PicoMessage]?
@@ -83,6 +83,9 @@ class AddFeedViewController: UIViewController, UITableViewDataSource, UITableVie
         
         // register for notifications
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "subscriptionDownloadedSuccessfully:", name: "newMessagesConfirmedByDataSource", object: PicoDataSource.sharedInstance)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "subscriptionDownloadFailed:", name: "dataDownloadFailed", object: PicoDataSource.sharedInstance.messageDownloadManager)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "subscriptionDownloadFailed:", name: "invalidMessageDataDownloaded", object: PicoDataSource.sharedInstance)
+        
     }
     
     override func viewWillDisappear(animated: Bool) {
@@ -154,6 +157,11 @@ class AddFeedViewController: UIViewController, UITableViewDataSource, UITableVie
         }
         
         self.feedPreviewTableView?.reloadData()
+    }
+    
+    @objc private func subscriptionDownloadFailed(notification: NSNotification) {
+        self.feedIsValid = false
+        self.changeUIToNotDownloadingState()
     }
     
     private func generateCorrectedURLFromString(originalString: String?) -> NSURL? {

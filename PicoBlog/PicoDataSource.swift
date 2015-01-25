@@ -65,29 +65,52 @@ class PicoDataSource {
     
     @objc private func newImagesDownloaded(notification: NSNotification) {
         var confirmed = false
+        var allKeys: [NSURL] = []
+
         for (key, data) in self.cellImageDownloadManager.dataFinished {
+            allKeys.append(key)
             if let image = UIImage(data: data) {
                 self.downloadedImages[key] = image
                 confirmed = true
+            } else {
+                self.cellImageDownloadManager.tasksWithInvalidData[key] = data
             }
-            self.cellImageDownloadManager.dataFinished.removeValueForKey(key)
         }
+        
         if confirmed { //confirm that there was at least one good piece of data
             NSNotificationCenter.defaultCenter().postNotificationName("newImagesConfirmedByDataSource", object: self)
+        } else {
+            NSNotificationCenter.defaultCenter().postNotificationName("invalidImageDataDownloaded", object: self)
         }
+        
+        for key in allKeys {
+            self.cellImageDownloadManager.dataFinished.removeValueForKey(key)
+        }
+
     }
     
     @objc private func newMessagesDownloaded(notification: NSNotification) {
         var confirmed = false
+        var allKeys: [NSURL] = []
+        
         for (key, data) in self.messageDownloadManager.dataFinished {
+            allKeys.append(key)
             if let messageArray = self.generatePicoMessagesFromJSONArray(self.verifyJSONData(data)) {
                 self.downloadedMessages[key] = messageArray
                 confirmed = true
+            } else {
+                self.messageDownloadManager.tasksWithInvalidData[key] = data
             }
-            self.messageDownloadManager.dataFinished.removeValueForKey(key)
         }
+        
         if confirmed { //confirm that there was at least one good piece of data
             NSNotificationCenter.defaultCenter().postNotificationName("newMessagesConfirmedByDataSource", object: self)
+        } else {
+            NSNotificationCenter.defaultCenter().postNotificationName("invalidMessageDataDownloaded", object: self)
+        }
+        
+        for key in allKeys {
+            self.messageDownloadManager.dataFinished.removeValueForKey(key)
         }
     }
     

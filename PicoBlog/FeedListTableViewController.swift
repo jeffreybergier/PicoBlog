@@ -70,9 +70,14 @@ class FeedListTableViewController: UITableViewController, UISplitViewControllerD
                 if let selectedIndexPath = self.tableView.indexPathForSelectedRow() {
                     if let subscriptionList = self.subscriptionList {
                         if selectedIndexPath.section == 0 {
-                            singleFeedTableViewController.subscriptions = subscriptionList
+                            var subscriptionDictionary: [NSURL : Subscription] = [:]
+                            for subscription in subscriptionList {
+                                subscriptionDictionary[subscription.verifiedURL.url] = subscription
+                            }
+                            singleFeedTableViewController.subscriptions = subscriptionDictionary
                         } else {
-                            singleFeedTableViewController.subscriptions = [subscriptionList[selectedIndexPath.row /*- self.cellIndexPathOffset*/]]
+                            let individualSubscription = subscriptionList[selectedIndexPath.row]
+                            singleFeedTableViewController.subscriptions = [individualSubscription.verifiedURL.url : individualSubscription]
                         }
                     }
                 }

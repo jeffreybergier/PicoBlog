@@ -35,7 +35,7 @@
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="252" verticalCompressionResistancePriority="752" text="username" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="NV6-6H-N5P">
-                                            <rect key="frame" x="8" y="16" width="73.5" height="22.5"/>
+                                            <rect key="frame" x="20" y="16" width="73.5" height="22.5"/>
                                             <fontDescription key="fontDescription" style="UICTFontTextStyleHeadline"/>
                                             <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                             <nil key="highlightedColor"/>
@@ -45,7 +45,7 @@
                                         <constraint firstAttribute="trailingMargin" relation="greaterThanOrEqual" secondItem="NV6-6H-N5P" secondAttribute="trailing" id="NLf-Ih-dAO"/>
                                         <constraint firstItem="NV6-6H-N5P" firstAttribute="top" secondItem="Jpk-7H-f1w" secondAttribute="topMargin" constant="8" id="YZF-mV-bwW"/>
                                         <constraint firstAttribute="bottomMargin" secondItem="NV6-6H-N5P" secondAttribute="bottom" constant="8" id="stm-jf-GSd"/>
-                                        <constraint firstItem="NV6-6H-N5P" firstAttribute="leading" secondItem="Jpk-7H-f1w" secondAttribute="leadingMargin" id="xLo-hg-uEK"/>
+                                        <constraint firstItem="NV6-6H-N5P" firstAttribute="leading" secondItem="Jpk-7H-f1w" secondAttribute="leadingMargin" constant="12" id="xLo-hg-uEK"/>
                                     </constraints>
                                 </tableViewCellContentView>
                                 <connections>

@@ -40,6 +40,8 @@ class DownloadManager: NSObject, NSURLSessionDelegate, NSURLSessionDataDelegate 
     // CellImages Properties
     var dataFinished: [NSURL : NSData] = [:]
     var tasksInProgress: [NSURL : NSURLSessionTask] = [:]
+    var tasksWithErrors: [NSURL : NSHTTPURLResponse] = [:]
+    var tasksWithInvalidData: [NSURL : NSData] = [:]
     private var dataInProgress: [NSURLSessionTask : NSMutableData] = [:]
     
     func downloadURLArray(urlArray: [NSURL]) {
@@ -55,6 +57,26 @@ class DownloadManager: NSObject, NSURLSessionDelegate, NSURLSessionDataDelegate 
             existingData.appendData(data)
         } else {
             self.dataInProgress[dataTask] = NSMutableData(data: data)
+        }
+    }
+    
+    func URLSession(session: NSURLSession, dataTask: NSURLSessionDataTask, didReceiveResponse response: NSURLResponse, completionHandler: (NSURLSessionResponseDisposition) -> Void) {
+        
+        var shouldContinue = false
+        
+        if let httpResponse = response as? NSHTTPURLResponse {
+            if httpResponse.statusCode == 200 {
+                shouldContinue = true
+            } else {
+                NSLog("\(self): Cancelling Download URL: \(dataTask.originalRequest.URL). Status Code: \(httpResponse.statusCode)")
+                tasksWithErrors[dataTask.originalRequest.URL] = httpResponse
+            }
+        }
+        
+        if shouldContinue {
+            completionHandler(NSURLSessionResponseDisposition.Allow)
+        } else {
+            completionHandler(NSURLSessionResponseDisposition.Cancel)
         }
     }
     

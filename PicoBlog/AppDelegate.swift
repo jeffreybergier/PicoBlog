@@ -46,9 +46,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 self.window = UIWindow(frame: UIScreen.mainScreen().bounds)
             }
             
-            self.window!.rootViewController = storyboardViewController
-            self.window!.backgroundColor = UIColor.whiteColor()
-            self.window!.makeKeyAndVisible()
+            self.window?.rootViewController = storyboardViewController
+            self.window?.backgroundColor = UIColor.whiteColor()
+            self.window!.makeKeyAndVisible() //I want this one to cause a crash if the unwrap fails
             
         } else {
             fatalError("AppDelegate: FeedTableViewController did not load from storyboard.")
@@ -63,6 +63,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         if !name.hasPrefix("UI") && !name.hasPrefix("_UI") && !name.hasPrefix("_NS") && !name.hasPrefix("NS") && !name.hasSuffix("Scrolling") && !name.hasPrefix("Buffer") {
             NSLog("AppDelegate: Notification Posted: \(notification.name)")
         }
+    }
+    
+    func applicationDidReceiveMemoryWarning(application: UIApplication) {
+        let dataSource = PicoDataSource.sharedInstance
+        dataSource.downloadedImages = [:]
+        dataSource.downloadedMessages = [:]
+        dataSource.messageDownloadManager.tasksWithErrors = [:]
+        dataSource.messageDownloadManager.tasksWithInvalidData = [:]
+        dataSource.cellImageDownloadManager.tasksWithErrors = [:]
+        dataSource.cellImageDownloadManager.tasksWithInvalidData = [:]
+        NSLog("\(self): Excess Memory Purged")
     }
 
     func applicationWillResignActive(application: UIApplication) {

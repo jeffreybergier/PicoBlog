@@ -31,25 +31,28 @@ import UIKit
 
 class SingleFeedTableViewController: UITableViewController {
     
-    var subscriptions: [Subscription]? {
+    var subscriptions: [NSURL : Subscription]? {
         didSet {
+            self.messages = nil
             if let subscriptions = self.subscriptions {
                 if subscriptions.count > 1 {
                     self.title = NSLocalizedString("Feed", comment: "")
                 } else {
-                    if let lastObject = subscriptions.last {
-                        self.title = NSLocalizedString("\(lastObject.username)", comment: "")
+                    for (i, (url, subscription)) in enumerate(subscriptions) {
+                        if i == subscriptions.count - 1 {
+                            self.title = subscription.username
+                        }
                     }
                 }
             }
             self.didSetSubscriptionsProperty()
         }
     }
-    private var messagesDictionary: [Subscription : [PicoMessage]] = [:]
+    private var errorTimer: NSTimer?
+    private var messagesDictionary: [NSURL : [PicoMessage]] = [:]
     private var messages: [PicoMessage]? {
         didSet {
             if self.messages != nil {
-                self.tableView.reloadData()
                 let pointlessRefreshControlTimer = NSTimer.scheduledTimerWithTimeInterval(0.3, target: self, selector: "pointlessRefreshControlTimer:", userInfo: nil, repeats: false)
             }
         }
@@ -84,6 +87,8 @@ class SingleFeedTableViewController: UITableViewController {
         
         // register for notifications
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "subscriptionDownloadedSuccessfully:", name: "newMessagesConfirmedByDataSource", object: PicoDataSource.sharedInstance)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "subscriptionDownloadFailed:", name: "dataDownloadFailed", object: PicoDataSource.sharedInstance.messageDownloadManager)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "subscriptionDownloadFailed:", name: "invalidMessageDataDownloaded", object: PicoDataSource.sharedInstance)
     }
     
     override func viewWillDisappear(animated: Bool) {
@@ -93,17 +98,19 @@ class SingleFeedTableViewController: UITableViewController {
         NSNotificationCenter.defaultCenter().removeObserver(self)
     }
     
-    private func didSetSubscriptionsProperty() {
+    private func didSetSubscriptionsProperty(IgnoreNewDownloads ignoreNewDownloads: Bool = false) {
         if let subscriptions = self.subscriptions {
             var urlArray: [NSURL] = []
-            for subscription in subscriptions {
-                if let newMessages = PicoDataSource.sharedInstance.downloadedMessages[subscription.verifiedURL.url] {
-                    self.messagesDictionary[subscription] = newMessages
+            for (url, subscription) in subscriptions {
+                if let newMessages = PicoDataSource.sharedInstance.downloadedMessages[url] {
+                    self.messagesDictionary[url] = newMessages
                 } else {
-                    if let task = PicoDataSource.sharedInstance.messageDownloadManager.tasksInProgress[subscription.verifiedURL.url] {
-                        task.resume()
-                    } else {
-                        urlArray.append(subscription.verifiedURL.url)
+                    if ignoreNewDownloads == false {
+                        if let task = PicoDataSource.sharedInstance.messageDownloadManager.tasksInProgress[subscription.verifiedURL.url] {
+                            task.resume()
+                        } else {
+                            urlArray.append(subscription.verifiedURL.url)
+                        }
                     }
                 }
             }
@@ -112,15 +119,22 @@ class SingleFeedTableViewController: UITableViewController {
                 PicoDataSource.sharedInstance.messageDownloadManager.downloadURLArray(urlArray)
             }
             
-            if self.subscriptions?.count == self.messagesDictionary.count {
-                for (key, value) in self.messagesDictionary {
-                    if self.messages != nil {
-                        var unsortedMessages: [PicoMessage] = self.messages!
-                        unsortedMessages += value
-                        let sortedMessages = self.sortPicoMessageArrayByDate(unsortedMessages)
-                        self.messages = sortedMessages
-                    } else {
-                        self.messages = self.sortPicoMessageArrayByDate(value)
+            if self.subscriptions?.count == self.messagesDictionary.count || ignoreNewDownloads == true {
+                if self.messagesDictionary.count > 0 {
+                    for (url, messages) in self.messagesDictionary {
+                        if self.messages != nil {
+                            var unsortedMessages: [PicoMessage] = self.messages!
+                            unsortedMessages += messages
+                            let sortedMessages = self.sortPicoMessageArrayByDate(unsortedMessages)
+                            self.messages = sortedMessages
+                        } else {
+                            self.messages = self.sortPicoMessageArrayByDate(messages)
+                        }
+                    }
+                    self.tableView.reloadData()
+                } else {
+                    if self.refreshControl?.refreshing == true {
+                        self.refreshControl?.endRefreshing()
                     }
                 }
             }
@@ -144,8 +158,84 @@ class SingleFeedTableViewController: UITableViewController {
     
     @objc private func subscriptionDownloadFailed(notification: NSNotification) {
         // do some error handling
-        if self.refreshControl?.refreshing == true {
-            self.refreshControl?.endRefreshing()
+        if let timer = self.errorTimer {
+            timer.invalidate()
+            self.errorTimer = nil
+        }
+        self.errorTimer = NSTimer.scheduledTimerWithTimeInterval(4.0, target: self, selector: "errorWhileDownloadingTimerFired:", userInfo: nil, repeats: false)
+        
+    }
+    
+    @objc private func errorWhileDownloadingTimerFired(timer: NSTimer) {
+        var tasksInProgress = 0
+        if let subscriptions = self.subscriptions {
+            for (url, subscription) in subscriptions {
+                if let task = PicoDataSource.sharedInstance.messageDownloadManager.tasksInProgress[subscription.verifiedURL.url] {
+                    tasksInProgress++
+                }
+            }
+        }
+        if tasksInProgress == 0 {
+            self.didSetSubscriptionsProperty(IgnoreNewDownloads: true)
+            let errorTimer = NSTimer.scheduledTimerWithTimeInterval(0.05, target: self, selector: "errorPresentationTimerFired:", userInfo: nil, repeats: false)
+        }
+    }
+    
+    @objc private func errorPresentationTimerFired(timer: NSTimer) {
+        timer.invalidate()
+        self.tableView.reloadData()
+        
+        var matchedErrors: [Subscription : NSHTTPURLResponse] = [:]
+        var matchedInvalidData: [Subscription] = []
+        if let subscriptions = self.subscriptions {
+            for (url, subscription) in subscriptions {
+                if let matchingResponse = PicoDataSource.sharedInstance.messageDownloadManager.tasksWithErrors[subscription.verifiedURL.url] {
+                    matchedErrors[subscription] = matchingResponse
+                }
+                if let matchedInvalid = PicoDataSource.sharedInstance.messageDownloadManager.tasksWithInvalidData[subscription.verifiedURL.url] {
+                    matchedInvalidData.append(subscription)
+                }
+            }
+        }
+        
+        let errorTitleString = NSLocalizedString("Error Downloading Messages", comment: "")
+        let invalidDataString: String = NSLocalizedString("Invalid Data", comment: "")
+        var messageString: String = "\nThere was an error downloading messages for the following subscription \n\n"
+        if ((matchedErrors.count + matchedInvalidData.count) > 1) {
+            var messageString: String = "\nThere was an error downloading messages for the following subscriptions \n\n"
+        }
+        
+        if matchedInvalidData.count > 0 {
+            for (i, subscription) in enumerate(matchedInvalidData) {
+                var lineBreak = "\n\n"
+                if i == matchedErrors.count - 1 && matchedErrors.count == 0 {
+                    lineBreak = ""
+                }
+                messageString += "Username: \(subscription.username)\nError: " + invalidDataString + lineBreak
+            }
+        }
+        
+        if matchedErrors.count > 0 {
+            for (i, (subscription, response)) in enumerate(matchedErrors) {
+                var lineBreak = "\n\n"
+                if i == matchedErrors.count - 1 {
+                    lineBreak = ""
+                }
+                messageString += "Username: \(subscription.username)\nError Code: \(response.statusCode)" + lineBreak
+            }
+        }
+        
+        if matchedErrors.count > 0 || matchedInvalidData.count > 0 {
+            let alertViewController = UIAlertController(title: errorTitleString, message: messageString, preferredStyle: UIAlertControllerStyle.Alert)
+            alertViewController.addAction(UIAlertAction(title: NSLocalizedString("Dismiss", comment: ""),
+                style: UIAlertActionStyle.Cancel,
+                handler: { (action: UIAlertAction!) -> Void in
+                    for (subscription, response) in matchedErrors {
+                        PicoDataSource.sharedInstance.messageDownloadManager.tasksWithErrors.removeValueForKey(subscription.verifiedURL.url)
+                        PicoDataSource.sharedInstance.messageDownloadManager.tasksWithInvalidData.removeValueForKey(subscription.verifiedURL.url)
+                    }
+            }))
+            self.presentViewController(alertViewController, animated: true, completion: nil)
         }
     }
     
@@ -156,7 +246,7 @@ class SingleFeedTableViewController: UITableViewController {
         
         // remove the messages already downloaded in the data source dictionary
         if let subscriptions = self.subscriptions {
-            for subscription in subscriptions {
+            for (url, subscription) in subscriptions {
                 PicoDataSource.sharedInstance.downloadedMessages.removeValueForKey(subscription.verifiedURL.url)
             }
         }
