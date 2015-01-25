@@ -66,7 +66,7 @@ class FeedListTableViewController: UITableViewController, UISplitViewControllerD
     
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
         if let navigationController = segue.destinationViewController as? UINavigationController {
-            if let singleFeedTableViewController = navigationController.viewControllers.last as? SingleFeedTableViewController {
+            if let singleFeedTableViewController = navigationController.viewControllers.last as? FeedTableViewController {
                 if let selectedIndexPath = self.tableView.indexPathForSelectedRow() {
                     if let subscriptionList = self.subscriptionList {
                         if selectedIndexPath.section == 0 {
@@ -146,7 +146,7 @@ class FeedListTableViewController: UITableViewController, UISplitViewControllerD
     func splitViewController(splitViewController: UISplitViewController, collapseSecondaryViewController secondaryViewController: UIViewController!, ontoPrimaryViewController primaryViewController: UIViewController!) -> Bool {
         var collapse = false
         if let secNavController = secondaryViewController as? UINavigationController {
-            if let feedListVC = secNavController.viewControllers.last as? SingleFeedTableViewController {
+            if let feedListVC = secNavController.viewControllers.last as? FeedTableViewController {
                 if feedListVC.subscriptions == nil {
                     collapse = true
                 }

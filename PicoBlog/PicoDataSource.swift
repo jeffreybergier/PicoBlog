@@ -39,8 +39,8 @@ class PicoDataSource {
     let dateFormatter = NSDateFormatter()
     let postManager = PicoPostManager()
     let subscriptionManager = PicoSubscriptionManager()
-    let messageDownloadManager = DownloadManager()
-    let cellImageDownloadManager = DownloadManager()
+    let messageDownloadManager = PicoDownloadManager()
+    let cellImageDownloadManager = PicoDownloadManager()
     
     var currentUser = User(username: "jeffburg", unverifiedFeedURLString: "http://www.jeffburg.com/pico/feed1.pico", unverifiedAvatarURLString: "http://www.jeffburg.com/pico/images/123456789_small.jpeg")!
     

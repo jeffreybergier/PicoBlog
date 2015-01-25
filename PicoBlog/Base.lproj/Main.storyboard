@@ -199,10 +199,10 @@
             </objects>
             <point key="canvasLocation" x="2930" y="260"/>
         </scene>
-        <!--Single Feed Table View Controller-->
+        <!--Feed Table View Controller-->
         <scene sceneID="VhO-LL-nT7">
             <objects>
-                <tableViewController id="bgj-sa-mTN" customClass="SingleFeedTableViewController" customModule="PicoBlog" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController id="bgj-sa-mTN" customClass="FeedTableViewController" customModule="PicoBlog" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="V2O-tP-YbD">
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>

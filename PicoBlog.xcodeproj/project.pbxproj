@@ -10,9 +10,9 @@
 		732BA0DA1A560E690079D07F /* PicoNonClassTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 732BA0D91A560E690079D07F /* PicoNonClassTypes.swift */; };
 		73400DA21A67471B0033D949 /* FeedTableViewCellWithImage.xib in Resources */ = {isa = PBXBuildFile; fileRef = 73400DA11A67471B0033D949 /* FeedTableViewCellWithImage.xib */; };
 		73400DA41A6751210033D949 /* FeedTableViewCellWithoutImage.xib in Resources */ = {isa = PBXBuildFile; fileRef = 73400DA31A6751210033D949 /* FeedTableViewCellWithoutImage.xib */; };
-		734273131A6B614800BE2B68 /* SingleFeedTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 734273121A6B614800BE2B68 /* SingleFeedTableViewController.swift */; };
+		734273131A6B614800BE2B68 /* FeedTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 734273121A6B614800BE2B68 /* FeedTableViewController.swift */; };
 		7354C3481A5B83890059D185 /* FeedListTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7354C3471A5B83890059D185 /* FeedListTableViewController.swift */; };
-		736301B51A58A3640011FC87 /* DownloadManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 736301B41A58A3640011FC87 /* DownloadManager.swift */; };
+		736301B51A58A3640011FC87 /* PicoDownloadManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 736301B41A58A3640011FC87 /* PicoDownloadManager.swift */; };
 		73636CB11A6604BB000451D8 /* AddFeedViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73636CB01A6604BB000451D8 /* AddFeedViewController.swift */; };
 		736ECB921A5CE332000C2BB1 /* FeedListTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 736ECB911A5CE332000C2BB1 /* FeedListTableViewCell.swift */; };
 		7373D8231A575B1A006CA25B /* FeedTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7373D8221A575B1A006CA25B /* FeedTableViewCell.swift */; };
@@ -40,9 +40,9 @@
 		732BA0D91A560E690079D07F /* PicoNonClassTypes.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PicoNonClassTypes.swift; sourceTree = "<group>"; };
 		73400DA11A67471B0033D949 /* FeedTableViewCellWithImage.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = FeedTableViewCellWithImage.xib; sourceTree = "<group>"; };
 		73400DA31A6751210033D949 /* FeedTableViewCellWithoutImage.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = FeedTableViewCellWithoutImage.xib; sourceTree = "<group>"; };
-		734273121A6B614800BE2B68 /* SingleFeedTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SingleFeedTableViewController.swift; sourceTree = "<group>"; };
+		734273121A6B614800BE2B68 /* FeedTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FeedTableViewController.swift; sourceTree = "<group>"; };
 		7354C3471A5B83890059D185 /* FeedListTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FeedListTableViewController.swift; sourceTree = "<group>"; };
-		736301B41A58A3640011FC87 /* DownloadManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DownloadManager.swift; sourceTree = "<group>"; };
+		736301B41A58A3640011FC87 /* PicoDownloadManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PicoDownloadManager.swift; sourceTree = "<group>"; };
 		73636CB01A6604BB000451D8 /* AddFeedViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddFeedViewController.swift; sourceTree = "<group>"; };
 		736ECB911A5CE332000C2BB1 /* FeedListTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FeedListTableViewCell.swift; sourceTree = "<group>"; };
 		7373D8221A575B1A006CA25B /* FeedTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FeedTableViewCell.swift; sourceTree = "<group>"; };
@@ -105,7 +105,6 @@
 				73E2DEBA1A54CA7400D34E95 /* View */,
 				73E2DEB91A54CA6500D34E95 /* Controller */,
 				73E2DEB81A54CA5800D34E95 /* Model */,
-				732BA0D91A560E690079D07F /* PicoNonClassTypes.swift */,
 				737FBD7A1A549626004AAE3A /* Images.xcassets */,
 				737FBD7C1A549626004AAE3A /* LaunchScreen.xib */,
 				737FBD711A549626004AAE3A /* Supporting Files */,
@@ -144,7 +143,8 @@
 				73E2DEBB1A54CA9600D34E95 /* PicoDataSource.swift */,
 				73E2DEBD1A54CAEB00D34E95 /* PicoSubscriptionManager.swift */,
 				73E2DEBF1A54CB3300D34E95 /* PicoPostManager.swift */,
-				736301B41A58A3640011FC87 /* DownloadManager.swift */,
+				736301B41A58A3640011FC87 /* PicoDownloadManager.swift */,
+				732BA0D91A560E690079D07F /* PicoNonClassTypes.swift */,
 			);
 			name = Model;
 			sourceTree = "<group>";
@@ -155,7 +155,7 @@
 				7373D8221A575B1A006CA25B /* FeedTableViewCell.swift */,
 				736ECB911A5CE332000C2BB1 /* FeedListTableViewCell.swift */,
 				7354C3471A5B83890059D185 /* FeedListTableViewController.swift */,
-				734273121A6B614800BE2B68 /* SingleFeedTableViewController.swift */,
+				734273121A6B614800BE2B68 /* FeedTableViewController.swift */,
 				73636CB01A6604BB000451D8 /* AddFeedViewController.swift */,
 			);
 			name = Controller;
@@ -282,9 +282,9 @@
 				737FBD741A549626004AAE3A /* AppDelegate.swift in Sources */,
 				73636CB11A6604BB000451D8 /* AddFeedViewController.swift in Sources */,
 				73E2DEC01A54CB3300D34E95 /* PicoPostManager.swift in Sources */,
-				736301B51A58A3640011FC87 /* DownloadManager.swift in Sources */,
+				736301B51A58A3640011FC87 /* PicoDownloadManager.swift in Sources */,
 				7354C3481A5B83890059D185 /* FeedListTableViewController.swift in Sources */,
-				734273131A6B614800BE2B68 /* SingleFeedTableViewController.swift in Sources */,
+				734273131A6B614800BE2B68 /* FeedTableViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

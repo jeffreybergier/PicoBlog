@@ -29,7 +29,7 @@
 
 import UIKit
 
-class SingleFeedTableViewController: UITableViewController {
+class FeedTableViewController: UITableViewController {
     
     var subscriptions: [NSURL : Subscription]? {
         didSet {

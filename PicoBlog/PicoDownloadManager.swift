@@ -29,7 +29,7 @@
 
 import UIKit
 
-class DownloadManager: NSObject, NSURLSessionDelegate, NSURLSessionDataDelegate {
+class PicoDownloadManager: NSObject, NSURLSessionDelegate, NSURLSessionDataDelegate {
     
     private lazy var session: NSURLSession = {
         let configuration = NSURLSessionConfiguration.defaultSessionConfiguration()
