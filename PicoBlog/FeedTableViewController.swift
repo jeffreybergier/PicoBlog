@@ -120,23 +120,24 @@ class FeedTableViewController: UITableViewController {
             }
             
             if self.subscriptions?.count == self.messagesDictionary.count || ignoreNewDownloads == true {
+                let startTime = NSDate(timeIntervalSinceNow: 0)
                 if self.messagesDictionary.count > 0 {
-                    for (url, messages) in self.messagesDictionary {
-                        if self.messages != nil {
-                            var unsortedMessages: [PicoMessage] = self.messages!
-                            unsortedMessages += messages
-                            let sortedMessages = self.sortPicoMessageArrayByDate(unsortedMessages)
-                            self.messages = sortedMessages
-                        } else {
-                            self.messages = self.sortPicoMessageArrayByDate(messages)
-                        }
+                    var unsortedMessagesArray: [PicoMessage] = []
+                    if let existingMessages = self.messages {
+                        unsortedMessagesArray += existingMessages
                     }
+                    for (url, newMessages) in self.messagesDictionary {
+                        unsortedMessagesArray += newMessages
+                    }
+                    self.messages = self.sortPicoMessageArrayByDate(unsortedMessagesArray)
                     self.tableView.reloadData()
                 } else {
                     if self.refreshControl?.refreshing == true {
                         self.refreshControl?.endRefreshing()
                     }
                 }
+                let endTime = NSDate(timeIntervalSinceNow: 0)
+                NSLog("\(self): Sorting messages took: \(endTime.timeIntervalSinceDate(startTime)) seconds.")
             }
         }
     }
