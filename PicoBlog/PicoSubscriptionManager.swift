@@ -39,7 +39,13 @@ class PicoSubscriptionManager {
         if let subscriptionsArray = self.userDefaults.arrayForKey("Subscriptions") as? [NSDictionary] {
             for dictionary in subscriptionsArray {
                 if let subscription = Subscription(dictionary: dictionary) {
-                    subscriptions.append(subscription)
+                    // debug code to get my broken subscriptions out of the subscription list.
+                    // these bad subscriptions are only needed when I am working on error handling
+                    if subscription.username == "baddata" || subscription.username == "filenotfound" {
+                        NSLog("\(self): Ignoring Corrupted Subscription With Username: \(subscription.username)")
+                    } else {
+                        subscriptions.append(subscription)
+                    }
                 }
             }
         }

@@ -64,23 +64,58 @@ class FeedListTableViewController: UITableViewController, UISplitViewControllerD
         }
     }
     
+    @IBAction func didTapAddButton(sender: UIBarButtonItem) {
+        let addSubscriptionAction = UIAlertAction(title: NSLocalizedString("Add Subscription", comment: ""),
+            style: UIAlertActionStyle.Default)
+            { (action: UIAlertAction!) -> Void in
+                self.performSegueWithIdentifier("addSubscriptionSegue", sender: nil)
+        }
+        let composeMessageAction = UIAlertAction(title: NSLocalizedString("Compose Message", comment: ""),
+            style: UIAlertActionStyle.Default)
+            { (action: UIAlertAction!) -> Void in
+                self.performSegueWithIdentifier("composeMessageSegue", sender: nil)
+        }
+        let cancelAction = UIAlertAction(title: NSLocalizedString("Cancel", comment: ""),
+            style: UIAlertActionStyle.Cancel)
+            { (action: UIAlertAction!) -> Void in
+                //
+        }
+        let alertController = UIAlertController(title: nil, message: nil, preferredStyle: UIAlertControllerStyle.ActionSheet)
+        alertController.addAction(composeMessageAction)
+        alertController.addAction(addSubscriptionAction)
+        alertController.addAction(cancelAction)
+        self.presentViewController(alertController, animated: true, completion: nil)
+    }
+    
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        if let navigationController = segue.destinationViewController as? UINavigationController {
-            if let singleFeedTableViewController = navigationController.viewControllers.last as? FeedTableViewController {
+        if let identifier = segue.identifier {
+            switch identifier {
+            case "composeMessageSegue":
+                break
+            case "addSubscriptionSegue":
+                break
+            case "viewSubscriptionSegue":
                 if let selectedIndexPath = self.tableView.indexPathForSelectedRow() {
                     if let subscriptionList = self.subscriptionList {
-                        if selectedIndexPath.section == 0 {
+                        let navigationController = segue.destinationViewController as? UINavigationController
+                        let feedTableViewController = navigationController?.viewControllers.last as? FeedTableViewController
+                        switch selectedIndexPath.section {
+                        case 0:
                             var subscriptionDictionary: [String : Subscription] = [:]
                             for subscription in subscriptionList {
                                 subscriptionDictionary[subscription.verifiedURL.string] = subscription
                             }
-                            singleFeedTableViewController.subscriptions = subscriptionDictionary
-                        } else {
+                            feedTableViewController?.subscriptions = subscriptionDictionary
+                        case 1:
                             let individualSubscription = subscriptionList[selectedIndexPath.row]
-                            singleFeedTableViewController.subscriptions = [individualSubscription.verifiedURL.string : individualSubscription]
+                            feedTableViewController?.subscriptions = [individualSubscription.verifiedURL.string : individualSubscription]
+                        default:
+                            break
                         }
                     }
                 }
+            default:
+                break
             }
         }
     }
