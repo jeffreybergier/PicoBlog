@@ -54,12 +54,12 @@ class FeedListTableViewController: UITableViewController, UISplitViewControllerD
     private func readSubscriptionsFromDisk() {
         self.subscriptionList = PicoDataSource.sharedInstance.subscriptionManager.readSubscriptionsFromDisk()
         if let subscriptionList = self.subscriptionList {
-            var urlArray: [NSURL] = []
+            var urlStringArray: [String] = []
             for subscription in subscriptionList {
-                urlArray.append(subscription.verifiedURL.url)
+                urlStringArray.append(subscription.verifiedURL.string)
             }
-            if urlArray.count > 0 {
-                PicoDataSource.sharedInstance.messageDownloadManager.downloadURLArray(urlArray)
+            if urlStringArray.count > 0 {
+                PicoDataSource.sharedInstance.messageDownloadManager.downloadURLStringArray(urlStringArray)
             }
         }
     }
@@ -70,14 +70,14 @@ class FeedListTableViewController: UITableViewController, UISplitViewControllerD
                 if let selectedIndexPath = self.tableView.indexPathForSelectedRow() {
                     if let subscriptionList = self.subscriptionList {
                         if selectedIndexPath.section == 0 {
-                            var subscriptionDictionary: [NSURL : Subscription] = [:]
+                            var subscriptionDictionary: [String : Subscription] = [:]
                             for subscription in subscriptionList {
-                                subscriptionDictionary[subscription.verifiedURL.url] = subscription
+                                subscriptionDictionary[subscription.verifiedURL.string] = subscription
                             }
                             singleFeedTableViewController.subscriptions = subscriptionDictionary
                         } else {
                             let individualSubscription = subscriptionList[selectedIndexPath.row]
-                            singleFeedTableViewController.subscriptions = [individualSubscription.verifiedURL.url : individualSubscription]
+                            singleFeedTableViewController.subscriptions = [individualSubscription.verifiedURL.string : individualSubscription]
                         }
                     }
                 }

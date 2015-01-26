@@ -38,25 +38,31 @@ class PicoDownloadManager: NSObject, NSURLSessionDelegate, NSURLSessionDataDeleg
         }()
     
     // CellImages Properties
-    var dataFinished: [NSURL : NSData] = [:]
-    var tasksInProgress: [NSURL : NSURLSessionTask] = [:]
-    var tasksWithErrors: [NSURL : NSHTTPURLResponse] = [:]
-    var tasksWithInvalidData: [NSURL : NSData] = [:]
-    private var dataInProgress: [NSURLSessionTask : NSMutableData] = [:]
+    var dataFinished: [String : NSData] = [:]
+    var tasksInProgress: [String : NSURLSessionTask] = [:]
+    var tasksWithErrors: [String : NSHTTPURLResponse] = [:]
+    var tasksWithInvalidData: [String : NSData] = [:]
+    private var dataInProgress: [String : NSMutableData] = [:]
     
-    func downloadURLArray(urlArray: [NSURL]) {
-        for url in urlArray {
-            let task = self.session.dataTaskWithURL(url)
-            task.resume()
-            self.tasksInProgress[url] = task
+    func downloadURLStringArray(urlStringArray: [String]) {
+        for string in urlStringArray {
+            if let existingTask = self.tasksInProgress[string] {
+                existingTask.resume()
+            } else {
+                if let url = NSURL(string: string) {
+                    let newTask = self.session.dataTaskWithURL(url)
+                    newTask.resume()
+                    self.tasksInProgress[url.description] = newTask
+                }
+            }
         }
     }
     
     func URLSession(session: NSURLSession, dataTask: NSURLSessionDataTask, didReceiveData data: NSData) {
-        if let existingData = self.dataInProgress[dataTask] {
+        if let existingData = self.dataInProgress[dataTask.originalRequest.URL.description] {
             existingData.appendData(data)
         } else {
-            self.dataInProgress[dataTask] = NSMutableData(data: data)
+            self.dataInProgress[dataTask.originalRequest.URL.description] = NSMutableData(data: data)
         }
     }
     
@@ -69,7 +75,7 @@ class PicoDownloadManager: NSObject, NSURLSessionDelegate, NSURLSessionDataDeleg
                 shouldContinue = true
             } else {
                 NSLog("\(self): Cancelling Download URL: \(dataTask.originalRequest.URL). Status Code: \(httpResponse.statusCode)")
-                tasksWithErrors[dataTask.originalRequest.URL] = httpResponse
+                tasksWithErrors[dataTask.originalRequest.URL.description] = httpResponse
             }
         }
         
@@ -82,16 +88,16 @@ class PicoDownloadManager: NSObject, NSURLSessionDelegate, NSURLSessionDataDeleg
     
     func URLSession(session: NSURLSession, task: NSURLSessionTask, didCompleteWithError error: NSError!) {
         if error == nil {
-            if let mutableData = self.dataInProgress[task] {
+            if let mutableData = self.dataInProgress[task.originalRequest.URL.description] {
                 let immutableData = NSData(data: mutableData)
-                self.dataFinished[task.originalRequest.URL] = immutableData
+                self.dataFinished[task.originalRequest.URL.description] = immutableData
                 NSNotificationCenter.defaultCenter().postNotificationName("dataDownloadedSuccessfully", object: self)
             }
         } else {
             NSLog("\(self): Error downloading data: \(error)")
             NSNotificationCenter.defaultCenter().postNotificationName("dataDownloadFailed", object: self)
         }
-        self.dataInProgress.removeValueForKey(task)
-        self.tasksInProgress.removeValueForKey(task.originalRequest.URL)
+        self.dataInProgress.removeValueForKey(task.originalRequest.URL.description)
+        self.tasksInProgress.removeValueForKey(task.originalRequest.URL.description)
     }
 }

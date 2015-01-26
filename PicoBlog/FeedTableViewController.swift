@@ -31,7 +31,7 @@ import UIKit
 
 class FeedTableViewController: UITableViewController {
     
-    var subscriptions: [NSURL : Subscription]? {
+    var subscriptions: [String : Subscription]? {
         didSet {
             self.messages = nil
             if let subscriptions = self.subscriptions {
@@ -49,7 +49,7 @@ class FeedTableViewController: UITableViewController {
         }
     }
     private var errorTimer: NSTimer?
-    private var messagesDictionary: [NSURL : [PicoMessage]] = [:]
+    private var messagesDictionary: [String : [PicoMessage]] = [:]
     private var messages: [PicoMessage]? {
         didSet {
             if self.messages != nil {
@@ -100,23 +100,23 @@ class FeedTableViewController: UITableViewController {
     
     private func didSetSubscriptionsProperty(IgnoreNewDownloads ignoreNewDownloads: Bool = false) {
         if let subscriptions = self.subscriptions {
-            var urlArray: [NSURL] = []
-            for (url, subscription) in subscriptions {
-                if let newMessages = PicoDataSource.sharedInstance.downloadedMessages[url] {
-                    self.messagesDictionary[url] = newMessages
+            var urlStringArray: [String] = []
+            for (urlString, subscription) in subscriptions {
+                if let newMessages = PicoDataSource.sharedInstance.downloadedMessages[urlString] {
+                    self.messagesDictionary[urlString] = newMessages
                 } else {
                     if ignoreNewDownloads == false {
-                        if let task = PicoDataSource.sharedInstance.messageDownloadManager.tasksInProgress[subscription.verifiedURL.url] {
+                        if let task = PicoDataSource.sharedInstance.messageDownloadManager.tasksInProgress[subscription.verifiedURL.string] {
                             task.resume()
                         } else {
-                            urlArray.append(subscription.verifiedURL.url)
+                            urlStringArray.append(subscription.verifiedURL.string)
                         }
                     }
                 }
             }
             
-            if urlArray.count > 0 {
-                PicoDataSource.sharedInstance.messageDownloadManager.downloadURLArray(urlArray)
+            if urlStringArray.count > 0 {
+                PicoDataSource.sharedInstance.messageDownloadManager.downloadURLStringArray(urlStringArray)
             }
             
             if self.subscriptions?.count == self.messagesDictionary.count || ignoreNewDownloads == true {
@@ -170,7 +170,7 @@ class FeedTableViewController: UITableViewController {
         var tasksInProgress = 0
         if let subscriptions = self.subscriptions {
             for (url, subscription) in subscriptions {
-                if let task = PicoDataSource.sharedInstance.messageDownloadManager.tasksInProgress[subscription.verifiedURL.url] {
+                if let task = PicoDataSource.sharedInstance.messageDownloadManager.tasksInProgress[subscription.verifiedURL.string] {
                     tasksInProgress++
                 }
             }
@@ -189,10 +189,10 @@ class FeedTableViewController: UITableViewController {
         var matchedInvalidData: [Subscription] = []
         if let subscriptions = self.subscriptions {
             for (url, subscription) in subscriptions {
-                if let matchingResponse = PicoDataSource.sharedInstance.messageDownloadManager.tasksWithErrors[subscription.verifiedURL.url] {
+                if let matchingResponse = PicoDataSource.sharedInstance.messageDownloadManager.tasksWithErrors[subscription.verifiedURL.string] {
                     matchedErrors[subscription] = matchingResponse
                 }
-                if let matchedInvalid = PicoDataSource.sharedInstance.messageDownloadManager.tasksWithInvalidData[subscription.verifiedURL.url] {
+                if let matchedInvalid = PicoDataSource.sharedInstance.messageDownloadManager.tasksWithInvalidData[subscription.verifiedURL.string] {
                     matchedInvalidData.append(subscription)
                 }
             }
@@ -231,8 +231,8 @@ class FeedTableViewController: UITableViewController {
                 style: UIAlertActionStyle.Cancel,
                 handler: { (action: UIAlertAction!) -> Void in
                     for (subscription, response) in matchedErrors {
-                        PicoDataSource.sharedInstance.messageDownloadManager.tasksWithErrors.removeValueForKey(subscription.verifiedURL.url)
-                        PicoDataSource.sharedInstance.messageDownloadManager.tasksWithInvalidData.removeValueForKey(subscription.verifiedURL.url)
+                        PicoDataSource.sharedInstance.messageDownloadManager.tasksWithErrors.removeValueForKey(subscription.verifiedURL.string)
+                        PicoDataSource.sharedInstance.messageDownloadManager.tasksWithInvalidData.removeValueForKey(subscription.verifiedURL.string)
                     }
             }))
             self.presentViewController(alertViewController, animated: true, completion: nil)
@@ -246,8 +246,8 @@ class FeedTableViewController: UITableViewController {
         
         // remove the messages already downloaded in the data source dictionary
         if let subscriptions = self.subscriptions {
-            for (url, subscription) in subscriptions {
-                PicoDataSource.sharedInstance.downloadedMessages.removeValueForKey(subscription.verifiedURL.url)
+            for (urlString, subscription) in subscriptions {
+                PicoDataSource.sharedInstance.downloadedMessages.removeValueForKey(urlString)
             }
         }
         

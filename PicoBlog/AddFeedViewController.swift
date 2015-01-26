@@ -88,6 +88,12 @@ class AddFeedViewController: UIViewController, UITableViewDataSource, UITableVie
         
     }
     
+    override func viewDidAppear(animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        self.feedURLTextField?.becomeFirstResponder()
+    }
+    
     override func viewWillDisappear(animated: Bool) {
         super.viewWillDisappear(animated)
         
@@ -107,6 +113,7 @@ class AddFeedViewController: UIViewController, UITableViewDataSource, UITableVie
     }
     
     override func shouldPerformSegueWithIdentifier(identifier: String?, sender: AnyObject?) -> Bool {
+        super.shouldPerformSegueWithIdentifier(identifier, sender: sender)
         var shouldSegue = true
         
         if let button = sender as? UIBarButtonItem {
@@ -137,12 +144,18 @@ class AddFeedViewController: UIViewController, UITableViewDataSource, UITableVie
         return shouldSegue
     }
     
+    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+        super.prepareForSegue(segue, sender: sender)
+        
+        self.view.endEditing(true)
+    }
+    
     @objc private func urlSessionShouldStartTimerFired(timer: NSTimer) {
         timer.invalidate()
         self.feedURLTextFieldTimer = nil
         
-        if let url = self.generateCorrectedURLFromString(self.feedURLTextField?.text) {
-            PicoDataSource.sharedInstance.messageDownloadManager.downloadURLArray([url])
+        if let urlString = self.generateCorrectedURLFromString(self.feedURLTextField?.text) {
+            PicoDataSource.sharedInstance.messageDownloadManager.downloadURLStringArray([urlString])
         }
     }
     
@@ -164,7 +177,7 @@ class AddFeedViewController: UIViewController, UITableViewDataSource, UITableVie
         self.changeUIToNotDownloadingState()
     }
     
-    private func generateCorrectedURLFromString(originalString: String?) -> NSURL? {
+    private func generateCorrectedURLFromString(originalString: String?) -> String? {
         if let originalString: String = originalString {
             let array = originalString.componentsSeparatedByString(":")
             var correctedString: String
@@ -175,7 +188,7 @@ class AddFeedViewController: UIViewController, UITableViewDataSource, UITableVie
                 correctedString = "http://" + originalString
             }
             
-            return NSURL(string: correctedString)
+            return correctedString
         }
         return nil
     }
@@ -183,7 +196,7 @@ class AddFeedViewController: UIViewController, UITableViewDataSource, UITableVie
     private func createSubscriptionFromTextField() -> Subscription? {
         let username: String? = self.messages?.last?.user.username
         let dateString: String = PicoDataSource.sharedInstance.dateFormatter.stringFromDate(NSDate(timeIntervalSinceNow: 0))
-        let urlString: String? = self.generateCorrectedURLFromString(self.feedURLTextField?.text)?.description
+        let urlString: String? = self.generateCorrectedURLFromString(self.feedURLTextField?.text)
         let subscription = Subscription(username: username, unverifiedURLString: urlString, unverifiedDateString: dateString)
         return subscription
     }

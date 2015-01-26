@@ -41,8 +41,8 @@ class FeedTableViewCell: UITableViewCell {
     
     private let dateFormatter = NSDateFormatter()
     
-    private var avatarURL: NSURL?
-    private var messagePictureURL: NSURL?
+    private var avatarURLString: String?
+    private var messagePictureURLString: String?
     
     @IBOutlet private weak var userImageView: UIImageView?
     @IBOutlet private weak var messageImageView: UIImageView?
@@ -69,16 +69,16 @@ class FeedTableViewCell: UITableViewCell {
         self.messageDateTextLabel?.text = ""
         self.userImageView?.image = nil
         self.messageImageView?.image = nil
-        self.avatarURL = nil
-        self.messagePictureURL = nil
+        self.avatarURLString = nil
+        self.messagePictureURLString = nil
         
         self.messageTextLabel?.text = newMessage.text
         self.usernameTextLabel?.text = newMessage.user.username
         self.messageDateTextLabel?.text = self.dateFormatter.stringFromDate(newMessage.verifiedDate.date)
         
-        self.avatarURL = newMessage.user.verifiedAvatarURL.url
+        self.avatarURLString = newMessage.user.verifiedAvatarURL.string
         if let verifiedMessagePictureURL = self.messagePost?.verifiedPictureURL {
-            self.messagePictureURL = verifiedMessagePictureURL.url
+            self.messagePictureURLString = verifiedMessagePictureURL.string
         }
 
         self.cellWillAppear()
@@ -89,36 +89,36 @@ class FeedTableViewCell: UITableViewCell {
     }
     
     func cellDidDisappear() {
-        if let avatarURL = self.avatarURL {
+        if let avatarURL = self.avatarURLString {
             PicoDataSource.sharedInstance.cellImageDownloadManager.tasksInProgress[avatarURL]?.suspend()
         }
-        if let messagePictureURL = self.messagePictureURL {
+        if let messagePictureURL = self.messagePictureURLString {
             PicoDataSource.sharedInstance.cellImageDownloadManager.tasksInProgress[messagePictureURL]?.suspend()
         }
     }
     
     func cellWillAppear() {
-        if let avatarURL = self.avatarURL {
+        if let avatarURLString = self.avatarURLString {
             if let avatarImageView = self.userImageView {
-                self.populateImageView(avatarImageView, WithURL: avatarURL)
+                self.populateImageView(avatarImageView, WithURLString: avatarURLString)
             }
         }
-        if let messagePictureURL = self.messagePictureURL {
+        if let messagePictureURLString = self.messagePictureURLString {
             if let messageImageView = self.messageImageView {
-                self.populateImageView(messageImageView, WithURL: messagePictureURL)
+                self.populateImageView(messageImageView, WithURLString: messagePictureURLString)
             }
         }
     }
     
-    private func populateImageView(imageView: UIImageView, WithURL url: NSURL) {
+    private func populateImageView(imageView: UIImageView, WithURLString urlString: String) {
         if imageView.image == nil {
-            if let image = PicoDataSource.sharedInstance.downloadedImages[url] {
+            if let image = PicoDataSource.sharedInstance.downloadedImages[urlString] {
                 imageView.image = image
             } else {
-                if let existingTask = PicoDataSource.sharedInstance.cellImageDownloadManager.tasksInProgress[url] {
+                if let existingTask = PicoDataSource.sharedInstance.cellImageDownloadManager.tasksInProgress[urlString] {
                     existingTask.resume()
                 } else {
-                    PicoDataSource.sharedInstance.cellImageDownloadManager.downloadURLArray([url])
+                    PicoDataSource.sharedInstance.cellImageDownloadManager.downloadURLStringArray([urlString])
                 }
             }
         }
