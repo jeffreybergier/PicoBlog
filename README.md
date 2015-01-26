@@ -22,7 +22,7 @@ Pico Blog will take a cue from the old world of the internet. The technology mod
  
 ### Remaining Stories
   1. The user needs to be able to upload / associate photos with messages.
-  2. The user needs to see those photos in the tableview.
+  2. ~~The user needs to see those photos in the tableview.~~
   3. The user needs to be able to upload new messages via SFTP/FTP without Trasnmit extension
   4. The user needs to be able to upload new messages via Dropbox
   5. The user needs to be able to subscribe to files hosted on other user's dropbox accounts.
