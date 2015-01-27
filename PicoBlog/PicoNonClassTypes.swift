@@ -30,7 +30,7 @@
 import UIKit
 import CoreLocation
 
-struct PicoMessage: Writable, Hashable {
+struct PicoMessage: Writable, Hashable, Printable {
     
     let user: User
     let text: String
@@ -39,6 +39,13 @@ struct PicoMessage: Writable, Hashable {
     var verifiedPictureURL: VerifiedURL?
     var location: CLLocation?
     var unknownItems: [String : String]?
+    
+    // PRINTABLE
+    var description: String {
+        get {
+            return "PicoMessage: \(self.verifiedDate.string): \(self.user.username): \(self.text)"
+        }
+    }
     
     init?(CompleteUser messageUser: User, unverifiedDateString: String, messageText: String, unverifiedPictureURLString: String?, unknownItems: [String : String]?) {
         self.user = messageUser
@@ -145,12 +152,19 @@ func ==(lhs: PicoMessage, rhs: PicoMessage) -> Bool {
     return lhs.verifiedDate.string == rhs.verifiedDate.string && lhs.text == rhs.text
 }
 
-struct User {
+struct User: Printable {
     let username: String
     let verifiedFeedURL: VerifiedURL
     let verifiedAvatarURL: VerifiedURL
     
     var bio: String?
+    
+    // PRINTABLE
+    var description: String {
+        get {
+            return "User: \(self.username): \(self.verifiedFeedURL.string)"
+        }
+    }
     
     init?(username: String, unverifiedFeedURLString: String, unverifiedAvatarURLString: String) {
         self.username = username
@@ -169,10 +183,17 @@ struct User {
     }
 }
 
-struct Subscription: Writable, Hashable {
+struct Subscription: Writable, Hashable, Printable {
     let username: String
     let verifiedDate: VerifiedDate
     let verifiedURL: VerifiedURL
+    
+    // PRINTABLE
+    var description: String {
+        get {
+            return "Subscription: \(self.username): \(self.verifiedURL.string)"
+        }
+    }
     
     init?(username: String?, unverifiedURLString: String?, unverifiedDateString: String?) {
         if let username = username {
@@ -223,13 +244,21 @@ func ==(lhs: Subscription, rhs: Subscription) -> Bool {
     return lhs.verifiedURL.string == rhs.verifiedURL.string && lhs.verifiedDate.string == rhs.verifiedDate.string
 }
 
-struct VerifiedDate: DateVerifiable {
+struct VerifiedDate: DateVerifiable, Printable {
     let string: String
     var date: NSDate {
         get {
             return PicoDataSource.sharedInstance.dateFormatter.dateFromString(self.string)!
         }
     }
+    
+    // PRINTABLE
+    var description: String {
+        get {
+            return "VerifiedDate: \(self.string)"
+        }
+    }
+    
     init?(unverifiedDateString: String?) {
         var success = false
         if let unverifiedDateString = unverifiedDateString {
@@ -251,6 +280,13 @@ struct VerifiedURL: URLVerifiable {
     var url: NSURL {
         get {
             return NSURL(string: self.string)!
+        }
+    }
+    
+    // PRINTABLE
+    var description: String {
+        get {
+            return "VerifiedURL: \(self.string)"
         }
     }
     
@@ -346,8 +382,4 @@ protocol Writable {
     // All other types will have to be converted in these two methods.
     init?(dictionary: NSDictionary)
     func prepareForDisk() -> NSDictionary
-}
-
-enum DownloadManagerIdentifier {
-    case Subscriptions, CellImages
 }

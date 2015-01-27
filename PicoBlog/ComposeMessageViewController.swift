@@ -31,8 +31,9 @@ import UIKit
 
 class ComposeMessageViewController: UIViewController {
     
-    @IBOutlet weak var bottomLayoutConstraint: NSLayoutConstraint?
-    @IBOutlet weak var messageTextView: UITextView?
+    @IBOutlet private weak var bottomLayoutConstraint: NSLayoutConstraint?
+    @IBOutlet private weak var messageTextView: UITextView?
+    @IBOutlet private weak var buttonView: UIView?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -40,9 +41,38 @@ class ComposeMessageViewController: UIViewController {
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "keyboardWillShow:", name: UIKeyboardWillShowNotification, object: nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "keyboardWillHide:", name: UIKeyboardWillHideNotification, object: nil)
         
+        var textViewEdgeInsets = self.messageTextView!.contentInset
+        textViewEdgeInsets.bottom = self.buttonView!.frame.size.height
+        self.messageTextView?.contentInset = textViewEdgeInsets
+        
+        self.title = NSLocalizedString("Compose", comment: "")
+        
+        self.messageTextView?.becomeFirstResponder()
+    }
+    
+    override func shouldPerformSegueWithIdentifier(identifier: String?, sender: AnyObject?) -> Bool {
+        var shouldPerformSegue = true
+        
+        if let identifier = identifier {
+            switch identifier {
+            case "cancelSegue":
+                var shouldPerformSegue = true
+            case "saveSegue":
+                // do a bunch of work to save the message
+                var shouldPerformSegue = true
+            default:
+                break
+            }
+        }
+        
+        return shouldPerformSegue
     }
     
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+        self.view.endEditing(true)
+    }
+    
+    @IBAction func didSwipeKeyboardDown(sender: UISwipeGestureRecognizer) {
         self.view.endEditing(true)
     }
     
@@ -51,23 +81,36 @@ class ComposeMessageViewController: UIViewController {
         let keyboardAnimationNumber = notification.userInfo?[UIKeyboardAnimationDurationUserInfoKey] as? NSNumber
         let keyboardAnimationDuration = keyboardAnimationNumber?.doubleValue
 
-//        if let verifiedUserInfo = notification.userInfo {
-//            if let animationValue = verifiedUserInfo[UIKeyboardAnimationDurationUserInfoKey] as? NSNumber {
-//                let animationDuration = animationValue.doubleValue
-//                keyboardAnimationDuration = animationDuration
-        //                let curveValue = verifiedUserInfo[UIKeyboardAnimationCurveUserInfoKey] as? NSNumber
-        //                let animationCurve = curveValue?.integerValue
-        //            }
-        //        }
         if keyboardSize != nil && keyboardAnimationDuration != nil {
             UIView.animateWithDuration(keyboardAnimationDuration!, animations: { () -> Void in
                 self.bottomLayoutConstraint?.constant = keyboardSize!.height
                 self.view.layoutIfNeeded()
+                }, completion: { (finished: Bool) -> Void in
+                    var textViewEdgeInsets = self.messageTextView!.contentInset
+                    textViewEdgeInsets.bottom = self.buttonView!.frame.size.height + keyboardSize!.height
+                    self.messageTextView?.contentInset = textViewEdgeInsets
             })
         }
     }
     
     @objc private func keyboardWillHide(notification: NSNotification) {
+        let keyboardSize = notification.userInfo?[UIKeyboardFrameBeginUserInfoKey]?.CGRectValue().size
+        let keyboardAnimationNumber = notification.userInfo?[UIKeyboardAnimationDurationUserInfoKey] as? NSNumber
+        let keyboardAnimationDuration = keyboardAnimationNumber?.doubleValue
         
+        if keyboardSize != nil && keyboardAnimationDuration != nil {
+            UIView.animateWithDuration(keyboardAnimationDuration!, animations: { () -> Void in
+                self.bottomLayoutConstraint?.constant = 0.0
+                self.view.layoutIfNeeded()
+                }, completion: { (finished: Bool) -> Void in
+                    var textViewEdgeInsets = self.messageTextView!.contentInset
+                    textViewEdgeInsets.bottom = self.buttonView!.frame.size.height
+                    self.messageTextView?.contentInset = textViewEdgeInsets
+            })
+        }
+    }
+    
+    deinit {
+        NSNotificationCenter.defaultCenter().removeObserver(self)
     }
 }

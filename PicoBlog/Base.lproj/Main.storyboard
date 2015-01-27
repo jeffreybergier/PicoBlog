@@ -103,59 +103,88 @@
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="wJW-KG-wTH">
-                                <rect key="frame" x="-4" y="0.0" width="608" height="600"/>
+                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="jAy-3f-PBK">
+                                <rect key="frame" x="16" y="0.0" width="568" height="600"/>
+                                <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
+                                <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                            </textView>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="fKt-da-AAC">
+                                <rect key="frame" x="-4" y="550" width="608" height="50"/>
                                 <subviews>
-                                    <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="jAy-3f-PBK">
-                                        <rect key="frame" x="0.0" y="0.0" width="608" height="550"/>
-                                        <color key="backgroundColor" red="0.0" green="1" blue="0.50196081400000003" alpha="1" colorSpace="calibratedRGB"/>
-                                        <mutableString key="text">Lorem ipsum dolor sit er elit lamet, consectetaur cillium adipisicing pecu, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Nam liber te conscient to factor tum poen legum odioque civiuda. Lorem ipsum dolor sit er elit lamet, consectetaur cillium adipisicing pecu, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Nam liber te conscient to factor tum poen legum odioque civiuda. Lorem ipsum dolor sit er elit lamet, consectetaur cillium adipisicing pecu, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Nam liber te conscient to factor tum poen legum odioque civiuda. Lorem ipsum dolor sit er elit lamet, consectetaur cillium adipisicing pecu, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Nam liber te conscient to factor tum poen legum odioque civiuda.</mutableString>
-                                        <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
-                                        <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
-                                    </textView>
-                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="fKt-da-AAC">
-                                        <rect key="frame" x="0.0" y="550" width="608" height="50"/>
-                                        <color key="backgroundColor" red="1" green="0.23548005759999999" blue="0.24434621710000001" alpha="1" colorSpace="calibratedRGB"/>
-                                        <constraints>
-                                            <constraint firstAttribute="height" constant="50" id="JWj-G2-eQK"/>
-                                        </constraints>
-                                    </view>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="etU-lT-4Pe">
+                                        <rect key="frame" x="20" y="10" width="59" height="30"/>
+                                        <state key="normal" title="Button 1">
+                                            <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                            <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                        </state>
+                                    </button>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="nre-Tm-3oU">
+                                        <rect key="frame" x="87" y="10" width="59" height="30"/>
+                                        <state key="normal" title="Button 2">
+                                            <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                            <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                        </state>
+                                    </button>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="HUX-wv-EDM">
+                                        <rect key="frame" x="154" y="10" width="59" height="30"/>
+                                        <state key="normal" title="Button 3">
+                                            <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                            <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                        </state>
+                                    </button>
                                 </subviews>
-                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
+                                <gestureRecognizers/>
                                 <constraints>
-                                    <constraint firstAttribute="trailing" secondItem="jAy-3f-PBK" secondAttribute="trailing" id="Qgf-NS-6g8"/>
-                                    <constraint firstItem="fKt-da-AAC" firstAttribute="top" secondItem="jAy-3f-PBK" secondAttribute="bottom" id="b4P-21-nnH"/>
-                                    <constraint firstItem="fKt-da-AAC" firstAttribute="leading" secondItem="wJW-KG-wTH" secondAttribute="leading" id="cpM-sn-ZvQ"/>
-                                    <constraint firstAttribute="trailing" secondItem="fKt-da-AAC" secondAttribute="trailing" id="emZ-Uu-SVn"/>
-                                    <constraint firstItem="jAy-3f-PBK" firstAttribute="leading" secondItem="wJW-KG-wTH" secondAttribute="leading" id="gOa-Eh-hX5"/>
-                                    <constraint firstAttribute="bottom" secondItem="fKt-da-AAC" secondAttribute="bottom" id="mOa-L4-Paj"/>
-                                    <constraint firstItem="jAy-3f-PBK" firstAttribute="top" secondItem="wJW-KG-wTH" secondAttribute="top" id="oTk-mQ-Mg3"/>
+                                    <constraint firstAttribute="centerY" secondItem="nre-Tm-3oU" secondAttribute="centerY" id="JJc-s0-gaX"/>
+                                    <constraint firstAttribute="height" constant="50" id="JWj-G2-eQK"/>
+                                    <constraint firstItem="HUX-wv-EDM" firstAttribute="leading" secondItem="nre-Tm-3oU" secondAttribute="trailing" constant="8" symbolic="YES" id="Jat-gd-yaT"/>
+                                    <constraint firstItem="etU-lT-4Pe" firstAttribute="leading" secondItem="fKt-da-AAC" secondAttribute="leading" constant="20" symbolic="YES" id="P7V-BE-2ek"/>
+                                    <constraint firstAttribute="centerY" secondItem="HUX-wv-EDM" secondAttribute="centerY" id="Ses-se-iLm"/>
+                                    <constraint firstItem="nre-Tm-3oU" firstAttribute="leading" secondItem="etU-lT-4Pe" secondAttribute="trailing" constant="8" symbolic="YES" id="Unx-0u-B97"/>
+                                    <constraint firstAttribute="centerY" secondItem="etU-lT-4Pe" secondAttribute="centerY" id="nBf-FM-iZO"/>
                                 </constraints>
+                                <connections>
+                                    <outletCollection property="gestureRecognizers" destination="Yt8-ka-6n3" appends="YES" id="KLw-0Z-UKh"/>
+                                </connections>
                             </view>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
-                            <constraint firstAttribute="trailingMargin" secondItem="wJW-KG-wTH" secondAttribute="trailing" constant="-20" id="GZJ-ws-dcv"/>
-                            <constraint firstItem="wJW-KG-wTH" firstAttribute="top" secondItem="u7O-Gm-5Gs" secondAttribute="topMargin" id="WQl-2k-9Yf"/>
-                            <constraint firstAttribute="bottomMargin" secondItem="wJW-KG-wTH" secondAttribute="bottom" id="cly-n5-LHo"/>
-                            <constraint firstItem="wJW-KG-wTH" firstAttribute="leading" secondItem="u7O-Gm-5Gs" secondAttribute="leadingMargin" constant="-20" id="hKY-d7-RK0"/>
+                            <constraint firstItem="jAy-3f-PBK" firstAttribute="top" secondItem="u7O-Gm-5Gs" secondAttribute="topMargin" id="6WA-sT-V2x"/>
+                            <constraint firstItem="pSW-2s-Muu" firstAttribute="top" secondItem="fKt-da-AAC" secondAttribute="bottom" id="Lid-fu-Beh"/>
+                            <constraint firstItem="fKt-da-AAC" firstAttribute="leading" secondItem="u7O-Gm-5Gs" secondAttribute="leadingMargin" constant="-20" id="cUS-gO-e7R"/>
+                            <constraint firstItem="jAy-3f-PBK" firstAttribute="leading" secondItem="u7O-Gm-5Gs" secondAttribute="leadingMargin" id="fcZ-Zb-JXA"/>
+                            <constraint firstItem="pSW-2s-Muu" firstAttribute="top" secondItem="jAy-3f-PBK" secondAttribute="bottom" id="tfC-Dd-ZKa"/>
+                            <constraint firstItem="jAy-3f-PBK" firstAttribute="trailing" secondItem="u7O-Gm-5Gs" secondAttribute="trailingMargin" id="xae-If-WR0"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="fKt-da-AAC" secondAttribute="trailing" constant="-20" id="z42-9h-dAO"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="0mE-iE-4dw">
                         <barButtonItem key="leftBarButtonItem" systemItem="cancel" id="Zbq-id-L9b">
                             <connections>
-                                <segue destination="FQq-n7-Azk" kind="unwind" unwindAction="unwindFromAddFeedViewController:" id="lqx-p9-9xh"/>
+                                <segue destination="FQq-n7-Azk" kind="unwind" identifier="cancelSegue" unwindAction="unwindFromAddFeedViewController:" id="g3j-RP-nRR"/>
                             </connections>
                         </barButtonItem>
-                        <barButtonItem key="rightBarButtonItem" systemItem="save" id="MfB-CC-gcG"/>
+                        <barButtonItem key="rightBarButtonItem" systemItem="save" id="MfB-CC-gcG">
+                            <connections>
+                                <segue destination="FQq-n7-Azk" kind="unwind" identifier="saveSegue" unwindAction="unwindFromAddFeedViewController:" id="v99-WL-Ahj"/>
+                            </connections>
+                        </barButtonItem>
                     </navigationItem>
                     <connections>
-                        <outlet property="bottomLayoutConstraint" destination="cly-n5-LHo" id="Rfi-0s-7sr"/>
+                        <outlet property="bottomLayoutConstraint" destination="Lid-fu-Beh" id="F2A-le-WAQ"/>
+                        <outlet property="buttonView" destination="fKt-da-AAC" id="Tuy-yb-3fK"/>
                         <outlet property="messageTextView" destination="jAy-3f-PBK" id="wZT-qn-pZo"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="qKQ-Uu-lE3" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <exit id="FQq-n7-Azk" userLabel="Exit" sceneMemberID="exit"/>
+                <swipeGestureRecognizer direction="down" id="Yt8-ka-6n3">
+                    <connections>
+                        <action selector="didSwipeKeyboardDown:" destination="aWA-mR-khT" id="yjd-kf-7Ig"/>
+                    </connections>
+                </swipeGestureRecognizer>
             </objects>
             <point key="canvasLocation" x="3706" y="-465"/>
         </scene>

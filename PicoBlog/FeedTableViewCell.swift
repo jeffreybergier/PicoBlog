@@ -61,6 +61,8 @@ class FeedTableViewCell: UITableViewCell {
         self.messageTextLabel?.text = ""
         self.usernameTextLabel?.text = ""
         self.messageDateTextLabel?.text = ""
+        
+        self.layoutIfNeeded()
     }
     
     private func updateViewWithNewPicoMessage(newMessage: PicoMessage) {
@@ -82,6 +84,7 @@ class FeedTableViewCell: UITableViewCell {
         }
 
         self.cellWillAppear()
+        self.layoutIfNeeded()
     }
     
     @objc private func newCellImageDownloaded(notification: NSNotification) {
