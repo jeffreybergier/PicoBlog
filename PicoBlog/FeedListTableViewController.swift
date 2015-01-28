@@ -88,35 +88,35 @@ class FeedListTableViewController: UITableViewController, UISplitViewControllerD
     }
     
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        if let identifier = segue.identifier {
-            switch identifier {
-            case "composeMessageSegue":
-                break
-            case "addSubscriptionSegue":
-                break
-            case "viewSubscriptionSegue":
-                if let selectedIndexPath = self.tableView.indexPathForSelectedRow() {
-                    if let subscriptionList = self.subscriptionList {
-                        let navigationController = segue.destinationViewController as? UINavigationController
-                        let feedTableViewController = navigationController?.viewControllers.last as? FeedTableViewController
-                        switch selectedIndexPath.section {
-                        case 0:
-                            var subscriptionDictionary: [String : Subscription] = [:]
-                            for subscription in subscriptionList {
-                                subscriptionDictionary[subscription.verifiedURL.string] = subscription
-                            }
-                            feedTableViewController?.subscriptions = subscriptionDictionary
-                        case 1:
-                            let individualSubscription = subscriptionList[selectedIndexPath.row]
-                            feedTableViewController?.subscriptions = [individualSubscription.verifiedURL.string : individualSubscription]
-                        default:
-                            break
-                        }
+        let segueIdentifier = segue.identifier !! "invalidSegue"
+        switch segueIdentifier {
+        case "composeMessageSegue":
+            break
+        case "addSubscriptionSegue":
+            break
+        case "viewSubscriptionSegue":
+            let selectedIndexPath = self.tableView.indexPathForSelectedRow() !! NSIndexPath(forRow: 0, inSection: 0)
+            if let subscriptionList = self.subscriptionList {
+                let navigationController = segue.destinationViewController as? UINavigationController
+                let feedTableViewController = navigationController?.viewControllers.last as? FeedTableViewController
+                switch selectedIndexPath.section {
+                case 0:
+                    var subscriptionDictionary: [String : Subscription] = [:]
+                    for subscription in subscriptionList {
+                        subscriptionDictionary[subscription.verifiedURL.string] = subscription
                     }
+                    feedTableViewController?.subscriptions = subscriptionDictionary
+                case 1:
+                    if subscriptionList.count > selectedIndexPath.row {
+                        let individualSubscription = subscriptionList[selectedIndexPath.row]
+                        feedTableViewController?.subscriptions = [individualSubscription.verifiedURL.string : individualSubscription]
+                    }
+                default:
+                    break
                 }
-            default:
-                break
             }
+        default:
+            break
         }
     }
     
@@ -137,16 +137,13 @@ class FeedListTableViewController: UITableViewController, UISplitViewControllerD
     }
     
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        var cell: AnyObject!
-        cell = tableView.dequeueReusableCellWithIdentifier("FeedListTableViewCell")
-        if let cell = cell as? FeedListTableViewCell {
-            if indexPath.section == 0 {
-                cell.feedUsernameTextLabel?.text = "All Subscriptions"
-            } else {
-                cell.feedUsernameTextLabel?.text = self.subscriptionList![indexPath.row /*- self.cellIndexPathOffset */].username
-            }
+        let cell = tableView.dequeueReusableCellWithIdentifier("FeedListTableViewCell") as? FeedListTableViewCell !! FeedListTableViewCell()
+        if indexPath.section == 0 {
+            cell.feedUsernameTextLabel?.text = "All Subscriptions"
+        } else {
+            cell.feedUsernameTextLabel?.text = self.subscriptionList![indexPath.row /*- self.cellIndexPathOffset */].username
         }
-        return cell as UITableViewCell
+        return cell
     }
     
     override func tableView(tableView: UITableView, canEditRowAtIndexPath indexPath: NSIndexPath) -> Bool {

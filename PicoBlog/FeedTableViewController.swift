@@ -268,7 +268,7 @@ class FeedTableViewController: UITableViewController {
     }
     
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        var cell: AnyObject!
+        var cell: FeedTableViewCell?
         if let messages = self.messages {
             var identifierString: NSString
             if messages[indexPath.row].verifiedPictureURL == nil {
@@ -276,12 +276,10 @@ class FeedTableViewController: UITableViewController {
             } else {
                 identifierString = "PicoMessageCellWithImage"
             }
-            cell = tableView.dequeueReusableCellWithIdentifier(identifierString, forIndexPath: indexPath)
-            if let cell = cell as? FeedTableViewCell {
-                cell.messagePost = messages[indexPath.row]
-            }
+            cell = tableView.dequeueReusableCellWithIdentifier(identifierString) as? FeedTableViewCell !! FeedTableViewCell()
+            cell?.messagePost = messages[indexPath.row]
         }
-        return cell as FeedTableViewCell
+        return cell !! FeedTableViewCell()
     }
     
     override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {

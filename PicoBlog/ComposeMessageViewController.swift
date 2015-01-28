@@ -41,8 +41,8 @@ class ComposeMessageViewController: UIViewController {
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "keyboardWillShow:", name: UIKeyboardWillShowNotification, object: nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "keyboardWillHide:", name: UIKeyboardWillHideNotification, object: nil)
         
-        var textViewEdgeInsets = self.messageTextView!.contentInset
-        textViewEdgeInsets.bottom = self.buttonView!.frame.size.height
+        var textViewEdgeInsets = self.messageTextView?.contentInset !! UIEdgeInsetsZero
+        textViewEdgeInsets.bottom = self.buttonView?.frame.size.height !! 50.0
         self.messageTextView?.contentInset = textViewEdgeInsets
         
         self.title = NSLocalizedString("Compose", comment: "")
@@ -77,37 +77,34 @@ class ComposeMessageViewController: UIViewController {
     }
     
     @objc private func keyboardWillShow(notification: NSNotification) {
-        let keyboardSize = notification.userInfo?[UIKeyboardFrameBeginUserInfoKey]?.CGRectValue().size
-        let keyboardAnimationNumber = notification.userInfo?[UIKeyboardAnimationDurationUserInfoKey] as? NSNumber
-        let keyboardAnimationDuration = keyboardAnimationNumber?.doubleValue
+        let keyboardSize = notification.userInfo?[UIKeyboardFrameBeginUserInfoKey]?.CGRectValue().size !! CGSize(width: 414, height: 271) //default US English keyboard size
+        let keyboardAnimationNumber = notification.userInfo?[UIKeyboardAnimationDurationUserInfoKey] as? NSNumber !! NSNumber(double: 0.4) // default animation duration
+        let keyboardAnimationDuration = keyboardAnimationNumber.doubleValue
 
-        if keyboardSize != nil && keyboardAnimationDuration != nil {
-            UIView.animateWithDuration(keyboardAnimationDuration!, animations: { () -> Void in
-                self.bottomLayoutConstraint?.constant = keyboardSize!.height
-                self.view.layoutIfNeeded()
-                }, completion: { (finished: Bool) -> Void in
-                    var textViewEdgeInsets = self.messageTextView!.contentInset
-                    textViewEdgeInsets.bottom = self.buttonView!.frame.size.height + keyboardSize!.height
-                    self.messageTextView?.contentInset = textViewEdgeInsets
-            })
-        }
+        UIView.animateWithDuration(keyboardAnimationDuration, animations: { () -> Void in
+            self.bottomLayoutConstraint?.constant = keyboardSize.height
+            self.view.layoutIfNeeded()
+            }, completion: { (finished: Bool) -> Void in
+                var textViewEdgeInsets = self.messageTextView?.contentInset !! UIEdgeInsetsZero
+                textViewEdgeInsets.bottom = self.buttonView?.frame.size.height !! 50.0
+                textViewEdgeInsets.bottom += keyboardSize.height
+                self.messageTextView?.contentInset = textViewEdgeInsets
+        })
     }
     
     @objc private func keyboardWillHide(notification: NSNotification) {
-        let keyboardSize = notification.userInfo?[UIKeyboardFrameBeginUserInfoKey]?.CGRectValue().size
-        let keyboardAnimationNumber = notification.userInfo?[UIKeyboardAnimationDurationUserInfoKey] as? NSNumber
-        let keyboardAnimationDuration = keyboardAnimationNumber?.doubleValue
+        let keyboardSize = notification.userInfo?[UIKeyboardFrameBeginUserInfoKey]?.CGRectValue().size !! CGSize(width: 414, height: 271) //default US English keyboard size
+        let keyboardAnimationNumber = notification.userInfo?[UIKeyboardAnimationDurationUserInfoKey] as? NSNumber !! NSNumber(double: 0.4) // default animation duration
+        let keyboardAnimationDuration = keyboardAnimationNumber.doubleValue
         
-        if keyboardSize != nil && keyboardAnimationDuration != nil {
-            UIView.animateWithDuration(keyboardAnimationDuration!, animations: { () -> Void in
-                self.bottomLayoutConstraint?.constant = 0.0
-                self.view.layoutIfNeeded()
-                }, completion: { (finished: Bool) -> Void in
-                    var textViewEdgeInsets = self.messageTextView!.contentInset
-                    textViewEdgeInsets.bottom = self.buttonView!.frame.size.height
-                    self.messageTextView?.contentInset = textViewEdgeInsets
-            })
-        }
+        UIView.animateWithDuration(keyboardAnimationDuration, animations: { () -> Void in
+            self.bottomLayoutConstraint?.constant = 0.0
+            self.view.layoutIfNeeded()
+            }, completion: { (finished: Bool) -> Void in
+                var textViewEdgeInsets = self.messageTextView?.contentInset !! UIEdgeInsetsZero
+                textViewEdgeInsets.bottom = self.buttonView?.frame.size.height !! 50.0
+                self.messageTextView?.contentInset = textViewEdgeInsets
+        })
     }
     
     deinit {

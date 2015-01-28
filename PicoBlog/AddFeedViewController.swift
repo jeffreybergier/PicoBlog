@@ -64,8 +64,10 @@ class AddFeedViewController: UIViewController, UITableViewDataSource, UITableVie
         self.feedIsValid = false
         
         // prepare the constants for animating the text input field
-        self.feedURLTextFieldConstraint.loading = self.feedURLTextFieldTrailingConstraint!.constant
-        self.feedURLTextFieldConstraint.notLoading = -1 * self.feedLoadingSpinner!.frame.size.width
+        let loading = self.feedURLTextFieldTrailingConstraint?.constant !! 12
+        let notLoading = self.feedLoadingSpinner?.frame.size.width !! 20
+        self.feedURLTextFieldConstraint.loading = loading
+        self.feedURLTextFieldConstraint.notLoading = notLoading * -1
         self.feedURLTextFieldTrailingConstraint?.constant = self.feedURLTextFieldConstraint.notLoading
         
         // configure the tableview
@@ -202,7 +204,7 @@ class AddFeedViewController: UIViewController, UITableViewDataSource, UITableVie
     }
     
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        var cell: AnyObject!
+        var cell: FeedTableViewCell?
         if let messages = self.messages {
             var identifierString: NSString
             if messages[indexPath.row].verifiedPictureURL == nil {
@@ -210,12 +212,10 @@ class AddFeedViewController: UIViewController, UITableViewDataSource, UITableVie
             } else {
                 identifierString = "PicoMessageCellWithImage"
             }
-            cell = tableView.dequeueReusableCellWithIdentifier(identifierString, forIndexPath: indexPath)
-            if let cell = cell as? FeedTableViewCell {
-                cell.messagePost = messages[indexPath.row]
-            }
+            cell = tableView.dequeueReusableCellWithIdentifier(identifierString) as? FeedTableViewCell !! FeedTableViewCell()
+            cell?.messagePost = messages[indexPath.row]
         }
-        return cell as FeedTableViewCell
+        return cell !! FeedTableViewCell()
     }
     
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
