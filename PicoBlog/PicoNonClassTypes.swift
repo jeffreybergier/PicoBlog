@@ -394,3 +394,19 @@ public func !!<A>(lhs:A?, rhs:@autoclosure()->A)->A {
     assert(lhs != nil)
     return lhs ?? rhs()
 }
+
+// Extending array
+// There were several cases where I was checking to make sure the index was in range before extracting the value
+// This code seemed clumsy, so I added this so I can deal with an optional instead.
+extension Array {
+    func optionalItemAtIndex(index: Int) -> T? {
+        if self.count > index && index >= 0 {
+            return self[index] // this returns nil if out of range.
+        }
+        return nil
+    }
+    
+    func itemAtIndex(index: Int) -> T? {
+        return self[index] // this crashes if out of range
+    }
+}

@@ -107,8 +107,7 @@ class FeedListTableViewController: UITableViewController, UISplitViewControllerD
                     }
                     feedTableViewController?.subscriptions = subscriptionDictionary
                 case 1:
-                    if subscriptionList.count > selectedIndexPath.row {
-                        let individualSubscription = subscriptionList[selectedIndexPath.row]
+                    if let individualSubscription = subscriptionList.optionalItemAtIndex(selectedIndexPath.row) {
                         feedTableViewController?.subscriptions = [individualSubscription.verifiedURL.string : individualSubscription]
                     }
                 default:
