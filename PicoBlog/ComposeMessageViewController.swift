@@ -38,6 +38,7 @@ class ComposeMessageViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "keyboardWillShow:", name: UIKeyboardWillChangeFrameNotification, object: nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "keyboardWillShow:", name: UIKeyboardWillShowNotification, object: nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "keyboardWillHide:", name: UIKeyboardWillHideNotification, object: nil)
         
@@ -77,7 +78,7 @@ class ComposeMessageViewController: UIViewController {
     }
     
     @objc private func keyboardWillShow(notification: NSNotification) {
-        let keyboardSize = notification.userInfo?[UIKeyboardFrameBeginUserInfoKey]?.CGRectValue().size !! CGSize(width: 414, height: 271) //default US English keyboard size
+        let keyboardSize = notification.userInfo?[UIKeyboardFrameEndUserInfoKey]?.CGRectValue().size !! CGSize(width: 414, height: 271) //default US English keyboard size
         let keyboardAnimationNumber = notification.userInfo?[UIKeyboardAnimationDurationUserInfoKey] as? NSNumber !! NSNumber(double: 0.4) // default animation duration
         let keyboardAnimationDuration = keyboardAnimationNumber.doubleValue
 
@@ -93,7 +94,7 @@ class ComposeMessageViewController: UIViewController {
     }
     
     @objc private func keyboardWillHide(notification: NSNotification) {
-        let keyboardSize = notification.userInfo?[UIKeyboardFrameBeginUserInfoKey]?.CGRectValue().size !! CGSize(width: 414, height: 271) //default US English keyboard size
+        let keyboardSize = notification.userInfo?[UIKeyboardFrameEndUserInfoKey]?.CGRectValue().size !! CGSize(width: 414, height: 271) //default US English keyboard size
         let keyboardAnimationNumber = notification.userInfo?[UIKeyboardAnimationDurationUserInfoKey] as? NSNumber !! NSNumber(double: 0.4) // default animation duration
         let keyboardAnimationDuration = keyboardAnimationNumber.doubleValue
         
