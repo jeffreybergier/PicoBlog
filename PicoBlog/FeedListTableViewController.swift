@@ -87,6 +87,26 @@ class FeedListTableViewController: UITableViewController, UISplitViewControllerD
         self.presentViewController(alertController, animated: true, completion: nil)
     }
     
+    override func shouldPerformSegueWithIdentifier(identifier: String?, sender: AnyObject?) -> Bool {
+        var shouldPerforformSegue = true
+        
+        let segueIdentifier = identifier !! "invalidSegue"
+        switch segueIdentifier {
+        case "composeMessageSegue":
+            break
+        case "addSubscriptionSegue":
+            break
+        case "viewSubscriptionSegue":
+            if self.tableView.indexPathForSelectedRow() == nil {
+                shouldPerforformSegue = false
+            }
+        default:
+            break
+        }
+        
+        return shouldPerforformSegue
+    }
+    
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
         let segueIdentifier = segue.identifier !! "invalidSegue"
         switch segueIdentifier {
