@@ -410,3 +410,7 @@ extension Array {
         return self[index] // this crashes if out of range
     }
 }
+
+enum DownloadError {
+    case FileTooLarge, FileNotFound, Other
+}

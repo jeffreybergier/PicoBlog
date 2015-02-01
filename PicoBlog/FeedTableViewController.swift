@@ -186,7 +186,7 @@ class FeedTableViewController: UITableViewController {
         timer.invalidate()
         self.tableView.reloadData()
         
-        var matchedErrors: [Subscription : NSHTTPURLResponse] = [:]
+        var matchedErrors: [Subscription : (response: NSHTTPURLResponse, downloadError: DownloadError)] = [:]
         var matchedInvalidData: [Subscription] = []
         if let subscriptions = self.subscriptions {
             for (url, subscription) in subscriptions {
@@ -217,12 +217,12 @@ class FeedTableViewController: UITableViewController {
         }
         
         if matchedErrors.count > 0 {
-            for (i, (subscription, response)) in enumerate(matchedErrors) {
+            for (i, (subscription, tuple)) in enumerate(matchedErrors) {
                 var lineBreak = "\n\n"
                 if i == matchedErrors.count - 1 {
                     lineBreak = ""
                 }
-                messageString += "Username: \(subscription.username)\nError Code: \(response.statusCode)" + lineBreak
+                messageString += "Username: \(subscription.username)\nError Code: \(tuple.response.statusCode)" + lineBreak
             }
         }
         

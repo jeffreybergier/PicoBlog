@@ -40,7 +40,7 @@ class PicoDownloadManager: NSObject, NSURLSessionDelegate, NSURLSessionDataDeleg
     // CellImages Properties
     var dataFinished: [String : NSData] = [:]
     var tasksInProgress: [String : NSURLSessionTask] = [:]
-    var tasksWithErrors: [String : NSHTTPURLResponse] = [:]
+    var tasksWithErrors: [String : (response: NSHTTPURLResponse, downloadError: DownloadError)] = [:]
     var tasksWithInvalidData: [String : NSData] = [:]
     private var dataInProgress: [String : NSMutableData] = [:]
     
@@ -67,22 +67,35 @@ class PicoDownloadManager: NSObject, NSURLSessionDelegate, NSURLSessionDataDeleg
     }
     
     func URLSession(session: NSURLSession, dataTask: NSURLSessionDataTask, didReceiveResponse response: NSURLResponse, completionHandler: (NSURLSessionResponseDisposition) -> Void) {
+        var shouldContinue = ReceivedResponse.ShouldCancel
+        let httpResponse = response as? NSHTTPURLResponse !! NSHTTPURLResponse()
         
-        var shouldContinue = false
-        
-        if let httpResponse = response as? NSHTTPURLResponse {
-            if httpResponse.statusCode == 200 {
-                shouldContinue = true
-            } else {
-                NSLog("\(self): Cancelling Download URL: \(dataTask.originalRequest.URL). Status Code: \(httpResponse.statusCode)")
-                tasksWithErrors[dataTask.originalRequest.URL.description] = httpResponse
+        switch httpResponse.statusCode {
+        case 200:
+            switch self.downloadSizeIsAcceptible(httpResponse.expectedContentLength) {
+            case true:
+                shouldContinue = .ShouldAllow
+            case false:
+                NSLog("\(self): Canceling Download URL: \(dataTask.originalRequest.URL): File Too Big: \(httpResponse.expectedContentLength) bytes")
+                self.tasksWithErrors[dataTask.originalRequest.URL.description] = (httpResponse, DownloadError.FileTooLarge)
+            default:
+                break
             }
+        case 404:
+            NSLog("\(self): Canceling Download URL: \(dataTask.originalRequest.URL). Status Code: \(httpResponse.statusCode)")
+            self.tasksWithErrors[dataTask.originalRequest.URL.description] = (httpResponse, DownloadError.FileNotFound)
+        default:
+            NSLog("\(self): Canceling Download URL: \(dataTask.originalRequest.URL). Status Code: \(httpResponse.statusCode)")
+            self.tasksWithErrors[dataTask.originalRequest.URL.description] = (httpResponse, DownloadError.Other)
         }
         
-        if shouldContinue {
+        switch shouldContinue {
+        case .ShouldAllow:
             completionHandler(NSURLSessionResponseDisposition.Allow)
-        } else {
+        case .ShouldCancel:
             completionHandler(NSURLSessionResponseDisposition.Cancel)
+        case .ShouldBecomeDownload:
+            completionHandler(NSURLSessionResponseDisposition.BecomeDownload)
         }
     }
     
@@ -99,5 +112,19 @@ class PicoDownloadManager: NSObject, NSURLSessionDelegate, NSURLSessionDataDeleg
         }
         self.dataInProgress.removeValueForKey(task.originalRequest.URL.description)
         self.tasksInProgress.removeValueForKey(task.originalRequest.URL.description)
+    }
+    
+    private func downloadSizeIsAcceptible(downloadSize: Int64) -> Bool {
+        var downloadSizeIsAcceptible = false
+        
+        if downloadSize < 250000 {
+            downloadSizeIsAcceptible = true
+        }
+        
+        return downloadSizeIsAcceptible
+    }
+    
+    enum ReceivedResponse {
+        case ShouldAllow, ShouldCancel, ShouldBecomeDownload
     }
 }
