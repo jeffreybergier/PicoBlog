@@ -38,8 +38,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
         
-        //NSNotificationCenter.defaultCenter().addObserver(self, selector: "notificationPosted:", name: nil, object: nil)
-        
         if let storyboardViewController = self.storyboard.instantiateInitialViewController() as? UIViewController {
             
             if self.window == nil {
@@ -55,14 +53,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
         
         return true
-    }
-    
-    @objc private func notificationPosted(notification: NSNotification) {
-        let name = notification.name
-        
-        if !name.hasPrefix("UI") && !name.hasPrefix("_UI") && !name.hasPrefix("_NS") && !name.hasPrefix("NS") && !name.hasSuffix("Scrolling") && !name.hasPrefix("Buffer") {
-            NSLog("AppDelegate: Notification Posted: \(notification.name)")
-        }
     }
     
     func applicationDidReceiveMemoryWarning(application: UIApplication) {

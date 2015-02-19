@@ -31,7 +31,7 @@ import UIKit
 
 class FeedListTableViewController: UITableViewController, UISplitViewControllerDelegate {
     
-    var subscriptionList: [Subscription]?
+    var subscriptionList = [Subscription]()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -52,14 +52,11 @@ class FeedListTableViewController: UITableViewController, UISplitViewControllerD
     }
     
     private func readSubscriptionsFromDisk() {
-        self.subscriptionList = PicoDataSource.sharedInstance.subscriptionManager.readSubscriptionsFromDisk()
-        if let subscriptionList = self.subscriptionList {
-            var urlStringArray: [String] = []
-            for subscription in subscriptionList {
-                urlStringArray.append(subscription.verifiedURL.string)
-            }
-            if urlStringArray.count > 0 {
-                PicoDataSource.sharedInstance.messageDownloadManager.downloadURLStringArray(urlStringArray)
+        if let subscriptionListFromDisk = PicoDataSource.sharedInstance.subscriptionManager.readSubscriptionsFromDisk() {
+            self.subscriptionList = subscriptionListFromDisk
+            let subscriptionURLStrings = subscriptionListFromDisk.map({ return $0.verifiedURL.string })
+            if subscriptionURLStrings.count > 0 {
+                PicoDataSource.sharedInstance.messageDownloadManager.downloadURLStringArray(subscriptionURLStrings)
             }
         }
     }
@@ -116,23 +113,21 @@ class FeedListTableViewController: UITableViewController, UISplitViewControllerD
             break
         case "viewSubscriptionSegue":
             let selectedIndexPath = self.tableView.indexPathForSelectedRow() !! NSIndexPath(forRow: 0, inSection: 0)
-            if let subscriptionList = self.subscriptionList {
                 let navigationController = segue.destinationViewController as? UINavigationController
                 let feedTableViewController = navigationController?.viewControllers.last as? FeedTableViewController
                 switch selectedIndexPath.section {
                 case 0:
                     var subscriptionDictionary: [String : Subscription] = [:]
-                    for subscription in subscriptionList {
+                    for subscription in self.subscriptionList {
                         subscriptionDictionary[subscription.verifiedURL.string] = subscription
                     }
                     feedTableViewController?.subscriptions = subscriptionDictionary
                 case 1:
-                    if let individualSubscription = subscriptionList.optionalItemAtIndex(selectedIndexPath.row) {
+                    if let individualSubscription = self.subscriptionList.optionalItemAtIndex(selectedIndexPath.row) {
                         feedTableViewController?.subscriptions = [individualSubscription.verifiedURL.string : individualSubscription]
                     }
                 default:
                     break
-                }
             }
         default:
             break
@@ -142,50 +137,53 @@ class FeedListTableViewController: UITableViewController, UISplitViewControllerD
     override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
         return 2
     }
-
+    
     override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if section == 0 {
+        switch section {
+        case 0:
             return 1
-        } else {
-            if let subscriptionListCount = self.subscriptionList?.count {
-                return subscriptionListCount //+ self.cellIndexPathOffset
-            } else {
-                return 0
-            }
+        default:
+            return self.subscriptionList.count //+ self.cellIndexPathOffset
         }
     }
     
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCellWithIdentifier("FeedListTableViewCell") as? FeedListTableViewCell !! FeedListTableViewCell()
+        let cell = (tableView.dequeueReusableCellWithIdentifier("FeedListTableViewCell") as? FeedListTableViewCell) !! FeedListTableViewCell()
         if indexPath.section == 0 {
             cell.feedUsernameTextLabel?.text = "All Subscriptions"
         } else {
-            cell.feedUsernameTextLabel?.text = self.subscriptionList![indexPath.row /*- self.cellIndexPathOffset */].username
+            let subscriptionUsername = self.subscriptionList.optionalItemAtIndex(indexPath.row)?.username !! ""
+            cell.feedUsernameTextLabel?.text = subscriptionUsername
         }
         return cell
     }
     
     override func tableView(tableView: UITableView, canEditRowAtIndexPath indexPath: NSIndexPath) -> Bool {
-        if indexPath.section == 0 {
+        switch indexPath.section {
+        case 0:
             return false
-        } else {
+        default:
             return true
         }
     }
     
     override func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath) {
-        if indexPath.section > 0 {
-            if editingStyle == UITableViewCellEditingStyle.Delete {
-                if let error = PicoDataSource.sharedInstance.subscriptionManager.deleteSubscriptionsFromDisk([self.subscriptionList![indexPath.row]]) {
+        //        if indexPath.section > 0 {
+        switch editingStyle {
+        case UITableViewCellEditingStyle.Delete :
+            if let subscription = self.subscriptionList.optionalItemAtIndex(indexPath.row) {
+                if let error = PicoDataSource.sharedInstance.subscriptionManager.deleteSubscriptionsFromDisk([subscription]) {
                     // do some error handling
                 } else {
                     tableView.beginUpdates()
-                    self.subscriptionList = PicoDataSource.sharedInstance.subscriptionManager.readSubscriptionsFromDisk()
+                    self.subscriptionList = PicoDataSource.sharedInstance.subscriptionManager.readSubscriptionsFromDisk() !! []
                     tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: UITableViewRowAnimation.Left)
                     tableView.endUpdates()
                     //tableView.endEditing(true)
                 }
             }
+        default:
+            break
         }
     }
     

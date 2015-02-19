@@ -59,62 +59,72 @@ class PicoDownloadManager: NSObject, NSURLSessionDelegate, NSURLSessionDataDeleg
     }
     
     func URLSession(session: NSURLSession, dataTask: NSURLSessionDataTask, didReceiveData data: NSData) {
-        if let existingData = self.dataInProgress[dataTask.originalRequest.URL.description] {
-            existingData.appendData(data)
-        } else {
-            self.dataInProgress[dataTask.originalRequest.URL.description] = NSMutableData(data: data)
+        if let dataTaskURL = dataTask.originalRequest.URL {
+            if let existingData = self.dataInProgress[dataTaskURL.description] {
+                existingData.appendData(data)
+            } else {
+                self.dataInProgress[dataTaskURL.description] = NSMutableData(data: data)
+            }
         }
     }
     
     func URLSession(session: NSURLSession, dataTask: NSURLSessionDataTask, didReceiveResponse response: NSURLResponse, completionHandler: (NSURLSessionResponseDisposition) -> Void) {
         var shouldContinue = ReceivedResponse.ShouldCancel
-        let httpResponse = response as? NSHTTPURLResponse !! NSHTTPURLResponse()
-        
-        switch httpResponse.statusCode {
-        case 200:
-            switch self.downloadSizeIsAcceptible(httpResponse.expectedContentLength) {
-            case true:
-                shouldContinue = .ShouldAllow
-            case false:
-                NSLog("\(self): Canceling Download URL: \(dataTask.originalRequest.URL): File Too Big: \(httpResponse.expectedContentLength) bytes")
-                self.tasksWithErrors[dataTask.originalRequest.URL.description] = (httpResponse, DownloadError.FileTooLarge)
+        if let httpResponse = (response as? NSHTTPURLResponse) {
+            switch httpResponse.statusCode {
+            case 200:
+                switch self.downloadSizeIsAcceptible(Int(httpResponse.expectedContentLength)) {
+                case true:
+                    shouldContinue = .ShouldAllow
+                case false:
+                    NSLog("\(self): Canceling Download URL: \(dataTask.originalRequest.URL): File Too Big: \(httpResponse.expectedContentLength) bytes")
+                    if let dataTaskURL = dataTask.originalRequest.URL {
+                        self.tasksWithErrors[dataTaskURL.description] = (httpResponse, DownloadError.FileTooLarge)
+                    }
+                default:
+                    break
+                }
+            case 404:
+                NSLog("\(self): Canceling Download URL: \(dataTask.originalRequest.URL). Status Code: \(httpResponse.statusCode)")
+                if let dataTaskURL = dataTask.originalRequest.URL {
+                    self.tasksWithErrors[dataTaskURL.description] = (httpResponse, DownloadError.FileNotFound)
+                }
             default:
-                break
+                NSLog("\(self): Canceling Download URL: \(dataTask.originalRequest.URL). Status Code: \(httpResponse.statusCode)")
+                if let dataTaskURL = dataTask.originalRequest.URL {
+                    self.tasksWithErrors[dataTaskURL.description] = (httpResponse, DownloadError.Other)
+                }
             }
-        case 404:
-            NSLog("\(self): Canceling Download URL: \(dataTask.originalRequest.URL). Status Code: \(httpResponse.statusCode)")
-            self.tasksWithErrors[dataTask.originalRequest.URL.description] = (httpResponse, DownloadError.FileNotFound)
-        default:
-            NSLog("\(self): Canceling Download URL: \(dataTask.originalRequest.URL). Status Code: \(httpResponse.statusCode)")
-            self.tasksWithErrors[dataTask.originalRequest.URL.description] = (httpResponse, DownloadError.Other)
-        }
-        
-        switch shouldContinue {
-        case .ShouldAllow:
-            completionHandler(NSURLSessionResponseDisposition.Allow)
-        case .ShouldCancel:
-            completionHandler(NSURLSessionResponseDisposition.Cancel)
-        case .ShouldBecomeDownload:
-            completionHandler(NSURLSessionResponseDisposition.BecomeDownload)
+            
+            switch shouldContinue {
+            case .ShouldAllow:
+                completionHandler(NSURLSessionResponseDisposition.Allow)
+            case .ShouldCancel:
+                completionHandler(NSURLSessionResponseDisposition.Cancel)
+            case .ShouldBecomeDownload:
+                completionHandler(NSURLSessionResponseDisposition.BecomeDownload)
+            }
         }
     }
     
-    func URLSession(session: NSURLSession, task: NSURLSessionTask, didCompleteWithError error: NSError!) {
-        if error == nil {
-            if let mutableData = self.dataInProgress[task.originalRequest.URL.description] {
-                let immutableData = NSData(data: mutableData)
-                self.dataFinished[task.originalRequest.URL.description] = immutableData
-                NSNotificationCenter.defaultCenter().postNotificationName("dataDownloadedSuccessfully", object: self)
+    func URLSession(session: NSURLSession, task: NSURLSessionTask, didCompleteWithError error: NSError?) {
+        if let dataTaskURL = task.originalRequest.URL {
+            if error == nil {
+                if let mutableData = self.dataInProgress[dataTaskURL.description] {
+                    let immutableData = NSData(data: mutableData)
+                    self.dataFinished[dataTaskURL.description] = immutableData
+                    NSNotificationCenter.defaultCenter().postNotificationName("dataDownloadedSuccessfully", object: self)
+                }
+            } else {
+                NSLog("\(self): Error downloading data: \(error)")
+                NSNotificationCenter.defaultCenter().postNotificationName("dataDownloadFailed", object: self)
             }
-        } else {
-            NSLog("\(self): Error downloading data: \(error)")
-            NSNotificationCenter.defaultCenter().postNotificationName("dataDownloadFailed", object: self)
+            self.dataInProgress.removeValueForKey(dataTaskURL.description)
+            self.tasksInProgress.removeValueForKey(dataTaskURL.description)
         }
-        self.dataInProgress.removeValueForKey(task.originalRequest.URL.description)
-        self.tasksInProgress.removeValueForKey(task.originalRequest.URL.description)
     }
     
-    private func downloadSizeIsAcceptible(downloadSize: Int64) -> Bool {
+    private func downloadSizeIsAcceptible(downloadSize: Int) -> Bool {
         var downloadSizeIsAcceptible = false
         
         if downloadSize < 250000 {

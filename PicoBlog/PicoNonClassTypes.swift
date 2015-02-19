@@ -108,25 +108,24 @@ struct PicoMessage: Writable, Hashable, Printable {
         }
         
         // CREATE THE MESSAGE
-        // nesting the if lets leads to really unreadable code, so I'm doing this nil check
         var user: User?
         var message: PicoMessage?
         
-        if (username != nil && userFeedURL != nil && userAvatarImageURL != nil) {
-            user = User(username: username!, unverifiedFeedURLString: userFeedURL!, unverifiedAvatarURLString: userAvatarImageURL!)
+        if let username = username, let userFeedURL = userFeedURL, userAvatarImageURL = userAvatarImageURL {
+            user = User(username: username, unverifiedFeedURLString: userFeedURL, unverifiedAvatarURLString: userAvatarImageURL)
         } else {
             return nil
         }
         
-        if (user != nil && messageDate != nil && messageText != nil) {
-            self.init(CompleteUser: user!, unverifiedDateString: messageDate!, messageText: messageText!, unverifiedPictureURLString: messagePictureURL, unknownItems: extrasDictionary)
+        if let user = user, messageDate = messageDate, messageText = messageText {
+            self.init(CompleteUser: user, unverifiedDateString: messageDate, messageText: messageText, unverifiedPictureURLString: messagePictureURL, unknownItems: extrasDictionary)
         } else {
             return nil
         }
     }
     
-    func prepareForDisk() -> NSDictionary {
-        let mutableDictionary: NSMutableDictionary = [
+    func prepareForDisk() -> [String : String] {
+        var dictionary = [
             "date" : self.verifiedDate.string,
             "username" : self.user.username,
             "userFeedURL" : self.user.verifiedFeedURL.string,
@@ -134,9 +133,9 @@ struct PicoMessage: Writable, Hashable, Printable {
             "messageText" : self.text,
         ]
         if let messagePictureURLString = self.verifiedPictureURL {
-            mutableDictionary["messagePictureURL"] = messagePictureURLString.string
+            dictionary["messagePictureURL"] = messagePictureURLString.string
         }
-        return NSDictionary(dictionary: mutableDictionary)
+        return dictionary
     }
     
     var hashValue: Int {
@@ -227,8 +226,8 @@ struct Subscription: Writable, Hashable, Printable {
         }
     }
     
-    func prepareForDisk() -> NSDictionary {
-        let dictionary: NSDictionary = ["urlString" : self.verifiedURL.string, "dateString" : self.verifiedDate.string, "username" : self.username]
+    func prepareForDisk() -> [String : String] {
+        let dictionary = ["urlString" : self.verifiedURL.string, "dateString" : self.verifiedDate.string, "username" : self.username]
         return dictionary
     }
     
@@ -309,10 +308,12 @@ struct VerifiedURL: URLVerifiable {
     
     static func stringContainsURL(string: String) -> Bool {
         var matches = false
-        let urlRegEx: NSString = "(http|https)://((\\w)*|([0-9]*)|([-|_])*)+([\\.|/]((\\w)*|([0-9]*)|([-|_])*))+"
-        if let predicate = NSPredicate(format: "SELF MATCHES %@", urlRegEx) {
-            matches = predicate.evaluateWithObject(string)
-        }
+        let urlRegEx = "(http|https)://((\\w)*|([0-9]*)|([-|_])*)+([\\.|/]((\\w)*|([0-9]*)|([-|_])*))+"
+        let predicate = NSPredicate(format: "SELF MATCHES %@", urlRegEx)
+        matches = predicate.evaluateWithObject(string)
+//        if let predicate = NSPredicate(format: "SELF MATCHES %@", urlRegEx) {
+//            matches = predicate.evaluateWithObject(string)
+//        }
         return matches
     }
     
@@ -381,7 +382,7 @@ protocol Writable {
     // NSJSONSerialization basically only accepts Strings so that should be the lowest common denominator
     // All other types will have to be converted in these two methods.
     init?(dictionary: NSDictionary)
-    func prepareForDisk() -> NSDictionary
+    func prepareForDisk() -> [String : String]
 }
 
 // Operator Overloading!!
@@ -390,7 +391,7 @@ protocol Writable {
 // Crediting http://blog.human-friendly.com/theanswer-equals-maybeanswer-or-a-good-alternative
 
 infix operator !! { associativity right precedence 110 }
-public func !!<A>(lhs:A?, rhs:@autoclosure()->A)->A {
+public func !!<A>(lhs:A?, @autoclosure rhs:()->A)->A {
     assert(lhs != nil)
     return lhs ?? rhs()
 }

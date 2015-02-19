@@ -206,13 +206,13 @@ class AddFeedViewController: UIViewController, UITableViewDataSource, UITableVie
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         var cell: FeedTableViewCell?
         if let messages = self.messages {
-            var identifierString: NSString
-            if messages[indexPath.row].verifiedPictureURL == nil {
+            let identifierString: String
+            if let message = messages.optionalItemAtIndex(indexPath.row) where message.verifiedPictureURL == nil {
                 identifierString = "PicoMessageCellWithoutImage"
             } else {
                 identifierString = "PicoMessageCellWithImage"
             }
-            cell = tableView.dequeueReusableCellWithIdentifier(identifierString) as? FeedTableViewCell !! FeedTableViewCell()
+            cell = tableView.dequeueReusableCellWithIdentifier(identifierString) as? FeedTableViewCell
             cell?.messagePost = messages[indexPath.row]
         }
         return cell !! FeedTableViewCell()

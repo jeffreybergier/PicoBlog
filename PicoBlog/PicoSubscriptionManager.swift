@@ -57,18 +57,17 @@ class PicoSubscriptionManager {
     }
     
     func overwriteSubscriptionsToDisk(subscriptions: [Subscription]) -> NSError? {
-        var mutableArray = NSMutableArray()
-        
-        for subscription in subscriptions {
-            mutableArray.addObject(subscription.prepareForDisk())
-        }
-        if mutableArray.count > 0 {
-            let array = NSArray(array: mutableArray)
-            self.userDefaults.setObject(array, forKey: "Subscriptions")
+        let preparedSubscriptions = subscriptions.map({ return $0.prepareForDisk() })
+        if preparedSubscriptions.count > 0 {
+            self.userDefaults.setObject(preparedSubscriptions, forKey: "Subscriptions")
         } else {
             self.userDefaults.removeObjectForKey("Subscriptions")
         }
-        self.userDefaults.synchronize()
+        
+        let synchronized = self.userDefaults.synchronize()
+        if subscriptions.count != preparedSubscriptions.count || synchronized == false {
+            return NSError() //error should be customized to explain that some subscriptions could not be written to disk
+        }
         return nil
     }
     
