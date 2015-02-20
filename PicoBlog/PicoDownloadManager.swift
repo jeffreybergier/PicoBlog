@@ -38,11 +38,11 @@ class PicoDownloadManager: NSObject, NSURLSessionDelegate, NSURLSessionDataDeleg
         }()
     
     // CellImages Properties
-    var dataFinished: [String : NSData] = [:]
-    var tasksInProgress: [String : NSURLSessionTask] = [:]
-    var tasksWithErrors: [String : (response: NSHTTPURLResponse, downloadError: DownloadError)] = [:]
-    var tasksWithInvalidData: [String : NSData] = [:]
-    private var dataInProgress: [String : NSMutableData] = [:]
+    var dataFinished: [URLString : NSData] = [:]
+    var tasksInProgress: [URLString : NSURLSessionTask] = [:]
+    var tasksWithErrors: [URLString : (response: NSHTTPURLResponse, downloadError: DownloadError)] = [:]
+    var tasksWithInvalidData: [URLString : NSData] = [:]
+    private var dataInProgress: [URLString : NSMutableData] = [:]
     
     func downloadURLStringArray(urlStringArray: [String]) {
         for string in urlStringArray {
@@ -131,7 +131,7 @@ class PicoDownloadManager: NSObject, NSURLSessionDelegate, NSURLSessionDataDeleg
             downloadSizeIsAcceptible = true
         }
         
-        return downloadSizeIsAcceptible
+        return true //downloadSizeIsAcceptible
     }
     
     enum ReceivedResponse {

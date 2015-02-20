@@ -196,7 +196,7 @@ class FeedListTableViewController: UITableViewController, UISplitViewControllerD
         var collapse = false
         if let secNavController = secondaryViewController as? UINavigationController {
             if let feedListVC = secNavController.viewControllers.last as? FeedTableViewController {
-                if feedListVC.subscriptions == nil {
+                if feedListVC.subscriptions.count == 0 {
                     collapse = true
                 }
             }

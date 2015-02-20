@@ -244,7 +244,7 @@ func ==(lhs: Subscription, rhs: Subscription) -> Bool {
 }
 
 struct VerifiedDate: DateVerifiable, Printable {
-    let string: String
+    let string: DateString
     var date: NSDate {
         get {
             return PicoDataSource.sharedInstance.dateFormatter.dateFromString(self.string)!
@@ -274,8 +274,8 @@ struct VerifiedDate: DateVerifiable, Printable {
 }
 
 struct VerifiedURL: URLVerifiable {
-    let string: String
-    let trimmedString: String
+    let string: URLString
+    let trimmedString: URLString
     var url: NSURL {
         get {
             return NSURL(string: self.string)!
@@ -395,6 +395,9 @@ public func !!<A>(lhs:A?, @autoclosure rhs:()->A)->A {
     assert(lhs != nil)
     return lhs ?? rhs()
 }
+
+typealias URLString = String
+typealias DateString = String
 
 // Extending array
 // There were several cases where I was checking to make sure the index was in range before extracting the value

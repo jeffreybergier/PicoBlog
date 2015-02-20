@@ -31,17 +31,15 @@ import UIKit
 
 class FeedTableViewController: UITableViewController {
     
-    var subscriptions: [String : Subscription]? {
+    var subscriptions: [String : Subscription] = [:] {
         didSet {
-            self.messages = nil
-            if let subscriptions = self.subscriptions {
-                if subscriptions.count > 1 {
-                    self.title = NSLocalizedString("Feed", comment: "")
-                } else {
-                    for (i, (url, subscription)) in enumerate(subscriptions) {
-                        if i == subscriptions.count - 1 {
-                            self.title = subscription.username
-                        }
+            self.messages = []
+            if self.subscriptions.count > 1 {
+                self.title = NSLocalizedString("Feed", comment: "")
+            } else {
+                for (i, (url, subscription)) in enumerate(self.subscriptions) {
+                    if i == self.subscriptions.count - 1 {
+                        self.title = subscription.username
                     }
                 }
             }
@@ -50,9 +48,9 @@ class FeedTableViewController: UITableViewController {
     }
     private var errorTimer: NSTimer?
     private var messagesDictionary: [String : [PicoMessage]] = [:]
-    private var messages: [PicoMessage]? {
+    private var messages: [PicoMessage] = [PicoMessage]() {
         didSet {
-            if self.messages != nil {
+            if self.messages.count == 0 {
                 let pointlessRefreshControlTimer = NSTimer.scheduledTimerWithTimeInterval(0.3, target: self, selector: "pointlessRefreshControlTimer:", userInfo: nil, repeats: false)
             }
         }
@@ -99,57 +97,50 @@ class FeedTableViewController: UITableViewController {
     }
     
     private func didSetSubscriptionsProperty(IgnoreNewDownloads ignoreNewDownloads: Bool = false) {
-        if let subscriptions = self.subscriptions {
-            var urlStringArray: [String] = []
-            for (urlString, subscription) in subscriptions {
-                if let newMessages = PicoDataSource.sharedInstance.downloadedMessages[urlString] {
-                    self.messagesDictionary[urlString] = newMessages
-                } else {
-                    if ignoreNewDownloads == false {
-                        if let task = PicoDataSource.sharedInstance.messageDownloadManager.tasksInProgress[subscription.verifiedURL.string] {
-                            task.resume()
-                        } else {
-                            urlStringArray.append(subscription.verifiedURL.string)
-                        }
+        var urlStringArray: [String] = []
+        for (urlString, subscription) in subscriptions {
+            if let newMessages = PicoDataSource.sharedInstance.downloadedMessages[urlString] {
+                self.messagesDictionary[urlString] = newMessages
+            } else {
+                if ignoreNewDownloads == false {
+                    if let task = PicoDataSource.sharedInstance.messageDownloadManager.tasksInProgress[subscription.verifiedURL.string] {
+                        task.resume()
+                    } else {
+                        urlStringArray.append(subscription.verifiedURL.string)
                     }
                 }
             }
-            
-            if urlStringArray.count > 0 {
-                PicoDataSource.sharedInstance.messageDownloadManager.downloadURLStringArray(urlStringArray)
-            }
-            
-            if self.subscriptions?.count == self.messagesDictionary.count || ignoreNewDownloads == true {
-                let startTime = NSDate(timeIntervalSinceNow: 0)
-                if self.messagesDictionary.count > 0 {
-                    var unsortedMessagesArray: [PicoMessage] = []
-                    if let existingMessages = self.messages {
-                        unsortedMessagesArray += existingMessages
-                    }
-                    for (url, newMessages) in self.messagesDictionary {
-                        unsortedMessagesArray += newMessages
-                    }
-                    self.messages = self.sortPicoMessageArrayByDate(unsortedMessagesArray)
-                    self.tableView.reloadData()
-                } else {
-                    if self.refreshControl?.refreshing == true {
-                        self.refreshControl?.endRefreshing()
-                    }
+        }
+        
+        if urlStringArray.count > 0 {
+            PicoDataSource.sharedInstance.messageDownloadManager.downloadURLStringArray(urlStringArray)
+        }
+        
+        if self.subscriptions.count == self.messagesDictionary.count || ignoreNewDownloads == true {
+            let startTime = NSDate(timeIntervalSinceNow: 0)
+            if self.messagesDictionary.count > 0 {
+                var unsortedMessagesArray = [PicoMessage]()
+                for (url, newMessages) in self.messagesDictionary {
+                    unsortedMessagesArray += newMessages
                 }
-                let endTime = NSDate(timeIntervalSinceNow: 0)
-                NSLog("\(self): Sorting messages took: \(endTime.timeIntervalSinceDate(startTime)) seconds.")
+                self.messages = self.sortPicoMessageArrayByDate(unsortedMessagesArray)
+                self.tableView.reloadData()
+            } else {
+                if self.refreshControl?.refreshing == true {
+                    self.refreshControl?.endRefreshing()
+                }
             }
+            let endTime = NSDate(timeIntervalSinceNow: 0)
+            NSLog("\(self): Sorting messages took: \(endTime.timeIntervalSinceDate(startTime)) seconds.")
         }
     }
     
     private func sortPicoMessageArrayByDate(inputArray: [PicoMessage]) -> [PicoMessage] {
-        var sortedArray = inputArray
-        sortedArray.sort({
+        let sortedArray = inputArray.sorted({
             let firstDate = $0.verifiedDate.date
             let secondDate = $1.verifiedDate.date
             return firstDate.compare(secondDate) == NSComparisonResult.OrderedAscending
         })
-
         return sortedArray
     }
     
@@ -169,11 +160,9 @@ class FeedTableViewController: UITableViewController {
     
     @objc private func errorWhileDownloadingTimerFired(timer: NSTimer) {
         var tasksInProgress = 0
-        if let subscriptions = self.subscriptions {
-            for (url, subscription) in subscriptions {
-                if let task = PicoDataSource.sharedInstance.messageDownloadManager.tasksInProgress[subscription.verifiedURL.string] {
-                    tasksInProgress++
-                }
+        for (url, subscription) in subscriptions {
+            if let task = PicoDataSource.sharedInstance.messageDownloadManager.tasksInProgress[subscription.verifiedURL.string] {
+                tasksInProgress++
             }
         }
         if tasksInProgress == 0 {
@@ -188,14 +177,12 @@ class FeedTableViewController: UITableViewController {
         
         var matchedErrors: [Subscription : (response: NSHTTPURLResponse, downloadError: DownloadError)] = [:]
         var matchedInvalidData: [Subscription] = []
-        if let subscriptions = self.subscriptions {
-            for (url, subscription) in subscriptions {
-                if let matchingResponse = PicoDataSource.sharedInstance.messageDownloadManager.tasksWithErrors[subscription.verifiedURL.string] {
-                    matchedErrors[subscription] = matchingResponse
-                }
-                if let matchedInvalid = PicoDataSource.sharedInstance.messageDownloadManager.tasksWithInvalidData[subscription.verifiedURL.string] {
-                    matchedInvalidData.append(subscription)
-                }
+        for (url, subscription) in subscriptions {
+            if let matchingResponse = PicoDataSource.sharedInstance.messageDownloadManager.tasksWithErrors[subscription.verifiedURL.string] {
+                matchedErrors[subscription] = matchingResponse
+            }
+            if let matchedInvalid = PicoDataSource.sharedInstance.messageDownloadManager.tasksWithInvalidData[subscription.verifiedURL.string] {
+                matchedInvalidData.append(subscription)
             }
         }
         
@@ -242,14 +229,12 @@ class FeedTableViewController: UITableViewController {
     
     @objc private func userPulledToRefresh(sender: UIRefreshControl) {
         // clear out the messages array
-        self.messages = nil
+        self.messages = []
         self.messagesDictionary = [:]
         
         // remove the messages already downloaded in the data source dictionary
-        if let subscriptions = self.subscriptions {
-            for (urlString, subscription) in subscriptions {
-                PicoDataSource.sharedInstance.downloadedMessages.removeValueForKey(urlString)
-            }
+        for (urlString, subscription) in subscriptions {
+            PicoDataSource.sharedInstance.downloadedMessages.removeValueForKey(urlString)
         }
         
         // run through setup as if this view controller were loading for the first time.
@@ -264,21 +249,23 @@ class FeedTableViewController: UITableViewController {
     }
     
     override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return messages?.count ?? 0
+        return messages.count
     }
     
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        var cell: FeedTableViewCell?
-        if let messages = self.messages {
-            var identifierString: String
-            if messages[indexPath.row].verifiedPictureURL == nil {
+        let cell: FeedTableViewCell?
+        let identifierString: String
+        if let message = self.messages.optionalItemAtIndex(indexPath.row) {
+            if message.verifiedPictureURL == nil {
                 identifierString = "PicoMessageCellWithoutImage"
             } else {
                 identifierString = "PicoMessageCellWithImage"
             }
-            cell = tableView.dequeueReusableCellWithIdentifier(identifierString) as? FeedTableViewCell
-            cell?.messagePost = messages[indexPath.row]
+        } else {
+            identifierString = "PicoMessageCellWithImage"
         }
+        cell = tableView.dequeueReusableCellWithIdentifier(identifierString) as? FeedTableViewCell
+        cell?.messagePost = messages[indexPath.row]
         return cell !! FeedTableViewCell()
     }
     

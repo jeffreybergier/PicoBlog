@@ -32,8 +32,8 @@ import UIKit
 class PicoDataSource {
     
     // Properties for View Controllers
-    var downloadedMessages: [String : [PicoMessage]] = [:]
-    var downloadedImages: [String : UIImage] = [:]
+    var downloadedMessages: [URLString : [PicoMessage]] = [:]
+    var downloadedImages: [URLString : UIImage] = [:]
     
     // Helper Instances
     let dateFormatter = NSDateFormatter()
@@ -91,7 +91,7 @@ class PicoDataSource {
     
     @objc private func newMessagesDownloaded(notification: NSNotification) {
         var confirmed = false
-        var allKeys: [String] = []
+        var allKeys: [URLString] = []
         
         for (key, data) in self.messageDownloadManager.dataFinished {
             allKeys.append(key)
