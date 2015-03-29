@@ -1,6 +1,3 @@
-# Assets used to create the assets used in the app
-
-
 # Xcode
 #
 build/
@@ -19,6 +16,7 @@ DerivedData
 *.hmap
 *.ipa
 *.xcuserstate
+.DS_Store
 
 # CocoaPods
 #
